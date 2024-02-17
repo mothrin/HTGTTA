@@ -96,12 +96,12 @@ namespace HTGTTA
                         Left = Keys.Left,
                         Right = Keys.Right,
                     },
-                },
-                /*new Sprite(one)
+                },*/
+                new Sprite(one)
                 {
                     Position = new Vector2(20,10),
                 
-                },*/
+                },
             };
             
 

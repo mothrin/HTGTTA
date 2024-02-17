@@ -2,12 +2,8 @@
 using HTGTTA.Models;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HTGTTA.Sprites
 {
@@ -24,6 +20,9 @@ namespace HTGTTA.Sprites
         protected Vector2 _position;
 
         protected Texture2D _texture;
+
+        public int Width { get; set; }
+        public int Height { get; set; }
 
 
         #endregion
@@ -42,11 +41,24 @@ namespace HTGTTA.Sprites
 
         public Rectangle Rectangle
         {
-            get { return new Rectangle((int)Position.X, (int)Position.Y, _texture.Width, _texture.Height); }
+            get { return new Rectangle((int)Position.X, (int)Position.Y, Width, Height); }
         }
+
         public Sprite(Texture2D texture)
         {
             _texture = texture;
+            Width = _texture.Width;
+            Height = +texture.Height;
+        }
+
+        public Sprite(Dictionary<string, Animation> animations)
+        {
+            _animations = animations;
+            _animationManager = new AnimationManager(_animations.First().Value);
+
+
+            Width = _animationManager.FrameWidth;
+            Height = _animationManager.FrameHeight;
         }
 
         public Vector2 Position
@@ -69,19 +81,16 @@ namespace HTGTTA.Sprites
         {
 
         }
+
         public virtual void Draw(SpriteBatch spriteBatch)
         {
+            if (_texture != null)
                 spriteBatch.Draw(_texture, Position, Color.White);
-
+            else if (_animationManager != null)
+                _animationManager.Draw(spriteBatch);
         }
 
-        public Sprite(Dictionary<string, Animation> animations)
-        {
-            
-        }
-
-
-
+        
         #endregion
 
     }
