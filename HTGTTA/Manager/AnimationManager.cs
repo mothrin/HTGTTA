@@ -49,7 +49,7 @@ namespace HTGTTA.Manager
             _timer = 0;
         }
 
-        public void Stop()
+        public void Stop() //stops animation
         {
             _timer = 0f;
 

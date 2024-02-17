@@ -19,6 +19,7 @@ namespace HTGTTA.Sprites
 
         protected Dictionary<string, Animation> _animations;
 
+        //packages
         protected IKeyboardStateManager _keyboard { get { return ((IInputStateService)Game.Services.GetService<IInputStateService>()).KeyboardManager; } }
 
         protected IAudioService _audio { get { return Game.Services.GetService<IAudioService>(); } }
@@ -98,10 +99,10 @@ namespace HTGTTA.Sprites
 
         #region Methods
 
-        public override void Update(GameTime gameTime)
-        {
+        //public override void Update(GameTime gameTime)
+        //{
 
-        }
+        //}
 
         public override void Draw(GameTime gameTime)
         {

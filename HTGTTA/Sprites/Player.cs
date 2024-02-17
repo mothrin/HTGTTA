@@ -57,7 +57,10 @@ namespace HTGTTA.Sprites
                 Position = new Vector2(Position.X, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height - height);
             }
         }
+        public void CollisonCheck()
+        {
 
+        }
         public override void Update(GameTime gameTime)
         {
 

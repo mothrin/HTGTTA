@@ -1,18 +1,13 @@
 ﻿using HTGTTA.Models;
 using HTGTTA.Sprites;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using MonoGame.Randomchaos.Services.Audio;
-using MonoGame.Randomchaos.Services.Input.Models;
 using MonoGame.Randomchaos.Services.Input;
+using MonoGame.Randomchaos.Services.Input.Models;
 using MonoGame.Randomchaos.Services.Interfaces;
 using System.Collections.Generic;
-using System.Numerics;
-using static System.Net.Mime.MediaTypeNames;
-using Vector2 = System.Numerics.Vector2;
 
 namespace HTGTTA
 {
@@ -69,10 +64,10 @@ namespace HTGTTA
         {
             var animations = new Dictionary<string, Animation>()
             {
-                { "WalkUp", new Animation(Content.Load<Texture2D>("Textures/back"), 3) },
-                { "WalkDown", new Animation(Content.Load<Texture2D>("Textures/front"), 3) },
-                { "WalkLeft", new Animation(Content.Load<Texture2D>("Textures/left"), 3) },
-                { "WalkRight", new Animation(Content.Load<Texture2D>("Textures/right"), 3) },
+                { "WalkUp", new Animation(Content.Load<Texture2D>("Textures/Sprite/back"), 3) },
+                { "WalkDown", new Animation(Content.Load<Texture2D>("Textures/Sprite/front"), 3) },
+                { "WalkLeft", new Animation(Content.Load<Texture2D>("Textures/Sprite/left"), 3) },
+                { "WalkRight", new Animation(Content.Load<Texture2D>("Textures/Sprite/right"), 3) },
             };
 
             // TODO: Add your initialization logic here
@@ -90,7 +85,7 @@ namespace HTGTTA
                         Right = Keys.D,
                     },
                 },
-                /*new Player(animations)
+                new Player(this, animations)
                 {
                     Position = new Vector2(w/2, h/2),
                     Input = new Input()
@@ -100,8 +95,8 @@ namespace HTGTTA
                         Left = Keys.Left,
                         Right = Keys.Right,
                     },
-                },*/
-                new Sprite(this, "Textures/bed")
+                },
+                new Sprite(this, "Textures/Objects/bed")
                 {
                     Position = new Vector2(20,10),
                 },
@@ -124,11 +119,7 @@ namespace HTGTTA
             
             _backgroundTexture = Content.Load<Texture2D>("Textures/background");
 
-            
-
-            
-
-            _audio.PlaySong("Audio/Music/Drafty-Places", .0125f);
+            _audio.PlaySong("Audio/Music/Drafty-Places", .05f);
             
             base.LoadContent();
         }
@@ -150,6 +141,7 @@ namespace HTGTTA
             inputService.PreUpdate(gameTime);
             base.Update(gameTime);
 
+            //collisions
             foreach (var sprite in _sprites)
             {
                 foreach (var sprite2 in _sprites)
