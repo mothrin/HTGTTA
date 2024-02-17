@@ -6,11 +6,12 @@ using System.Collections.Generic;
 
 namespace HTGTTA.Sprites
 {
+    
     public class Player : Sprite
     {
-        public Player(Texture2D texture) : base(texture) { }
+        public Player(Game game, string textureAsset) : base(game, textureAsset) { }
 
-        public Player(Dictionary<string, Animation> animations) : base(animations) { }
+        public Player(Game game, Dictionary<string, Animation> animations) : base(game, animations) { }
 
         public virtual void Move() //movement code
         {
@@ -58,25 +59,13 @@ namespace HTGTTA.Sprites
             }
         }
 
-        public override void Update(GameTime gameTime, List<Sprite> sprites)
+        public override void Update(GameTime gameTime)
         {
 
             Move();
             SetAnimations();
 
-            foreach (var sprite in sprites)
-            {
-                if (sprite == this)
-                    continue;
-
-                Position += Velocity;
-
-                if (Rectangle.Intersects(sprite.Rectangle))
-                {
-                    Position -= Velocity;
-                }
-
-            }
+            Position += Velocity;
 
             Velocity = Vector2.Zero;
 

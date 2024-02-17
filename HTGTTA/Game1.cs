@@ -1,8 +1,12 @@
 ﻿using HTGTTA.Models;
 using HTGTTA.Sprites;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
+using MonoGame.Randomchaos.Services.Audio;
+using MonoGame.Randomchaos.Services.Interfaces;
 using System.Collections.Generic;
 using System.Numerics;
 using static System.Net.Mime.MediaTypeNames;
@@ -25,6 +29,8 @@ namespace HTGTTA
         private List<Sprite> _sprites;
 
 
+        private IAudioService _audio { get { return Services.GetService<IAudioService>(); } }
+
 
         public Game1()
         {
@@ -40,6 +46,9 @@ namespace HTGTTA
             Content.RootDirectory = "Content";
             IsMouseVisible = false;
 
+
+            new AudioService(this);
+
         }
 
         /// Allows the game to perform any initialization it needs to before starting to run.
@@ -49,33 +58,19 @@ namespace HTGTTA
 
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-
-
-            base.Initialize();
-        }
-
-        /// LoadContent will be called once per game and is the place to load all of your content.
-
-        protected override void LoadContent()
-        {
-            // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-            one = Content.Load<Texture2D>("bed");
-            _backgroundTexture = Content.Load<Texture2D>("background");
-
             var animations = new Dictionary<string, Animation>()
             {
-                { "WalkUp", new Animation(Content.Load<Texture2D>("back"), 3) },
-                { "WalkDown", new Animation(Content.Load<Texture2D>("front"), 3) },
-                { "WalkLeft", new Animation(Content.Load<Texture2D>("left"), 3) },
-                { "WalkRight", new Animation(Content.Load<Texture2D>("right"), 3) },
+                { "WalkUp", new Animation(Content.Load<Texture2D>("Textures/back"), 3) },
+                { "WalkDown", new Animation(Content.Load<Texture2D>("Textures/front"), 3) },
+                { "WalkLeft", new Animation(Content.Load<Texture2D>("Textures/left"), 3) },
+                { "WalkRight", new Animation(Content.Load<Texture2D>("Textures/right"), 3) },
             };
 
+            // TODO: Add your initialization logic here
             _sprites = new List<Sprite>()
             {
-                
-                new Player(animations)
+
+                new Player(this, animations)
                 {
                     Position = new Vector2(w/2, h/2),
                     Input = new Input()
@@ -97,13 +92,36 @@ namespace HTGTTA
                         Right = Keys.Right,
                     },
                 },*/
-                new Sprite(one)
+                new Sprite(this, "Textures/bed")
                 {
                     Position = new Vector2(20,10),
-                
                 },
             };
 
+            foreach (var sprite in _sprites)
+            {
+                Components.Add(sprite);
+            }
+
+            base.Initialize();
+        }
+
+        /// LoadContent will be called once per game and is the place to load all of your content.
+
+        protected override void LoadContent()
+        {
+            // Create a new SpriteBatch, which can be used to draw textures.
+            spriteBatch = new SpriteBatch(GraphicsDevice);
+            
+            _backgroundTexture = Content.Load<Texture2D>("Textures/background");
+
+            
+
+            
+
+            _audio.PlaySong("Audio/Music/Drafty-Places", .0125f);
+            
+            base.LoadContent();
         }
 
 
@@ -121,7 +139,18 @@ namespace HTGTTA
         {
 
             foreach (var sprite in _sprites)
-                sprite.Update(gameTime, _sprites);
+            {
+                foreach (var sprite2 in _sprites)
+                {
+                    if (sprite != sprite2)
+                    {
+                        if (sprite.Rectangle.Intersects(sprite2.Rectangle))
+                        {
+                            sprite.Position -= sprite.Velocity;
+                        }
+                    }
+                }
+            }
 
             base.Update(gameTime);
         }
@@ -139,8 +168,8 @@ namespace HTGTTA
                 new Rectangle(0, 0, _backgroundTexture.Width, _backgroundTexture.Height),
                Color.White);
 
-            foreach (var sprite in _sprites)
-                sprite.Draw(spriteBatch);
+            //foreach (var sprite in _sprites)
+            //    sprite.Draw(spriteBatch);
 
                 
 
