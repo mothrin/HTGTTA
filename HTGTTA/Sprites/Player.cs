@@ -37,6 +37,7 @@ namespace HTGTTA.Sprites
             CheckPosition(Width, Height);
 
         }
+
         protected void CheckPosition(int width, int height)
         {
             if (Position.X > GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width - width) // so ghost can't go out the sides of window
@@ -63,7 +64,6 @@ namespace HTGTTA.Sprites
             Move();
             SetAnimations();
 
-
             foreach (var sprite in sprites)
             {
                 if (sprite == this)
@@ -77,8 +77,6 @@ namespace HTGTTA.Sprites
                 }
 
             }
-
-            
 
             Velocity = Vector2.Zero;
 
