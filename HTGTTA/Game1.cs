@@ -6,6 +6,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using MonoGame.Randomchaos.Services.Audio;
+using MonoGame.Randomchaos.Services.Input.Models;
+using MonoGame.Randomchaos.Services.Input;
 using MonoGame.Randomchaos.Services.Interfaces;
 using System.Collections.Generic;
 using System.Numerics;
@@ -28,6 +30,10 @@ namespace HTGTTA
 
         private List<Sprite> _sprites;
 
+        /// <summary>   The input service. </summary>
+        IInputStateService inputService;
+        /// <summary>   State of the kB. </summary>
+        IKeyboardStateManager kbState;
 
         private IAudioService _audio { get { return Services.GetService<IAudioService>(); } }
 
@@ -48,6 +54,9 @@ namespace HTGTTA
 
 
             new AudioService(this);
+
+            kbState = new KeyboardStateManager(this);
+            inputService = new InputHandlerService(this, kbState);
 
         }
 
@@ -138,6 +147,9 @@ namespace HTGTTA
         protected override void Update(GameTime gameTime)
         {
 
+            inputService.PreUpdate(gameTime);
+            base.Update(gameTime);
+
             foreach (var sprite in _sprites)
             {
                 foreach (var sprite2 in _sprites)
@@ -152,7 +164,10 @@ namespace HTGTTA
                 }
             }
 
-            base.Update(gameTime);
+            if (inputService.KeyboardManager.KeyPress(Keys.Escape))
+            {
+                Exit();
+            }
         }
 
        /// This is called when the game should draw itself.

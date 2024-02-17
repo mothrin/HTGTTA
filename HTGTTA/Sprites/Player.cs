@@ -16,21 +16,20 @@ namespace HTGTTA.Sprites
         public virtual void Move() //movement code
         {
 
-            var kstate = Keyboard.GetState();
 
-            if (kstate.IsKeyDown(Keys.W))
+            if (_keyboard.KeyDown(Keys.W))
             {
                 Velocity.Y -= spriteSpeed;
             }
-            if (kstate.IsKeyDown(Keys.S))
+            if (_keyboard.KeyDown(Keys.S))
             {
                 Velocity.Y += spriteSpeed;
             }
-            if (kstate.IsKeyDown(Keys.A))
+            if (_keyboard.KeyDown(Keys.A))
             {
                 Velocity.X -= spriteSpeed;
             }
-            if (kstate.IsKeyDown(Keys.D))
+            if (_keyboard.KeyDown(Keys.D))
             {
                 Velocity.X += spriteSpeed;
             }

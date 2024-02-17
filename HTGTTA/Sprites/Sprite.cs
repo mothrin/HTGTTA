@@ -2,6 +2,7 @@
 using HTGTTA.Models;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Randomchaos.Services.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -18,6 +19,9 @@ namespace HTGTTA.Sprites
 
         protected Dictionary<string, Animation> _animations;
 
+        protected IKeyboardStateManager _keyboard { get { return ((IInputStateService)Game.Services.GetService<IInputStateService>()).KeyboardManager; } }
+
+        protected IAudioService _audio { get { return Game.Services.GetService<IAudioService>(); } }
 
         protected Vector2 _position;
 
