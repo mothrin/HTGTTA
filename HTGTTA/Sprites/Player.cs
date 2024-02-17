@@ -27,7 +27,7 @@ namespace HTGTTA.Sprites
         }
 
 
-        public virtual void Move()
+        public virtual void Move() //movement code
         {
 
             var kstate = Keyboard.GetState();
@@ -48,26 +48,36 @@ namespace HTGTTA.Sprites
             {
                 Velocity.X += spriteSpeed;
             }
-            if (Velocity.X > GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width - _texture.Width / 2)
+            if (_texture != null)
             {
-                Velocity.X = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height / 2;
+                CheckPosition(_texture.Width, _texture.Height);
             }
-            else if (Velocity.X < _texture.Width / 2)
+            else
             {
-                Velocity.X = _texture.Width / 2;
+                CheckPosition(_animationManager.FrameWidth, _animationManager.FrameHeight);
             }
-            if (Velocity.Y > GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width - _texture.Width / 2)
-            {
-                Velocity.Y = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height - _texture.Height / 2;
-            }
-            else if (Velocity.Y < _texture.Height / 2)
-            {
-                Velocity.Y = _texture.Height / 2;
-            }
-
 
         }
-
+        protected void CheckPosition(int width, int height)
+        {
+            if (Position.X > GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width - width) // so ghost can't go out the sides of window
+            {
+                Position = new Vector2(GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width - width, Position.Y);
+            }
+            else if (Position.X < 0) 
+            {
+                Position = new Vector2(0, Position.Y);
+            }
+            if (Position.Y < GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height / 2  - height)   // so ghost can't go out top and bottom of window , 
+            {
+                Position = new Vector2(Position.X, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height / 2 - height);
+            }
+            else if (Position.Y > GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height - height)
+            {
+                Position = new Vector2(Position.X, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height - height);
+            }
+        }
+        //collisions
         protected bool isTouchingLeft(Sprite sprite)
         {
             return this.Rectangle.Right + this.Velocity.X > sprite.Rectangle.Left &&
@@ -107,6 +117,7 @@ namespace HTGTTA.Sprites
 
         public override void Update(GameTime gameTime, List<Sprite> sprites)
         {
+
             Move();
             SetAnimations();
 

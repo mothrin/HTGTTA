@@ -17,6 +17,10 @@ namespace HTGTTA.Manager
 
         public Vector2 Position { get; set; }
 
+        protected Texture2D _CurrentFrame;
+        public int FrameWidth { get { return _animation.FrameWidth; } }
+        public int FrameHeight { get { return _animation.FrameHeight; } }
+
         public AnimationManager(Animation animation)
         {
             _animation = animation;

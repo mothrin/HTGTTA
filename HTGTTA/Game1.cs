@@ -86,7 +86,7 @@ namespace HTGTTA
                         Right = Keys.D,
                     },
                 },
-                /*new Sprite(animations)
+                /*new Player(animations)
                 {
                     Position = new Vector2(w/2, h/2),
                     Input = new Input()
@@ -97,7 +97,7 @@ namespace HTGTTA
                         Right = Keys.Right,
                     },
                 },
-                new Sprite(one)
+                /*new Sprite(one)
                 {
                     Position = new Vector2(20,10),
                 
@@ -137,7 +137,7 @@ namespace HTGTTA
 
             spriteBatch.Draw(_backgroundTexture,
                 new Rectangle(0,0, w, h), 
-                new Rectangle(0, 0, _backgroundTexture.Width+100, _backgroundTexture.Height+50),
+                new Rectangle(0, 0, _backgroundTexture.Width, _backgroundTexture.Height),
                Color.White);
 
             foreach (var sprite in _sprites)
