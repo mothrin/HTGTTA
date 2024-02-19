@@ -86,16 +86,34 @@ namespace HTGTTA
                 new Sprite(this, "Textures/Objects/bed")
                 {
                     Name = "Bed",
-                    Position = new Vector2(20,10),
-                    RenderBounds = true,
+                    Position = new Vector2(1460,260),
+                    Width = 300,
+                    Height = 100,
+                    RenderBounds = true, //for bounds
                 },
                 new Sprite (this, "Textures/Objects/desk")
                 {
                     Name = "Desk",
                     Position = new Vector2(100,1000),
-                    Width = 300,
-                    Height = 100,
-                    RenderBounds = true,
+                    RenderBounds = true, //bounds
+                },
+                new Sprite(this,"Textures/Objects/drawers")
+                {
+                    Name = "Drawer",
+                    Position = new Vector2(500,200),
+                    RenderBounds = true, //bounds
+                },
+                new Sprite(this,"Textures/Objects/wardrobe")
+                {
+                    Name = "Wardrobe",
+                    Position = new Vector2(0,0),
+                    RenderBounds = true, //bounds
+                },
+                new Sprite(this,"Textures/Objects/table")
+                {
+                    Name = "Table",
+                    Position = new Vector2(1200,200),
+                    RenderBounds = true, //bounds
                 }
             };
 

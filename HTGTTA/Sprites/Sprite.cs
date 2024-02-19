@@ -53,7 +53,6 @@ namespace HTGTTA.Sprites
 
         public Rectangle Bounds //for collision
         {
-            //get { return new Rectangle((int)(Position.X) - (Width / 2), (int)(Position.Y) - (Width / 2), Width, Height); }
             get { return new Rectangle((int)Position.X, (int)Position.Y, Width, Height); }
         }
 
@@ -70,9 +69,11 @@ namespace HTGTTA.Sprites
 
         protected override void LoadContent()
         {
+            //text
             _font = Game.Content.Load<SpriteFont>("Fonts/font");
             spriteBatch = new SpriteBatch(Game.GraphicsDevice);
 
+             //bounds
             _boundsTexture = new Texture2D(GraphicsDevice, 1, 1);
             _boundsTexture.SetData(new Color[] { new Color(1f, .1f, .1f, .25f) });
 
@@ -126,7 +127,7 @@ namespace HTGTTA.Sprites
                     _animationManager.Draw(spriteBatch);
                 }
 
-                // Draw text
+                // Draw text for coords
                 string textToPrint = $"{Name} - {Position}";
                 Vector2 textSize = _font.MeasureString(textToPrint);
                 Vector2 txtPos = Position + (new Vector2(Width / 2, 0) - (textSize * .5f));
