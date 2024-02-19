@@ -13,6 +13,8 @@ namespace HTGTTA.Sprites
 
         public Player(Game game, Dictionary<string, Animation> animations) : base(game, animations) { }
 
+        public List<Sprite> _sprites;
+
         public virtual void Move() //movement code
         {
 
@@ -56,11 +58,14 @@ namespace HTGTTA.Sprites
             {
                 Position = new Vector2(Position.X, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height - height);
             }
+           
         }
         public void CollisonCheck()
         {
-
+            //collisions
+            
         }
+
         public override void Update(GameTime gameTime)
         {
 

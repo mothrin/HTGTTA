@@ -10,7 +10,7 @@ using MonoGame.Randomchaos.Services.Interfaces;
 using System.Collections.Generic;
 
 namespace HTGTTA
-{
+{ 
     public class Game1 : Game
     {
         GraphicsDeviceManager graphics;
@@ -21,9 +21,12 @@ namespace HTGTTA
         public int h;
 
         private Texture2D _backgroundTexture;
-        private Texture2D one;
 
-        private List<Sprite> _sprites;
+        private Player player;
+
+        public List<Sprite> _items;
+
+        Vector2 lastPosition;
 
         /// <summary>   The input service. </summary>
         IInputStateService inputService;
@@ -46,7 +49,6 @@ namespace HTGTTA
 
             Content.RootDirectory = "Content";
             IsMouseVisible = false;
-
 
             new AudioService(this);
 
@@ -71,41 +73,42 @@ namespace HTGTTA
             };
 
             // TODO: Add your initialization logic here
-            _sprites = new List<Sprite>()
-            {
 
-                new Player(this, animations)
-                {
-                    Position = new Vector2(w/2, h/2),
-                    Input = new Input()
-                    {
-                        Up = Keys.W,
-                        Down = Keys.S,
-                        Left = Keys.A,
-                        Right = Keys.D,
-                    },
-                },
-                new Player(this, animations)
-                {
-                    Position = new Vector2(w/2, h/2),
-                    Input = new Input()
-                    {
-                        Up = Keys.Up,
-                        Down = Keys.Down,
-                        Left = Keys.Left,
-                        Right = Keys.Right,
-                    },
-                },
+
+            //furniture
+            _items = new List<Sprite>()
+            {
                 new Sprite(this, "Textures/Objects/bed")
                 {
                     Position = new Vector2(20,10),
                 },
+                new Sprite (this, "Textures/Objects/desk")
+                {
+                    Position = new Vector2(100,1000),
+                    Width = 300,
+                    Height = 100,
+                }
             };
 
-            foreach (var sprite in _sprites)
+            foreach (var item in _items)
             {
-                Components.Add(sprite);
+                Components.Add(item);
             }
+
+            //player
+            player = new Player(this, animations)
+            {
+                Position = new Vector2(w / 2, h / 2),
+                Input = new Input()
+                {
+                    Up = Keys.W,
+                    Down = Keys.S,
+                    Left = Keys.A,
+                    Right = Keys.D,
+                },
+            };
+            Components.Add(player);
+
 
             base.Initialize();
         }
@@ -117,9 +120,9 @@ namespace HTGTTA
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             
-            _backgroundTexture = Content.Load<Texture2D>("Textures/background");
+            _backgroundTexture = Content.Load<Texture2D>("Textures/background"); //background
 
-            _audio.PlaySong("Audio/Music/Drafty-Places", .05f);
+            _audio.PlaySong("Audio/Music/Drafty-Places", .05f); //music
             
             base.LoadContent();
         }
@@ -139,22 +142,22 @@ namespace HTGTTA
         {
 
             inputService.PreUpdate(gameTime);
+
+            lastPosition = player.Position;
+
             base.Update(gameTime);
 
-            //collisions
-            foreach (var sprite in _sprites)
+
+            foreach (var item in _items)
             {
-                foreach (var sprite2 in _sprites)
+                if (player.Bounds.Intersects(item.Bounds))
                 {
-                    if (sprite != sprite2)
-                    {
-                        if (sprite.Rectangle.Intersects(sprite2.Rectangle))
-                        {
-                            sprite.Position -= sprite.Velocity;
-                        }
-                    }
+                    player.Position = lastPosition;
+                    //player.Color = Color.Gold;
                 }
             }
+
+  
 
             if (inputService.KeyboardManager.KeyPress(Keys.Escape))
             {

@@ -28,6 +28,8 @@ namespace HTGTTA.Sprites
 
         protected Texture2D _texture;
 
+        List<Sprite> _sprites;
+
         public int Width { get; set; }
         public int Height { get; set; }
 
@@ -46,9 +48,9 @@ namespace HTGTTA.Sprites
 
         protected string TextureAsset { get; set; }
 
-        public Rectangle Rectangle
+        public Rectangle Bounds
         {
-            get { return new Rectangle((int)Position.X, (int)Position.Y, Width, Height); }
+            get { return new Rectangle((int)(Position.X) - (Width / 2), (int)(Position.Y) - (Width / 2), Width, Height); }
         }
 
         public Sprite(Game game, string textureAsset) : base(game)
@@ -99,10 +101,10 @@ namespace HTGTTA.Sprites
 
         #region Methods
 
-        //public override void Update(GameTime gameTime)
-        //{
+        public override void Update(GameTime gameTime)
+        {
 
-        //}
+        }
 
         public override void Draw(GameTime gameTime)
         {
@@ -118,8 +120,9 @@ namespace HTGTTA.Sprites
                 spriteBatch.End();
             }
         }
-
         
+
+
         #endregion
 
     }
