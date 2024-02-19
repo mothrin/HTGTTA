@@ -19,6 +19,13 @@
 /processorParam:Quality=Best
 /build:Audio/Music/Drafty-Places.mp3
 
+#begin Fonts/font.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/font.spritefont
+
 #begin Textures/background.png
 /importer:TextureImporter
 /processor:TextureProcessor

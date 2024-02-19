@@ -85,13 +85,17 @@ namespace HTGTTA
             {
                 new Sprite(this, "Textures/Objects/bed")
                 {
+                    Name = "Bed",
                     Position = new Vector2(20,10),
+                    RenderBounds = true,
                 },
                 new Sprite (this, "Textures/Objects/desk")
                 {
+                    Name = "Desk",
                     Position = new Vector2(100,1000),
                     Width = 300,
                     Height = 100,
+                    RenderBounds = true,
                 }
             };
 
@@ -103,6 +107,7 @@ namespace HTGTTA
             //player
             player = new Player(this, animations)
             {
+                Name = "Player",
                 Position = new Vector2(w / 2, h / 2),
                 Input = new Input()
                 {
@@ -111,6 +116,7 @@ namespace HTGTTA
                     Left = Keys.A,
                     Right = Keys.D,
                 },
+                RenderBounds = true,
             };
             Components.Add(player);
 
