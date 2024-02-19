@@ -17,8 +17,6 @@ namespace HTGTTA.Sprites
 
         public virtual void Move() //movement code
         {
-
-
             if (_keyboard.KeyDown(Keys.W))
             {
                 Velocity.Y -= spriteSpeed;
@@ -37,8 +35,8 @@ namespace HTGTTA.Sprites
             }
 
             CheckPosition(Width, Height);
-
         }
+
 
         protected void CheckPosition(int width, int height)
         {
@@ -50,32 +48,24 @@ namespace HTGTTA.Sprites
             {
                 Position = new Vector2(0, Position.Y);
             }
-            if (Position.Y < GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height / 2  - height)   // so ghost can't go out top and bottom of window , 
+            if (Position.Y < GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height / 2  - height)   // so ghost can't go out bottom of window , 
             {
                 Position = new Vector2(Position.X, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height / 2 - height);
             }
-            else if (Position.Y > GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height - height)
+            else if (Position.Y > GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height - height) //ghost can't go onto wall
             {
                 Position = new Vector2(Position.X, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height - height);
             }
-           
-        }
-        public void CollisonCheck()
-        {
-            //collisions
-            
         }
 
         public override void Update(GameTime gameTime)
         {
-
             Move();
             SetAnimations();
 
             Position += Velocity;
 
             Velocity = Vector2.Zero;
-
 
             _animationManager.Update(gameTime);
         }

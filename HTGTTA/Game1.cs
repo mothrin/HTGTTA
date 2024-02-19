@@ -16,7 +16,6 @@ namespace HTGTTA
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-
         public int w;
         public int h;
 
@@ -24,10 +23,11 @@ namespace HTGTTA
 
         private Player player;
 
-        public List<Sprite> _items;
+        public List<Sprite> _items; 
 
-        Vector2 lastPosition;
+        Vector2 lastPosition; //collision
 
+        // packages
         /// <summary>   The input service. </summary>
         IInputStateService inputService;
         /// <summary>   State of the kB. </summary>
@@ -38,20 +38,25 @@ namespace HTGTTA
 
         public Game1()
         {
+            //defining window width and height
             w = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
             h = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
 
             graphics = new GraphicsDeviceManager(this);
 
+            //window sizes
             graphics.PreferredBackBufferWidth = w;
             graphics.PreferredBackBufferHeight = h;
             graphics.ApplyChanges();
 
+            //different features
             Content.RootDirectory = "Content";
             IsMouseVisible = false;
 
+            //audio
             new AudioService(this);
 
+            //input
             kbState = new KeyboardStateManager(this);
             inputService = new InputHandlerService(this, kbState);
 
@@ -75,7 +80,7 @@ namespace HTGTTA
             // TODO: Add your initialization logic here
 
 
-            //furniture
+            //objects
             _items = new List<Sprite>()
             {
                 new Sprite(this, "Textures/Objects/bed")
@@ -109,7 +114,6 @@ namespace HTGTTA
             };
             Components.Add(player);
 
-
             base.Initialize();
         }
 
@@ -140,13 +144,11 @@ namespace HTGTTA
 
         protected override void Update(GameTime gameTime)
         {
-
             inputService.PreUpdate(gameTime);
 
             lastPosition = player.Position;
 
             base.Update(gameTime);
-
 
             foreach (var item in _items)
             {
@@ -156,8 +158,6 @@ namespace HTGTTA
                     //player.Color = Color.Gold;
                 }
             }
-
-  
 
             if (inputService.KeyboardManager.KeyPress(Keys.Escape))
             {
@@ -177,11 +177,6 @@ namespace HTGTTA
                 new Rectangle(0,0, w, h), 
                 new Rectangle(0, 0, _backgroundTexture.Width, _backgroundTexture.Height),
                Color.White);
-
-            //foreach (var sprite in _sprites)
-            //    sprite.Draw(spriteBatch);
-
-                
 
             spriteBatch.End();
 

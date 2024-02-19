@@ -14,7 +14,6 @@ namespace HTGTTA.Manager
         private Animation _animation;
 
         private float _timer; // to know when to incremenet current frame based on spritespeed
-
         public Vector2 Position { get; set; }
 
         protected Texture2D _CurrentFrame;

@@ -19,11 +19,6 @@ namespace HTGTTA.Sprites
 
         protected Dictionary<string, Animation> _animations;
 
-        //packages
-        protected IKeyboardStateManager _keyboard { get { return ((IInputStateService)Game.Services.GetService<IInputStateService>()).KeyboardManager; } }
-
-        protected IAudioService _audio { get { return Game.Services.GetService<IAudioService>(); } }
-
         protected Vector2 _position;
 
         protected Texture2D _texture;
@@ -33,22 +28,24 @@ namespace HTGTTA.Sprites
         public int Width { get; set; }
         public int Height { get; set; }
 
+        //packages
+        protected IKeyboardStateManager _keyboard { get { return ((IInputStateService)Game.Services.GetService<IInputStateService>()).KeyboardManager; } }
+        protected IAudioService _audio { get { return Game.Services.GetService<IAudioService>(); } }
+
 
         #endregion
-
 
         #region Properties
 
         public Input Input;
 
-        public float spriteSpeed = 5f;
+        public float spriteSpeed = 5f; //player speed
 
-
-        public Vector2 Velocity;
+        public Vector2 Velocity; //player position
 
         protected string TextureAsset { get; set; }
 
-        public Rectangle Bounds
+        public Rectangle Bounds //for collision
         {
             get { return new Rectangle((int)(Position.X) - (Width / 2), (int)(Position.Y) - (Width / 2), Width, Height); }
         }
@@ -74,13 +71,11 @@ namespace HTGTTA.Sprites
                 Width = _texture.Width;
                 Height = _texture.Height;
             }
-
             if (_animations != null)
             {
                 Width = _animationManager.FrameWidth;
                 Height = _animationManager.FrameHeight;
             }
-
 
             base.LoadContent();
         }
@@ -100,12 +95,6 @@ namespace HTGTTA.Sprites
         #endregion
 
         #region Methods
-
-        public override void Update(GameTime gameTime)
-        {
-
-        }
-
         public override void Draw(GameTime gameTime)
         {
             if (spriteBatch != null)
@@ -120,9 +109,6 @@ namespace HTGTTA.Sprites
                 spriteBatch.End();
             }
         }
-        
-
-
         #endregion
 
     }

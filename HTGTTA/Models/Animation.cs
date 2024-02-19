@@ -9,7 +9,6 @@ namespace HTGTTA.Models
 {
     public class Animation
     {
-
         public int CurrentFrame { get; set; } // viewing
         public int FrameCount { get; private set; } // amount of sprites in loop
         public int FrameHeight {get {return Texture.Height;} } // height of texture
@@ -17,6 +16,7 @@ namespace HTGTTA.Models
         public float FrameSpeed { get; set; } //speed of animation
         public bool IsLooping { get; set; }
         public Texture2D Texture { get; private set; } 
+
 
         public Animation (Texture2D texture, int frameCount) //contructor
         {
