@@ -5,11 +5,10 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Randomchaos.Services.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 
 namespace HTGTTA.Sprites
 {
-    public class Sprite : DrawableGameComponent
+	public class Sprite : DrawableGameComponent
     {
 
         #region Fields
@@ -119,8 +118,10 @@ namespace HTGTTA.Sprites
                 }
 
                 if (_texture != null)
-                {   
-                    spriteBatch.Draw(_texture, Position, Color.White);
+                {
+                    //spriteBatch.Draw(_texture, Position, Color.White);
+                    // Draw to specific size
+                    spriteBatch.Draw(_texture, Bounds, Color.White);
                 }
                 else if (_animationManager != null)
                 {                 

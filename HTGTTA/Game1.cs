@@ -42,6 +42,10 @@ namespace HTGTTA
             w = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
             h = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
 
+            // Make this 1080p
+            w = 1920;
+            h = 1080;
+
             graphics = new GraphicsDeviceManager(this);
 
             //window sizes
