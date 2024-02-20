@@ -86,33 +86,49 @@ namespace HTGTTA
                 new Sprite(this, "Textures/Objects/bed")
                 {
                     Name = "Bed",
-                    Position = new Vector2(1460,260),
-                    Width = 300,
-                    Height = 100,
+                    Position = new Vector2(1443,273),
+                    Width = 278,
+                    Height = 328,
+                    RenderBounds = true, //for bounds
+                },
+                new Sprite(this, "Textures/Objects/bed")
+                {
+                    Name = "Bed2",
+                    Position = new Vector2(1500,400),
+                    Width = 278,
+                    Height = 328,
                     RenderBounds = true, //for bounds
                 },
                 new Sprite (this, "Textures/Objects/desk")
                 {
                     Name = "Desk",
-                    Position = new Vector2(100,1000),
+                    Position = new Vector2(102,972),
+                    Width = 570,
+                    Height = 75,
                     RenderBounds = true, //bounds
                 },
                 new Sprite(this,"Textures/Objects/drawers")
                 {
                     Name = "Drawer",
-                    Position = new Vector2(500,200),
+                    Position = new Vector2(483,220),
+                    Width = 345,
+                    Height = 335,
                     RenderBounds = true, //bounds
                 },
                 new Sprite(this,"Textures/Objects/wardrobe")
                 {
                     Name = "Wardrobe",
-                    Position = new Vector2(0,0),
+                    Position = new Vector2(858,30),
+                    Width = 288,
+                    Height = 510,
                     RenderBounds = true, //bounds
                 },
                 new Sprite(this,"Textures/Objects/table")
                 {
                     Name = "Table",
-                    Position = new Vector2(1200,200),
+                    Position = new Vector2(1284,348),
+                    Width = 171,
+                    Height = 213,
                     RenderBounds = true, //bounds
                 }
             };

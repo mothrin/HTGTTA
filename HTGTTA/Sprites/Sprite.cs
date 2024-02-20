@@ -51,7 +51,7 @@ namespace HTGTTA.Sprites
 
         protected string TextureAsset { get; set; }
 
-        public Rectangle Bounds //for collision
+        public Rectangle Bounds //for collision and bounds
         {
             get { return new Rectangle((int)Position.X, (int)Position.Y, Width, Height); }
         }
@@ -75,13 +75,13 @@ namespace HTGTTA.Sprites
 
              //bounds
             _boundsTexture = new Texture2D(GraphicsDevice, 1, 1);
-            _boundsTexture.SetData(new Color[] { new Color(1f, .1f, .1f, .25f) });
+            _boundsTexture.SetData(new Color[] {new Color(1f, .1f, .1f, .25f) });
 
             if (!string.IsNullOrEmpty(TextureAsset))
             {
                 _texture = Game.Content.Load<Texture2D>(TextureAsset);
-                Width = _texture.Width;
-                Height = _texture.Height;
+                //Width = _texture.Width;
+                //Height = _texture.Height;
             }
             if (_animations != null)
             {
