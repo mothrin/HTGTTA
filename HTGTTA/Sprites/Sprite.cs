@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace HTGTTA.Sprites
 {
-	public class Sprite : DrawableGameComponent
+    public class Sprite : DrawableGameComponent
     {
 
         #region Fields
@@ -54,6 +54,11 @@ namespace HTGTTA.Sprites
         {
             get { return new Rectangle((int)Position.X, (int)Position.Y, Width, Height); }
         }
+        public Rectangle BoundsPlayer
+        {
+            get { return new Rectangle((int)Position.X+(Width/4), (int)Position.Y + (2* (Height/3)), Width/2, Height / 4); }
+        }
+
 
         public Sprite(Game game, string textureAsset) : base(game)
         {
@@ -70,6 +75,7 @@ namespace HTGTTA.Sprites
         {
             //text
             _font = Game.Content.Load<SpriteFont>("Fonts/font");
+
             spriteBatch = new SpriteBatch(Game.GraphicsDevice);
 
              //bounds
@@ -114,13 +120,15 @@ namespace HTGTTA.Sprites
 
                 if (RenderBounds)
                 {
-                    spriteBatch.Draw(_boundsTexture, Bounds, Color.White);
+                    if (_texture != null)
+                        spriteBatch.Draw(_boundsTexture, Bounds, Color.White);
+                    else
+                        spriteBatch.Draw(_boundsTexture, BoundsPlayer, Color.White);
+
                 }
 
                 if (_texture != null)
                 {
-                    //spriteBatch.Draw(_texture, Position, Color.White);
-                    // Draw to specific size
                     spriteBatch.Draw(_texture, Bounds, Color.White);
                 }
                 else if (_animationManager != null)

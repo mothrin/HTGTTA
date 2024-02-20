@@ -8,6 +8,7 @@ using MonoGame.Randomchaos.Services.Input;
 using MonoGame.Randomchaos.Services.Input.Models;
 using MonoGame.Randomchaos.Services.Interfaces;
 using System.Collections.Generic;
+using System.Xml.Linq;
 
 namespace HTGTTA
 { 
@@ -18,6 +19,8 @@ namespace HTGTTA
 
         public int w;
         public int h;
+
+        protected SpriteFont _font;
 
         private Texture2D _backgroundTexture;
 
@@ -38,11 +41,11 @@ namespace HTGTTA
 
         public Game1()
         {
-            //defining window width and height
-            w = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-            h = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+            ////defining window width and height
+            //w = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+            //h = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
 
-            // Make this 1080p
+            //1080p
             w = 1920;
             h = 1080;
 
@@ -83,11 +86,10 @@ namespace HTGTTA
 
             // TODO: Add your initialization logic here
 
-
             //objects
             _items = new List<Sprite>()
             {
-                new Sprite(this, "Textures/Objects/bed")
+                new Sprite(this, "Textures/Objects/Blank")
                 {
                     Name = "Bed",
                     Position = new Vector2(1443,273),
@@ -95,7 +97,7 @@ namespace HTGTTA
                     Height = 328,
                     RenderBounds = true, //for bounds
                 },
-                new Sprite(this, "Textures/Objects/bed")
+                new Sprite(this, "Textures/Objects/Blank")
                 {
                     Name = "Bed2",
                     Position = new Vector2(1500,400),
@@ -103,7 +105,15 @@ namespace HTGTTA
                     Height = 328,
                     RenderBounds = true, //for bounds
                 },
-                new Sprite (this, "Textures/Objects/desk")
+                new Sprite(this, "Textures/Objects/Blank")
+                {
+                    Name = "Bed3",
+                    Position = new Vector2(1557,527),
+                    Width = 278,
+                    Height = 328,
+                    RenderBounds = true, //for bounds
+                },
+                new Sprite (this, "Textures/Objects/Blank")
                 {
                     Name = "Desk",
                     Position = new Vector2(102,972),
@@ -111,7 +121,7 @@ namespace HTGTTA
                     Height = 75,
                     RenderBounds = true, //bounds
                 },
-                new Sprite(this,"Textures/Objects/drawers")
+                new Sprite(this,"Textures/Objects/Blank")
                 {
                     Name = "Drawer",
                     Position = new Vector2(483,220),
@@ -119,7 +129,7 @@ namespace HTGTTA
                     Height = 335,
                     RenderBounds = true, //bounds
                 },
-                new Sprite(this,"Textures/Objects/wardrobe")
+                new Sprite(this,"Textures/Objects/Blank")
                 {
                     Name = "Wardrobe",
                     Position = new Vector2(858,30),
@@ -127,12 +137,28 @@ namespace HTGTTA
                     Height = 510,
                     RenderBounds = true, //bounds
                 },
-                new Sprite(this,"Textures/Objects/table")
+                new Sprite(this,"Textures/Objects/Blank")
                 {
                     Name = "Table",
                     Position = new Vector2(1284,348),
                     Width = 171,
                     Height = 213,
+                    RenderBounds = true, //bounds
+                },
+                new Sprite(this,"Textures/Objects/Blank")
+                {
+                    Name = "Door",
+                    Position = new Vector2(195,120),
+                    Width = 255,
+                    Height = 380,
+                    RenderBounds = true, //bounds
+                },
+                new Sprite(this,"Textures/Objects/Blank")
+                {
+                    Name = "Window",
+                    Position = new Vector2(0,105),
+                    Width = 65,
+                    Height = 560,
                     RenderBounds = true, //bounds
                 }
             };
@@ -196,9 +222,20 @@ namespace HTGTTA
 
             foreach (var item in _items)
             {
-                if (player.Bounds.Intersects(item.Bounds))
+                if (player.BoundsPlayer.Intersects(item.Bounds))
                 {
                     player.Position = lastPosition;
+
+
+                    //interaction key
+                    string textToPrint = $"E to interact";
+                    _font = Content.Load<SpriteFont>("Fonts/font");
+                    //Vector2 textSize = _font.MeasureString(textToPrint);
+                    Vector2 txtPos = new Vector2(100,100);
+
+                    spriteBatch.Begin();
+                    spriteBatch.DrawString(_font, textToPrint, txtPos, Color.Black);
+                    spriteBatch.End();
                     //player.Color = Color.Gold;
                 }
             }
@@ -221,6 +258,19 @@ namespace HTGTTA
                 new Rectangle(0,0, w, h), 
                 new Rectangle(0, 0, _backgroundTexture.Width, _backgroundTexture.Height),
                Color.White);
+
+            foreach (var item in _items)
+            {
+                if (player.BoundsPlayer.Intersects(item.Bounds))
+                {
+                    string textToPrint = $"E to interact";
+                    _font = Content.Load<SpriteFont>("Fonts/font");
+                    Vector2 txtPos = (new Vector2(w / 2, h/2));
+
+                    spriteBatch.DrawString(_font, textToPrint, txtPos, Color.White);
+
+                }
+            }
 
             spriteBatch.End();
 
