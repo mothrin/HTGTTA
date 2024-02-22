@@ -67,6 +67,8 @@ namespace HTGTTA.Sprites
 
             Velocity = Vector2.Zero;
 
+
+
             _animationManager.Update(gameTime);
         }
         

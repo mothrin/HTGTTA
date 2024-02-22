@@ -14,6 +14,8 @@ namespace HTGTTA
 { 
     public class Game1 : Game
     {
+        
+
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
@@ -26,7 +28,11 @@ namespace HTGTTA
 
         private Player player;
 
-        public List<Sprite> _items; 
+        public List<Sprite> _items;
+
+        public string Name { get; set; }
+
+        public string Description { get; set; }
 
         Vector2 lastPosition; //collision
 
@@ -92,6 +98,7 @@ namespace HTGTTA
                 new Sprite(this, "Textures/Objects/Blank")
                 {
                     Name = "Bed",
+                    Description = "We should probably leave that be...",
                     Position = new Vector2(1443,273),
                     Width = 278,
                     Height = 328,
@@ -100,6 +107,7 @@ namespace HTGTTA
                 new Sprite(this, "Textures/Objects/Blank")
                 {
                     Name = "Bed2",
+                    Description = "We should probably leave that be...",
                     Position = new Vector2(1500,400),
                     Width = 278,
                     Height = 328,
@@ -108,6 +116,7 @@ namespace HTGTTA
                 new Sprite(this, "Textures/Objects/Blank")
                 {
                     Name = "Bed3",
+                    Description = "We should probably leave that be...",
                     Position = new Vector2(1557,527),
                     Width = 278,
                     Height = 328,
@@ -116,6 +125,7 @@ namespace HTGTTA
                 new Sprite (this, "Textures/Objects/Blank")
                 {
                     Name = "Desk",
+                    Description = "The laptop is locked",
                     Position = new Vector2(102,972),
                     Width = 570,
                     Height = 75,
@@ -124,6 +134,7 @@ namespace HTGTTA
                 new Sprite(this,"Textures/Objects/Blank")
                 {
                     Name = "Drawer",
+                    Description = "Nothing of interest in here. Just clothes.",
                     Position = new Vector2(483,220),
                     Width = 345,
                     Height = 335,
@@ -132,6 +143,7 @@ namespace HTGTTA
                 new Sprite(this,"Textures/Objects/Blank")
                 {
                     Name = "Wardrobe",
+                    Description = "There are too many clothes here, I can't open the door.",
                     Position = new Vector2(858,30),
                     Width = 288,
                     Height = 510,
@@ -140,6 +152,7 @@ namespace HTGTTA
                 new Sprite(this,"Textures/Objects/Blank")
                 {
                     Name = "Table",
+                    Description = "This bear is cute.",
                     Position = new Vector2(1284,348),
                     Width = 171,
                     Height = 213,
@@ -148,6 +161,7 @@ namespace HTGTTA
                 new Sprite(this,"Textures/Objects/Blank")
                 {
                     Name = "Door",
+                    Description = "I need to find the code.",
                     Position = new Vector2(195,120),
                     Width = 255,
                     Height = 380,
@@ -156,6 +170,7 @@ namespace HTGTTA
                 new Sprite(this,"Textures/Objects/Blank")
                 {
                     Name = "Window",
+                    Description = "Locked.",
                     Position = new Vector2(0,105),
                     Width = 65,
                     Height = 560,
@@ -197,7 +212,7 @@ namespace HTGTTA
             _backgroundTexture = Content.Load<Texture2D>("Textures/background"); //background
 
             _audio.PlaySong("Audio/Music/Drafty-Places", .05f); //music
-            
+
             base.LoadContent();
         }
 
@@ -222,21 +237,10 @@ namespace HTGTTA
 
             foreach (var item in _items)
             {
+                
                 if (player.BoundsPlayer.Intersects(item.Bounds))
                 {
                     player.Position = lastPosition;
-
-
-                    //interaction key
-                    string textToPrint = $"E to interact";
-                    _font = Content.Load<SpriteFont>("Fonts/font");
-                    //Vector2 textSize = _font.MeasureString(textToPrint);
-                    Vector2 txtPos = new Vector2(100,100);
-
-                    spriteBatch.Begin();
-                    spriteBatch.DrawString(_font, textToPrint, txtPos, Color.Black);
-                    spriteBatch.End();
-                    //player.Color = Color.Gold;
                 }
             }
 
@@ -244,33 +248,43 @@ namespace HTGTTA
             {
                 Exit();
             }
+
+            //for object interaction
+            foreach (var item in _items)
+            {
+                _font = Content.Load<SpriteFont>("Fonts/font");
+                if (player.BoundsPlayer.Intersects(item.Bounds))
+                {
+                    string textToPrint = $"E to interact";
+                    Vector2 textSize = _font.MeasureString(textToPrint);
+                    Vector2 txtPos = player.Position + (new Vector2(w / 2, 0) - (textSize * .5f));
+
+                    spriteBatch.DrawString(_font, textToPrint, txtPos, Color.Black);
+
+                    if (Keyboard.GetState().IsKeyDown(Keys.E))
+                    {
+                        textToPrint = $"{Name} - {Description}";
+                        textSize = _font.MeasureString(textToPrint);
+                        txtPos = player.Position + (new Vector2(w + w, h + h) - (textSize * .5f));
+
+                        spriteBatch.DrawString(_font, textToPrint, txtPos, Color.Black);
+                    }
+                }
+            }
         }
 
-       /// This is called when the game should draw itself.
+        /// This is called when the game should draw itself.
 
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            spriteBatch.Begin();
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
 
             spriteBatch.Draw(_backgroundTexture,
                 new Rectangle(0,0, w, h), 
                 new Rectangle(0, 0, _backgroundTexture.Width, _backgroundTexture.Height),
                Color.White);
-
-            foreach (var item in _items)
-            {
-                if (player.BoundsPlayer.Intersects(item.Bounds))
-                {
-                    string textToPrint = $"E to interact";
-                    _font = Content.Load<SpriteFont>("Fonts/font");
-                    Vector2 txtPos = (new Vector2(w / 2, h/2));
-
-                    spriteBatch.DrawString(_font, textToPrint, txtPos, Color.White);
-
-                }
-            }
 
             spriteBatch.End();
 

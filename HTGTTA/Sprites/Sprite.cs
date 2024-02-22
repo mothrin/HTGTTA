@@ -46,6 +46,8 @@ namespace HTGTTA.Sprites
 
         public string Name { get; set; }
 
+        public string Description { get; set; } 
+
         public bool RenderBounds { get; set; }
 
         protected string TextureAsset { get; set; }
@@ -124,7 +126,6 @@ namespace HTGTTA.Sprites
                         spriteBatch.Draw(_boundsTexture, Bounds, Color.White);
                     else
                         spriteBatch.Draw(_boundsTexture, BoundsPlayer, Color.White);
-
                 }
 
                 if (_texture != null)
@@ -143,6 +144,8 @@ namespace HTGTTA.Sprites
 
                 spriteBatch.DrawString(_font, textToPrint, txtPos, Color.Black);
                 spriteBatch.DrawString(_font, textToPrint, txtPos + new Vector2(-2,-2), Color.Gold);
+
+
 
                 spriteBatch.End();
             }
