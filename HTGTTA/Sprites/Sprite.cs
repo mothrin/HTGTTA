@@ -10,6 +10,7 @@ namespace HTGTTA.Sprites
 {
     public class Sprite : DrawableGameComponent
     {
+        public static bool BondsOn = true;
 
         #region Fields
 
@@ -49,16 +50,18 @@ namespace HTGTTA.Sprites
         public string Description { get; set; } 
 
         public bool RenderBounds { get; set; }
+        public bool RenderInteractionBounds { get; set; }
 
         protected string TextureAsset { get; set; }
 
-        public Rectangle Bounds //for collision and bounds
+        public virtual Rectangle Bounds //for collision and bounds
         {
             get { return new Rectangle((int)Position.X, (int)Position.Y, Width, Height); }
         }
-        public Rectangle BoundsPlayer
+
+        public virtual Rectangle InteractionBounds // for interaction
         {
-            get { return new Rectangle((int)Position.X+(Width/4), (int)Position.Y + (2* (Height/3)), Width/2, Height / 4); }
+            get { return new Rectangle((int)Position.X, (int)Position.Y, Width, Height); }
         }
 
 
@@ -82,7 +85,7 @@ namespace HTGTTA.Sprites
 
              //bounds
             _boundsTexture = new Texture2D(GraphicsDevice, 1, 1);
-            _boundsTexture.SetData(new Color[] {new Color(1f, .1f, .1f, .25f) });
+            _boundsTexture.SetData(new Color[] {new Color(.25f, .25f, .25f, .25f) });
 
             if (!string.IsNullOrEmpty(TextureAsset))
             {
@@ -120,12 +123,12 @@ namespace HTGTTA.Sprites
             {
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
 
-                if (RenderBounds)
+                if (RenderBounds && BondsOn)
                 {
                     if (_texture != null)
-                        spriteBatch.Draw(_boundsTexture, Bounds, Color.White);
+                        spriteBatch.Draw(_boundsTexture, Bounds, Color.Red);
                     else
-                        spriteBatch.Draw(_boundsTexture, BoundsPlayer, Color.White);
+                        spriteBatch.Draw(_boundsTexture, Bounds, Color.Red);
                 }
 
                 if (_texture != null)
@@ -143,9 +146,15 @@ namespace HTGTTA.Sprites
                 Vector2 txtPos = Position + (new Vector2(Width / 2, 0) - (textSize * .5f));
 
                 spriteBatch.DrawString(_font, textToPrint, txtPos, Color.Black);
-                spriteBatch.DrawString(_font, textToPrint, txtPos + new Vector2(-2,-2), Color.Gold);
+                spriteBatch.DrawString(_font, textToPrint, txtPos + new Vector2(-1,-1), Color.Gold);
 
-
+                if (RenderInteractionBounds && BondsOn)
+                {
+                    if (_texture != null)
+                        spriteBatch.Draw(_boundsTexture, InteractionBounds, Color.Green);
+                    else
+                        spriteBatch.Draw(_boundsTexture, InteractionBounds, Color.Green);
+                }
 
                 spriteBatch.End();
             }

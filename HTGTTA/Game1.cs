@@ -30,9 +30,6 @@ namespace HTGTTA
 
         public List<Sprite> _items;
 
-        public string Name { get; set; }
-
-        public string Description { get; set; }
 
         Vector2 lastPosition; //collision
 
@@ -103,6 +100,7 @@ namespace HTGTTA
                     Width = 278,
                     Height = 328,
                     RenderBounds = true, //for bounds
+                    RenderInteractionBounds = true,
                 },
                 new Sprite(this, "Textures/Objects/Blank")
                 {
@@ -112,6 +110,7 @@ namespace HTGTTA
                     Width = 278,
                     Height = 328,
                     RenderBounds = true, //for bounds
+                    RenderInteractionBounds = true,
                 },
                 new Sprite(this, "Textures/Objects/Blank")
                 {
@@ -121,6 +120,7 @@ namespace HTGTTA
                     Width = 278,
                     Height = 328,
                     RenderBounds = true, //for bounds
+                    RenderInteractionBounds = true,
                 },
                 new Sprite (this, "Textures/Objects/Blank")
                 {
@@ -130,6 +130,7 @@ namespace HTGTTA
                     Width = 570,
                     Height = 75,
                     RenderBounds = true, //bounds
+                    RenderInteractionBounds = true,
                 },
                 new Sprite(this,"Textures/Objects/Blank")
                 {
@@ -139,6 +140,7 @@ namespace HTGTTA
                     Width = 345,
                     Height = 335,
                     RenderBounds = true, //bounds
+                    RenderInteractionBounds = true,
                 },
                 new Sprite(this,"Textures/Objects/Blank")
                 {
@@ -148,6 +150,7 @@ namespace HTGTTA
                     Width = 288,
                     Height = 510,
                     RenderBounds = true, //bounds
+                    RenderInteractionBounds = true,
                 },
                 new Sprite(this,"Textures/Objects/Blank")
                 {
@@ -157,6 +160,7 @@ namespace HTGTTA
                     Width = 171,
                     Height = 213,
                     RenderBounds = true, //bounds
+                    RenderInteractionBounds = true,
                 },
                 new Sprite(this,"Textures/Objects/Blank")
                 {
@@ -166,6 +170,7 @@ namespace HTGTTA
                     Width = 255,
                     Height = 380,
                     RenderBounds = true, //bounds
+                    RenderInteractionBounds = true,
                 },
                 new Sprite(this,"Textures/Objects/Blank")
                 {
@@ -175,6 +180,7 @@ namespace HTGTTA
                     Width = 65,
                     Height = 560,
                     RenderBounds = true, //bounds
+                    RenderInteractionBounds = true,
                 }
             };
 
@@ -196,6 +202,7 @@ namespace HTGTTA
                     Right = Keys.D,
                 },
                 RenderBounds = true,
+                RenderInteractionBounds = true,
             };
             Components.Add(player);
 
@@ -224,7 +231,7 @@ namespace HTGTTA
             // TODO: Unload any non ContentManager content here
         }
 
-       
+
         /// Allows the game to run logic such as updating the world, checking for collisions, gathering input, and playing audio
 
         protected override void Update(GameTime gameTime)
@@ -237,39 +244,21 @@ namespace HTGTTA
 
             foreach (var item in _items)
             {
-                
-                if (player.BoundsPlayer.Intersects(item.Bounds))
+
+                if (player.Bounds.Intersects(item.Bounds))
                 {
                     player.Position = lastPosition;
                 }
             }
 
+            if (inputService.KeyboardManager.KeyPress(Keys.F1))
+            {
+                Sprite.BondsOn = !Sprite.BondsOn;
+            }
+
             if (inputService.KeyboardManager.KeyPress(Keys.Escape))
             {
                 Exit();
-            }
-
-            //for object interaction
-            foreach (var item in _items)
-            {
-                _font = Content.Load<SpriteFont>("Fonts/font");
-                if (player.BoundsPlayer.Intersects(item.Bounds))
-                {
-                    string textToPrint = $"E to interact";
-                    Vector2 textSize = _font.MeasureString(textToPrint);
-                    Vector2 txtPos = player.Position + (new Vector2(w / 2, 0) - (textSize * .5f));
-
-                    spriteBatch.DrawString(_font, textToPrint, txtPos, Color.Black);
-
-                    if (Keyboard.GetState().IsKeyDown(Keys.E))
-                    {
-                        textToPrint = $"{Name} - {Description}";
-                        textSize = _font.MeasureString(textToPrint);
-                        txtPos = player.Position + (new Vector2(w + w, h + h) - (textSize * .5f));
-
-                        spriteBatch.DrawString(_font, textToPrint, txtPos, Color.Black);
-                    }
-                }
             }
         }
 
@@ -289,6 +278,32 @@ namespace HTGTTA
             spriteBatch.End();
 
             base.Draw(gameTime);
+
+            //for object interaction
+            foreach (var item in _items)
+            {
+                _font = Content.Load<SpriteFont>("Fonts/font");
+                if (player.InteractionBounds.Intersects(item.InteractionBounds))
+                {
+                    string textToPrint = $"E to interact with [{item.Name}]";
+                    Vector2 textSize = _font.MeasureString(textToPrint);
+                    Vector2 txtPos = player.Position + (new Vector2(player.Width/2, _font.LineSpacing * -3) - (textSize * .5f));
+
+                    spriteBatch.Begin();
+                    spriteBatch.DrawString(_font, textToPrint, txtPos, Color.Black);
+                    spriteBatch.DrawString(_font, textToPrint, txtPos + new Vector2(-1,-1), Color.White);
+
+                    if (inputService.KeyboardManager.KeyDown(Keys.E))
+                    {
+                        textToPrint = $"{item.Name} - {item.Description}";
+                        textSize = _font.MeasureString(textToPrint);
+                        txtPos = player.Position + (new Vector2(player.Width / 2, _font.LineSpacing * -2) - (textSize * .5f));
+
+                        spriteBatch.DrawString(_font, textToPrint, txtPos, Color.Black);
+                    }
+                    spriteBatch.End();
+                }
+            }
         }
     }
 }

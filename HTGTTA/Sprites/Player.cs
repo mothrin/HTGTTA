@@ -9,6 +9,16 @@ namespace HTGTTA.Sprites
     
     public class Player : Sprite
     {
+        public override Rectangle Bounds
+        {
+            get { return new Rectangle((int)Position.X + (Width / 4), (int)Position.Y + (2 * (Height / 3)), Width / 2, Height / 4); }
+        }
+
+        public override Rectangle InteractionBounds // for interaction
+        {
+            get { return new Rectangle((int)Position.X+24, (int)Position.Y+16, Width-48, Height-32); }
+        }
+
         public Player(Game game, string textureAsset) : base(game, textureAsset) { }
 
         public Player(Game game, Dictionary<string, Animation> animations) : base(game, animations) { }
@@ -71,7 +81,7 @@ namespace HTGTTA.Sprites
 
             _animationManager.Update(gameTime);
         }
-        
+
         protected virtual void SetAnimations()
         {
             if (Velocity.X > 0)
