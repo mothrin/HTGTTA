@@ -54,6 +54,8 @@ namespace HTGTTA.Sprites
 
         protected string TextureAsset { get; set; }
 
+        public Dictionary<string, ObjectInterations> Interaction { get; set; } = new Dictionary<string, ObjectInterations>();
+
         public virtual Rectangle Bounds //for collision and bounds
         {
             get { return new Rectangle((int)Position.X, (int)Position.Y, Width, Height); }
@@ -124,7 +126,7 @@ namespace HTGTTA.Sprites
             }
         }
 
-        public object Interaction { get; internal set; }
+        
 
         #endregion
 

@@ -1,4 +1,5 @@
-﻿using HTGTTA.Models;
+﻿using HTGTTA.Enums;
+using HTGTTA.Models;
 using HTGTTA.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -8,12 +9,10 @@ using MonoGame.Randomchaos.Services.Input;
 using MonoGame.Randomchaos.Services.Input.Models;
 using MonoGame.Randomchaos.Services.Interfaces;
 using MonoGame.Randomchaos.UI;
-using System;
 using System.Collections.Generic;
-using System.Xml.Linq;
 
 namespace HTGTTA
-{ 
+{
     public class Game1 : Game
     {
         
@@ -28,7 +27,7 @@ namespace HTGTTA
 
         private Texture2D _backgroundTexture;
 
-        public string[] Interaction;
+        public Dictionary<Sprite, Dictionary<string, ObjectInterations>> Interactions = new Dictionary<Sprite, Dictionary<string, ObjectInterations>>();
 
         private Player player;
 
@@ -43,6 +42,8 @@ namespace HTGTTA
         /// <summary>   State of the kB. </summary>
         IKeyboardStateManager kbState;
         private int i;
+
+        protected Hud HUD;
 
         private IAudioService _audio { get { return Services.GetService<IAudioService>(); } }
 
@@ -84,6 +85,10 @@ namespace HTGTTA
 
         protected override void Initialize()
         {
+            HUD = new Hud(this);
+
+            Components.Add(HUD);
+
             var animations = new Dictionary<string, Animation>()
             {
                 { "WalkUp", new Animation(Content.Load<Texture2D>("Textures/Sprite/back"), 3) },
@@ -93,6 +98,10 @@ namespace HTGTTA
             };
 
             // TODO: Add your initialization logic here
+            Dictionary<string, ObjectInterations> nothingToDo = new Dictionary<string, ObjectInterations>()
+            {
+                {"Noting to do here", new ObjectInterations(){ Active = true, Description = "Nothing to do here", Name = "Nothing to do.", InteractionType = InteractionTypeEnum.Nothing } }
+            };
 
             //objects
             _items = new List<Sprite>()
@@ -101,12 +110,12 @@ namespace HTGTTA
                 {
                     Name = "Bed1",
                     Description = "We should probably leave that be...",
-                    
                     Position = new Vector2(1500,273),
                     Width = 278,
                     Height = 328,
                     RenderBounds = true, //for bounds
                     RenderInteractionBounds = true,
+                    Interaction = nothingToDo,
                 },
                 new Sprite(this, "Textures/Objects/Blank")
                 {
@@ -116,6 +125,7 @@ namespace HTGTTA
                     Width = 278,
                     Height = 328,
                     RenderBounds = true, //for bounds
+                    Interaction = nothingToDo,
                     RenderInteractionBounds = true,
                 },
                 new Sprite(this, "Textures/Objects/Blank")
@@ -127,12 +137,17 @@ namespace HTGTTA
                     Height = 328,
                     RenderBounds = true, //for bounds
                     RenderInteractionBounds = true,
+                    Interaction = nothingToDo,
                 },
                 new Sprite (this, "Textures/Objects/Blank")
                 {
                     Name = "Desk",
                     Description = "The laptop is locked",
-                    Interaction = new string [] {"Desk","Laptop"},
+                    Interaction = new Dictionary<string, ObjectInterations>()
+                    {
+                        {"Desk", new ObjectInterations(){ InteractionType = InteractionTypeEnum.DrawsOpen,Name = "Open Desk" }  },
+                        {"Laptop", new ObjectInterations(){ InteractionType = InteractionTypeEnum.LaptopCodeEnter, Name ="Laptop",  Description = "Please enter the code..." }  }
+                    },
                     Position = new Vector2(102,972),
                     Width = 570,
                     Height = 75,
@@ -143,18 +158,23 @@ namespace HTGTTA
                 {
                     Name = "Drawer",
                     Description = "Nothing of interest in here. Just clothes.",
-                    Interaction = new string [] {"Bear","Drawer"},
                     Position = new Vector2(483,220),
                     Width = 345,
                     Height = 280,
                     RenderBounds = true, //bounds
                     RenderInteractionBounds = true,
+                    Interaction = nothingToDo,
                 },
                 new Sprite(this,"Textures/Objects/Blank")
                 {
                     Name = "Wardrobe",
                     Description = "There are too many clothes here, I can't open the door.",
-                    Interaction = new string [] {"Door","Clothes","Box"},
+                    Interaction = new Dictionary<string, ObjectInterations>()
+                    {
+                        {"Door", new ObjectInterations(){ }  },
+                        {"Clothes", new ObjectInterations(){ }  },
+                        {"Box", new ObjectInterations(){ }  }
+                    },
                     Position = new Vector2(858,30),
                     Width = 288,
                     Height = 450,
@@ -165,7 +185,11 @@ namespace HTGTTA
                 {
                     Name = "Table",
                     Description = "This bear is cute.",
-                    Interaction = new string [] {"Bear","Drawer"},
+                    Interaction = new Dictionary<string, ObjectInterations>()
+                    {
+                        {"Bear", new ObjectInterations(){ } },
+                        {"Drawer", new ObjectInterations(){ } }
+                    },
                     Position = new Vector2(1284,348),
                     Width = 171,
                     Height = 150,
@@ -176,7 +200,11 @@ namespace HTGTTA
                 {
                     Name = "Door",
                     Description = "I need to find the code.",
-                    Interaction = new string [] {"Door","Code"},
+                    Interaction = new Dictionary<string, ObjectInterations>()
+                    {
+                        {"Door", new ObjectInterations(){ } },
+                        {"Code", new ObjectInterations(){ } }
+                    },
                     Position = new Vector2(195,120),
                     Width = 255,
                     Height = 330,
@@ -187,7 +215,11 @@ namespace HTGTTA
                 {
                     Name = "Window",
                     Description = "Locked.",
-                    Interaction = new string [] {"Window","Open"},
+                    Interaction = new Dictionary<string, ObjectInterations>()
+                    {
+                        {"Window", new ObjectInterations(){ } },
+                        {"Open", new ObjectInterations(){ } }
+                    },
                     Position = new Vector2(0,105),
                     Width = 65,
                     Height = 560,
@@ -291,44 +323,29 @@ namespace HTGTTA
 
             base.Draw(gameTime);
 
+            Interactions.Clear();
+
             //for object interaction
             foreach (var item in _items) 
             {
                 _font = Content.Load<SpriteFont>("Fonts/font");
                 if (player.InteractionBounds.Intersects(item.InteractionBounds))
                 {
-                    string textToPrint = $"E to interact with [{item.Name}]";
-                    Vector2 textSize = _font.MeasureString(textToPrint);
-                    Vector2 txtPos = player.Position + (new Vector2(player.Width / 2, _font.LineSpacing * -3) - (textSize * .5f));
+                    Interactions.Add(item,item.Interaction);                    
+                }             
+            }
 
-                    
-
-                    spriteBatch.Begin();
-                    spriteBatch.DrawString(_font, textToPrint, txtPos, Color.Black);
-                    spriteBatch.DrawString(_font, textToPrint, txtPos + new Vector2(-1, -1), Color.White);
-                    //(_textbox.Draw(_font, textToPrint, txtPos + new Vector2(-1, -1), Color.White)
-
-                    for (int i=0; i < 10; i++)
-                    {
-                        spriteBatch.DrawString(_font, Interaction[i], txtPos + new Vector2(0, 0), Color.White);
-                    }
-
-
-                    if (inputService.KeyboardManager.KeyDown(Keys.E))
-                    {
-                        textToPrint = $"{item.Name} - {item.Description}";
-                        textSize = _font.MeasureString(textToPrint);
-                        txtPos = player.Position + (new Vector2(player.Width / 2, _font.LineSpacing * -2) - (textSize * .5f));
-
-                        spriteBatch.DrawString(_font, textToPrint, txtPos, Color.Black);
-                    }
-                    spriteBatch.End();
-                }
-
-             
+            if (Interactions.Count > 0)
+            {
+                HUD.ShowInteractionOptionsWindow(Interactions);
+            }
+            else
+            {
+                HUD.CurrentInteractions = null;
             }
             
-
         }
+
+       
     }
 }
