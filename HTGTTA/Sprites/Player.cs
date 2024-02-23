@@ -16,7 +16,7 @@ namespace HTGTTA.Sprites
 
         public override Rectangle InteractionBounds // for interaction
         {
-            get { return new Rectangle((int)Position.X+24, (int)Position.Y+16, Width-48, Height-32); }
+            get { return new Rectangle((int)Position.X+24, (int)Position.Y+(Height/2), Width-48, Height/2); }
         }
 
         public Player(Game game, string textureAsset) : base(game, textureAsset) { }

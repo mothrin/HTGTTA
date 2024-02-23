@@ -61,9 +61,19 @@ namespace HTGTTA.Sprites
 
         public virtual Rectangle InteractionBounds // for interaction
         {
-            get { return new Rectangle((int)Position.X, (int)Position.Y, Width, Height); }
+           
+            get {if (Name == "Bed")
+                {
+                    return new Rectangle((int)Position.X , (int)Position.Y + (Height / 3), Width, Height/3);
+                }
+                else
+                {
+                    return new Rectangle((int)Position.X + (Width / 3), (int)Position.Y, Width / 3, Height);
+                }
+            }
+                
         }
-
+         
 
         public Sprite(Game game, string textureAsset) : base(game)
         {
@@ -113,6 +123,8 @@ namespace HTGTTA.Sprites
                     _animationManager.Position = _position;
             }
         }
+
+        public object Interaction { get; internal set; }
 
         #endregion
 
