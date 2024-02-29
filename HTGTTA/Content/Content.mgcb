@@ -117,6 +117,30 @@
 /processorParam:TextureFormat=Color
 /build:Textures/Objects/wardrobe.png
 
+#begin Textures/Puzzle UI/laptop.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Puzzle UI/laptop.png
+
+#begin Textures/Puzzle UI/LaptopLocked.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Puzzle UI/LaptopLocked.png
+
 #begin Textures/Sprite/back.png
 /importer:TextureImporter
 /processor:TextureProcessor

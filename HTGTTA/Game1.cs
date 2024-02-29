@@ -9,6 +9,7 @@ using MonoGame.Randomchaos.Services.Input;
 using MonoGame.Randomchaos.Services.Input.Models;
 using MonoGame.Randomchaos.Services.Interfaces;
 using MonoGame.Randomchaos.UI;
+using System;
 using System.Collections.Generic;
 
 namespace HTGTTA
@@ -26,12 +27,25 @@ namespace HTGTTA
         protected SpriteFont _font;
 
         private Texture2D _backgroundTexture;
+        public Texture2D _laptopTexture;
 
         public Dictionary<Sprite, Dictionary<string, ObjectInterations>> Interactions = new Dictionary<Sprite, Dictionary<string, ObjectInterations>>();
 
         private Player player;
 
         public List<Sprite> _items;
+
+        public List<Sprite> _inventory;
+
+        public Boolean laptopOpened;
+        public Boolean diaryRead;
+        public Boolean chairGot;
+        public Boolean chairplaced;
+        public Boolean boxOpened;
+        public Boolean keyGot;
+        public Boolean drawerOpened;
+        public Boolean paperRead;
+        public Boolean clothesMoved;
 
 
         Vector2 lastPosition; //collision
@@ -46,8 +60,6 @@ namespace HTGTTA
         protected Hud HUD;
 
         private IAudioService _audio { get { return Services.GetService<IAudioService>(); } }
-
-        private UIMessageBox _textbox;
         public Game1()
         {
             ////defining window width and height
@@ -67,7 +79,7 @@ namespace HTGTTA
 
             //different features
             Content.RootDirectory = "Content";
-            IsMouseVisible = false;
+            IsMouseVisible = true;
 
             //audio
             new AudioService(this);
@@ -100,7 +112,7 @@ namespace HTGTTA
             // TODO: Add your initialization logic here
             Dictionary<string, ObjectInterations> nothingToDo = new Dictionary<string, ObjectInterations>()
             {
-                {"Noting to do here", new ObjectInterations(){ Active = true, Description = "Nothing to do here", Name = "Nothing to do.", InteractionType = InteractionTypeEnum.Nothing } }
+                {"Nothing to do here", new ObjectInterations(){ Active = true, Description = "Nothing to do here", Name = "Nothing to do.", InteractionType = InteractionTypeEnum.Nothing } }
             };
 
             //objects
@@ -109,7 +121,6 @@ namespace HTGTTA
                 new Sprite(this, "Textures/Objects/Blank")
                 {
                     Name = "Bed1",
-                    Description = "We should probably leave that be...",
                     Position = new Vector2(1500,273),
                     Width = 278,
                     Height = 328,
@@ -121,17 +132,21 @@ namespace HTGTTA
                 {
                     Name = "Bed",
                     Description = "We should probably leave that be...",
+                    Interaction = new Dictionary<string, ObjectInterations>()
+                    {
+                        {"Look at bed", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Bed,Name = "Bed", Description = "Maybe we should leave this be..." }  },
+                        {"Go to bed", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Sleep,Name = "Bed", Description = "I'm so so tired. Should i jsut go back to bed?" }  },
+                        {"Read diary", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Diary, Name ="Diary",  Description = "I don't think i should read that." }  }
+                    },
                     Position = new Vector2(1540,400),
                     Width = 278,
                     Height = 328,
                     RenderBounds = true, //for bounds
-                    Interaction = nothingToDo,
                     RenderInteractionBounds = true,
                 },
                 new Sprite(this, "Textures/Objects/Blank")
                 {
                     Name = "Bed",
-                    Description = "We should probably leave that be...",
                     Position = new Vector2(1580,527),
                     Width = 278,
                     Height = 328,
@@ -142,11 +157,11 @@ namespace HTGTTA
                 new Sprite (this, "Textures/Objects/Blank")
                 {
                     Name = "Desk",
-                    Description = "The laptop is locked",
                     Interaction = new Dictionary<string, ObjectInterations>()
                     {
-                        {"Desk", new ObjectInterations(){ InteractionType = InteractionTypeEnum.DrawsOpen,Name = "Open Desk" }  },
-                        {"Laptop", new ObjectInterations(){ InteractionType = InteractionTypeEnum.LaptopCodeEnter, Name ="Laptop",  Description = "Please enter the code..." }  }
+                        {"Look at desk", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Desk,Name = "Desk", Description = "Hm, just loads of books." }  },
+                        {"Look at paper", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Paper,Name = "Paper", Description = "Just some homework, I think." }  },
+                        {"Open Laptop", new ObjectInterations(){ InteractionType = InteractionTypeEnum.LaptopCodeEnter, Name ="Laptop",  Description = "Needs a password. I don't remember what it as." }  }
                     },
                     Position = new Vector2(102,972),
                     Width = 570,
@@ -157,23 +172,26 @@ namespace HTGTTA
                 new Sprite(this,"Textures/Objects/Blank")
                 {
                     Name = "Drawer",
-                    Description = "Nothing of interest in here. Just clothes.",
+                    Interaction = new Dictionary<string, ObjectInterations>()
+                    {
+                       {"Look at drawers", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Drawers,Name = "Drawers",Description = "Eh, just clothes and stuff. Nothing of interest.", }  },
+                        {"Look at plant", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Plant,Name = "Plant",Description = "Aw poor plant, someone didn't look after you very well.", }  },
+                        {"Look at mirror", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Mirror,Name = "Mirror",Description = "Well someone had a tantrum...was it you mr plant?", }  }
+                    },
                     Position = new Vector2(483,220),
                     Width = 345,
                     Height = 280,
                     RenderBounds = true, //bounds
                     RenderInteractionBounds = true,
-                    Interaction = nothingToDo,
                 },
                 new Sprite(this,"Textures/Objects/Blank")
                 {
-                    Name = "Wardrobe",
-                    Description = "There are too many clothes here, I can't open the door.",
+                    Name = "Wardrobe", 
                     Interaction = new Dictionary<string, ObjectInterations>()
                     {
-                        {"Door", new ObjectInterations(){ }  },
-                        {"Clothes", new ObjectInterations(){ }  },
-                        {"Box", new ObjectInterations(){ }  }
+                        {"Open door", new ObjectInterations(){ InteractionType = InteractionTypeEnum.WarDoorOpen,Name = "Door",Description = "There are too many clothes here, I can't open the door.", }  },
+                        {"Move clothes", new ObjectInterations(){ InteractionType = InteractionTypeEnum.ClothesMoved,Name = "Clothes", Description = "No point in moving these, waste of energy..." }  },
+                        {"Look in box", new ObjectInterations(){ InteractionType = InteractionTypeEnum.ChairPlaced,Name = "Box",  Description = "I can't reach that.",}  },
                     },
                     Position = new Vector2(858,30),
                     Width = 288,
@@ -183,12 +201,12 @@ namespace HTGTTA
                 },
                 new Sprite(this,"Textures/Objects/Blank")
                 {
-                    Name = "Table",
-                    Description = "This bear is cute.",
+                    Name = "Bedside Table",
                     Interaction = new Dictionary<string, ObjectInterations>()
                     {
-                        {"Bear", new ObjectInterations(){ } },
-                        {"Drawer", new ObjectInterations(){ } }
+                        {"Talk to bear", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Bear1,Name = "Bear" , Description = "Hello Mr Cluedo. How are you today?"}  },
+                        {"Look at board", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Board, Name= "Board" , Description = "Cute photos, this note seems to have a code, wonder what it does."} },
+                        {"Open drawer", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Table, Name= "Drawer" , Description = "It needs a key to open."} },
                     },
                     Position = new Vector2(1284,348),
                     Width = 171,
@@ -199,11 +217,10 @@ namespace HTGTTA
                 new Sprite(this,"Textures/Objects/Blank")
                 {
                     Name = "Door",
-                    Description = "I need to find the code.",
                     Interaction = new Dictionary<string, ObjectInterations>()
                     {
-                        {"Door", new ObjectInterations(){ } },
-                        {"Code", new ObjectInterations(){ } }
+                        {"Open door", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Door,Name = "Door", Description = "Hm, It's locked. I think it needs a code." }  },
+                        {"Enter code", new ObjectInterations(){ InteractionType= InteractionTypeEnum.DoorCode,Name = "Door" , Description = "What's the code?"} },
                     },
                     Position = new Vector2(195,120),
                     Width = 255,
@@ -214,11 +231,10 @@ namespace HTGTTA
                 new Sprite(this,"Textures/Objects/Blank")
                 {
                     Name = "Window",
-                    Description = "Locked.",
                     Interaction = new Dictionary<string, ObjectInterations>()
                     {
-                        {"Window", new ObjectInterations(){ } },
-                        {"Open", new ObjectInterations(){ } }
+                        {"Inspect window", new ObjectInterations(){InteractionType = InteractionTypeEnum.Window,Name = "Window", Description = "Ew so much mold...someone obviously hasn't cleaned in a while." } },
+                        {"Open window", new ObjectInterations(){InteractionType = InteractionTypeEnum.WindowOpen, Name = "Window", Description = "It's locked. Doesn't seem like a great escape plan anyway. Would hurt falling down that far...or would it? I don't even touch the ground." } }
                     },
                     Position = new Vector2(0,105),
                     Width = 65,
@@ -263,6 +279,8 @@ namespace HTGTTA
             _backgroundTexture = Content.Load<Texture2D>("Textures/background"); //background
 
             _audio.PlaySong("Audio/Music/Drafty-Places", .05f); //music
+
+            _laptopTexture = Content.Load<Texture2D>("Textures/Puzzle UI/laptop"); // ui
 
             base.LoadContent();
         }
