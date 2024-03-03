@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Randomchaos.Services.Audio;
+using MonoGame.Randomchaos.Services.Coroutine;
 using MonoGame.Randomchaos.Services.Input;
 using MonoGame.Randomchaos.Services.Input.Models;
 using MonoGame.Randomchaos.Services.Interfaces;
@@ -26,6 +27,7 @@ namespace HTGTTA
         SpriteBatch spriteBatch;
 
         ISceneService sceneService { get { return Services.GetService<ISceneService>(); } }
+        ICoroutineService coroutineService { get { return Services.GetService<ICoroutineService>(); } }
 
         IInputStateService inputService;
         IKeyboardStateManager kbState;
@@ -45,6 +47,9 @@ namespace HTGTTA
             //different features
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+
+            // Set up coroutine service
+            new CoroutineService(this);
 
             //audio
             new AudioService(this);
@@ -82,6 +87,7 @@ namespace HTGTTA
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            sceneService.LoadScene("Game");
 
             base.LoadContent();
         }
@@ -101,6 +107,11 @@ namespace HTGTTA
         {
             inputService.PreUpdate(gameTime);
             base.Update(gameTime);
+
+            if (inputService.KeyboardManager.KeyPress(Keys.Escape))
+            {
+                Exit();
+            }
         }
 
         /// This is called when the game should draw itself.
@@ -110,6 +121,13 @@ namespace HTGTTA
             GraphicsDevice.Clear(Color.White);
 
             base.Draw(gameTime);
+        }
+
+        protected override void EndDraw() // needed for the coroutne service
+        {
+            base.EndDraw();
+
+            coroutineService.UpdateEndFrame(null);
         }
     }
 }

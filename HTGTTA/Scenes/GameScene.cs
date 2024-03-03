@@ -1,24 +1,17 @@
 ﻿using HTGTTA.Enums;
 using HTGTTA.Models;
 using HTGTTA.Sprites;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework;
-using MonoGame.Randomchaos.Services.Audio;
-using MonoGame.Randomchaos.Services.Input.Models;
-using MonoGame.Randomchaos.Services.Input;
 using MonoGame.Randomchaos.Services.Interfaces;
-using MonoGame.Randomchaos.Services.Scene.Services;
-using System;
+using MonoGame.Randomchaos.Services.Interfaces.Enums;
+using MonoGame.Randomchaos.Services.Scene.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HTGTTA.Scenes
 {
-    public class GameScene : Game1
+    public class GameScene : SceneFadeBase
     {
 
         GraphicsDeviceManager graphics;
@@ -41,84 +34,50 @@ namespace HTGTTA.Scenes
 
         public List<Sprite> _inventory;
 
-        public Boolean laptopOpened;
-        public Boolean diaryRead;
-        public Boolean chairGot;
-        public Boolean chairplaced;
-        public Boolean boxOpened;
-        public Boolean keyGot;
-        public Boolean drawerOpened;
-        public Boolean paperRead;
-        public Boolean clothesMoved;
+        public bool laptopOpened;
+        public bool diaryRead;
+        public bool chairGot;
+        public bool chairplaced;
+        public bool boxOpened;
+        public bool keyGot;
+        public bool drawerOpened;
+        public bool paperRead;
+        public bool clothesMoved;
 
 
         Vector2 lastPosition; //collision
 
         // packages
         /// <summary>   The input service. </summary>
-        IInputStateService inputService;
+        IInputStateService inputService { get { return Game.Services.GetService<IInputStateService>(); } }
         /// <summary>   State of the kB. </summary>
-        IKeyboardStateManager kbState;
+        IKeyboardStateManager kbState { get { return inputService.KeyboardManager; } }
         private int i;
 
         protected Hud HUD;
 
-        private IAudioService _audio { get { return Services.GetService<IAudioService>(); } }
+        private IAudioService _audio { get { return Game.Services.GetService<IAudioService>(); } }
 
-        ISceneService sceneService { get { return Services.GetService<ISceneService>(); } }
+        ISceneService sceneService { get { return Game.Services.GetService<ISceneService>(); } }
 
 
-        public GameScene(Game game, string name)
+        public GameScene(Game game, string name) : base(game, name)
         {
-            ////defining window width and height
-            //w = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-            //h = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-
-            //1080p
-            w = 1920;
-            h = 1080;
-
-            graphics = new GraphicsDeviceManager(this);
-
-            //window sizes
-            graphics.PreferredBackBufferWidth = w;
-            graphics.PreferredBackBufferHeight = h;
-            graphics.ApplyChanges();
-
-            //different features
-            Content.RootDirectory = "Content";
-            IsMouseVisible = true;
-
-            //audio
-            new AudioService(this);
-
-            //input
-            kbState = new KeyboardStateManager(this);
-            inputService = new InputHandlerService(this, kbState);
-
-            //scenes
-            new SceneService(this);
-
-
+            w = GraphicsDevice.Viewport.Width;
+            h = GraphicsDevice.Viewport.Height;
         }
 
-        /// Allows the game to perform any initialization it needs to before starting to run.
-        /// This is where it can query for any required services and load any non-graphic
-        /// related content.  Calling base.Initialize will enumerate through any components
-        /// and initialize them as well.
-
-        protected override void Initialize()
+        public override void LoadScene()
         {
-            sceneService.AddScene(new MainMenu(this, "mainMenu"));
-            HUD = new Hud(this);
+            HUD = new Hud(Game);
             Components.Add(HUD);
 
             var animations = new Dictionary<string, Animation>()
             {
-                { "WalkUp", new Animation(Content.Load<Texture2D>("Textures/Sprite/back"), 3) },
-                { "WalkDown", new Animation(Content.Load<Texture2D>("Textures/Sprite/front"), 3) },
-                { "WalkLeft", new Animation(Content.Load<Texture2D>("Textures/Sprite/left"), 3) },
-                { "WalkRight", new Animation(Content.Load<Texture2D>("Textures/Sprite/right"), 3) },
+                { "WalkUp", new Animation(Game.Content.Load<Texture2D>("Textures/Sprite/back"), 3) },
+                { "WalkDown", new Animation(Game.Content.Load<Texture2D>("Textures/Sprite/front"), 3) },
+                { "WalkLeft", new Animation(Game.Content.Load<Texture2D>("Textures/Sprite/left"), 3) },
+                { "WalkRight", new Animation(Game.Content.Load<Texture2D>("Textures/Sprite/right"), 3) },
             };
 
             // TODO: Add your initialization logic here
@@ -130,7 +89,7 @@ namespace HTGTTA.Scenes
             //objects
             _items = new List<Sprite>()
             {
-                new Sprite(this, "Textures/Objects/Blank")
+                new Sprite(Game, "Textures/Objects/Blank")
                 {
                     Name = "Bed1",
                     Position = new Vector2(1500,273),
@@ -140,7 +99,7 @@ namespace HTGTTA.Scenes
                     RenderInteractionBounds = true,
                     Interaction = nothingToDo,
                 },
-                new Sprite(this, "Textures/Objects/Blank")
+                new Sprite(Game, "Textures/Objects/Blank")
                 {
                     Name = "Bed",
                     Description = "We should probably leave that be...",
@@ -156,7 +115,7 @@ namespace HTGTTA.Scenes
                     RenderBounds = true, //for bounds
                     RenderInteractionBounds = true,
                 },
-                new Sprite(this, "Textures/Objects/Blank")
+                new Sprite(Game, "Textures/Objects/Blank")
                 {
                     Name = "Bed",
                     Position = new Vector2(1580,527),
@@ -166,7 +125,7 @@ namespace HTGTTA.Scenes
                     RenderInteractionBounds = true,
                     Interaction = nothingToDo,
                 },
-                new Sprite (this, "Textures/Objects/Blank")
+                new Sprite (Game, "Textures/Objects/Blank")
                 {
                     Name = "Desk",
                     Interaction = new Dictionary<string, ObjectInterations>()
@@ -181,7 +140,7 @@ namespace HTGTTA.Scenes
                     RenderBounds = true, //bounds
                     RenderInteractionBounds = true,
                 },
-                new Sprite(this,"Textures/Objects/Blank")
+                new Sprite(Game,"Textures/Objects/Blank")
                 {
                     Name = "Drawer",
                     Interaction = new Dictionary<string, ObjectInterations>()
@@ -196,7 +155,7 @@ namespace HTGTTA.Scenes
                     RenderBounds = true, //bounds
                     RenderInteractionBounds = true,
                 },
-                new Sprite(this,"Textures/Objects/Blank")
+                new Sprite(Game,"Textures/Objects/Blank")
                 {
                     Name = "Wardrobe",
                     Interaction = new Dictionary<string, ObjectInterations>()
@@ -211,7 +170,7 @@ namespace HTGTTA.Scenes
                     RenderBounds = true, //bounds
                     RenderInteractionBounds = true,
                 },
-                new Sprite(this,"Textures/Objects/Blank")
+                new Sprite(Game,"Textures/Objects/Blank")
                 {
                     Name = "Bedside Table",
                     Interaction = new Dictionary<string, ObjectInterations>()
@@ -226,7 +185,7 @@ namespace HTGTTA.Scenes
                     RenderBounds = true, //bounds
                     RenderInteractionBounds = true,
                 },
-                new Sprite(this,"Textures/Objects/Blank")
+                new Sprite(Game,"Textures/Objects/Blank")
                 {
                     Name = "Door",
                     Interaction = new Dictionary<string, ObjectInterations>()
@@ -240,13 +199,13 @@ namespace HTGTTA.Scenes
                     RenderBounds = true, //bounds
                     RenderInteractionBounds = true,
                 },
-                new Sprite(this,"Textures/Objects/Blank")
+                new Sprite(Game,"Textures/Objects/Blank")
                 {
                     Name = "Window",
                     Interaction = new Dictionary<string, ObjectInterations>()
                     {
                         {"Inspect window", new ObjectInterations(){InteractionType = InteractionTypeEnum.Window,Name = "Window", Description = "Ew so much mold...someone obviously hasn't cleaned in a while." } },
-                        {"Open window", new ObjectInterations(){InteractionType = InteractionTypeEnum.WindowOpen, Name = "Window", Description = "It's locked. Doesn't seem like a great escape plan anyway. Would hurt falling down that far...or would it? I don't even touch the ground." } }
+                        {"Open window", new ObjectInterations(){InteractionType = InteractionTypeEnum.WindowOpen, Name = "Window", Description = "It's locked. Doesn't seem like a great escape plan anyway.\nWould hurt falling down that far...or would it? I don't even touch the ground." } }
                     },
                     Position = new Vector2(0,105),
                     Width = 65,
@@ -262,7 +221,7 @@ namespace HTGTTA.Scenes
             }
 
             //player
-            player = new Player(this, animations)
+            player = new Player(Game, animations)
             {
                 Name = "Player",
                 Position = new Vector2(w / 2, h / 2),
@@ -278,6 +237,16 @@ namespace HTGTTA.Scenes
             };
             Components.Add(player);
 
+            base.LoadScene();
+        }
+
+        /// Allows the game to perform any initialization it needs to before starting to run.
+        /// This is where it can query for any required services and load any non-graphic
+        /// related content.  Calling base.Initialize will enumerate through any components
+        /// and initialize them as well.
+
+        public override void Initialize()
+        {
             base.Initialize();
         }
 
@@ -288,11 +257,11 @@ namespace HTGTTA.Scenes
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            _backgroundTexture = Content.Load<Texture2D>("Textures/background"); //background
+            _backgroundTexture = Game.Content.Load<Texture2D>("Textures/background"); //background
 
             _audio.PlaySong("Audio/Music/Drafty-Places", .05f); //music
 
-            _laptopTexture = Content.Load<Texture2D>("Textures/Puzzle UI/laptop"); // ui
+            _laptopTexture = Game.Content.Load<Texture2D>("Textures/Puzzle UI/laptop"); // ui
 
             base.LoadContent();
         }
@@ -308,37 +277,37 @@ namespace HTGTTA.Scenes
 
         /// Allows the game to run logic such as updating the world, checking for collisions, gathering input, and playing audio
 
-        protected override void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime)
         {
-            inputService.PreUpdate(gameTime);
 
-            lastPosition = player.Position;
-
+            if (State == SceneStateEnum.Loaded)
+            {
+                lastPosition = player.Position;
+            }
+             
             base.Update(gameTime);
-
-            foreach (var item in _items)
+            
+            if (State == SceneStateEnum.Loaded)
             {
-
-                if (player.Bounds.Intersects(item.Bounds))
+                foreach (var item in _items)
                 {
-                    player.Position = lastPosition;
+
+                    if (player.Bounds.Intersects(item.Bounds))
+                    {
+                        player.Position = lastPosition;
+                    }
                 }
-            }
 
-            if (inputService.KeyboardManager.KeyPress(Keys.F1))
-            {
-                Sprite.BondsOn = !Sprite.BondsOn;
-            }
-
-            if (inputService.KeyboardManager.KeyPress(Keys.Escape))
-            {
-                Exit();
+                if (inputService.KeyboardManager.KeyPress(Keys.F1))
+                {
+                    Sprite.BondsOn = !Sprite.BondsOn;
+                }
             }
         }
 
         /// This is called when the game should draw itself.
 
-        protected override void Draw(GameTime gameTime)
+        public override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
@@ -358,7 +327,7 @@ namespace HTGTTA.Scenes
             //for object interaction
             foreach (var item in _items)
             {
-                _font = Content.Load<SpriteFont>("Fonts/font");
+                _font = Game.Content.Load<SpriteFont>("Fonts/font");
                 if (player.InteractionBounds.Intersects(item.InteractionBounds))
                 {
                     Interactions.Add(item, item.Interaction);
@@ -374,6 +343,7 @@ namespace HTGTTA.Scenes
                 HUD.CurrentInteractions = null;
             }
 
+            DrawFader(gameTime);
         }
 
 
