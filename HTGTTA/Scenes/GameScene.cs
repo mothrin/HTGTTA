@@ -13,10 +13,6 @@ namespace HTGTTA.Scenes
 {
     public class GameScene : SceneFadeBase
     {
-
-        GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
-
         public int w;
         public int h;
 
@@ -24,7 +20,7 @@ namespace HTGTTA.Scenes
         protected SpriteFont _font;
 
         private Texture2D _backgroundTexture;
-        public Texture2D _laptopTexture;
+        
 
         public Dictionary<Sprite, Dictionary<string, ObjectInterations>> Interactions = new Dictionary<Sprite, Dictionary<string, ObjectInterations>>();
 
@@ -52,7 +48,6 @@ namespace HTGTTA.Scenes
         IInputStateService inputService { get { return Game.Services.GetService<IInputStateService>(); } }
         /// <summary>   State of the kB. </summary>
         IKeyboardStateManager kbState { get { return inputService.KeyboardManager; } }
-        private int i;
 
         protected Hud HUD;
 
@@ -106,7 +101,7 @@ namespace HTGTTA.Scenes
                     Interaction = new Dictionary<string, ObjectInterations>()
                     {
                         {"Look at bed", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Bed,Name = "Bed", Description = "Maybe we should leave this be..." }  },
-                        {"Go to bed", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Sleep,Name = "Bed", Description = "I'm so so tired. Should i jsut go back to bed?" }  },
+                        {"Go to bed", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Sleep,Name = "Bed", Description = "I'm so so tired. Should i just go back to bed?" }  },
                         {"Read diary", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Diary, Name ="Diary",  Description = "I don't think i should read that." }  }
                     },
                     Position = new Vector2(1540,400),
@@ -255,13 +250,13 @@ namespace HTGTTA.Scenes
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
+            _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            _backgroundTexture = Game.Content.Load<Texture2D>("Textures/background"); //background
+            _backgroundTexture = Game.Content.Load<Texture2D>("Textures/backgrounds/background"); //background
 
             _audio.PlaySong("Audio/Music/Drafty-Places", .05f); //music
 
-            _laptopTexture = Game.Content.Load<Texture2D>("Textures/Puzzle UI/laptop"); // ui
+            
 
             base.LoadContent();
         }
@@ -303,6 +298,12 @@ namespace HTGTTA.Scenes
                     Sprite.BondsOn = !Sprite.BondsOn;
                 }
             }
+            if (State == SceneStateEnum.Loaded)
+            {
+                if (kbManager.KeyPress(Microsoft.Xna.Framework.Input.Keys.F2))
+                    sceneManager.LoadScene("mainMenu");
+            }
+
         }
 
         /// This is called when the game should draw itself.
@@ -311,14 +312,14 @@ namespace HTGTTA.Scenes
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+            _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
 
-            spriteBatch.Draw(_backgroundTexture,
+            _spriteBatch.Draw(_backgroundTexture,
                 new Rectangle(0, 0, w, h),
                 new Rectangle(0, 0, _backgroundTexture.Width, _backgroundTexture.Height),
                Color.White);
 
-            spriteBatch.End();
+            _spriteBatch.End();
 
             base.Draw(gameTime);
 

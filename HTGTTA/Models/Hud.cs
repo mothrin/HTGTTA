@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Randomchaos.Extensions;
 using MonoGame.Randomchaos.Services.Interfaces;
+using MonoGame.Randomchaos.Services.Scene.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +25,7 @@ namespace HTGTTA.Models
         ObjectInterations interactionToDo = null;
 
 
-
+        ISceneService sceneService { get { return Game.Services.GetService<ISceneService>(); } }
         IKeyboardStateManager _kbState { get { return Game.Services.GetService<IInputStateService>().KeyboardManager; } }
 
         public Dictionary<string, ObjectInterations> CurrentInteractions = null;
@@ -134,6 +135,7 @@ namespace HTGTTA.Models
                     textToPrint = interaction.Description;
                     interaction.InteractionType = InteractionTypeEnum.LaptopCodeEnter;
                     userInputRequired = true;
+                    sceneManager.LoadScene("laptop");
                     break;
                 case InteractionTypeEnum.Paper:
                     textToPrint = interaction.Description;

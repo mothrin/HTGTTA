@@ -73,7 +73,7 @@ namespace HTGTTA
         {
             sceneService.AddScene(new GameScene(this, "Game"));
             sceneService.AddScene(new MainMenu(this, "mainMenu"));
-
+            sceneService.AddScene(new Laptop(this, "laptop"));
 
 
 
@@ -107,11 +107,6 @@ namespace HTGTTA
         {
             inputService.PreUpdate(gameTime);
             base.Update(gameTime);
-
-            if (inputService.KeyboardManager.KeyPress(Keys.Escape))
-            {
-                Exit();
-            }
         }
 
         /// This is called when the game should draw itself.

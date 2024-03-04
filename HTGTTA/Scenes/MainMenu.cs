@@ -30,7 +30,7 @@ namespace HTGTTA.Scenes
         {
             if (State == SceneStateEnum.Loaded)
             {
-                if (kbManager.KeyPress(Microsoft.Xna.Framework.Input.Keys.Escape))
+                if (kbManager.KeyPress(Microsoft.Xna.Framework.Input.Keys.F10))
                 {
                     exiting = true;
                     State = SceneStateEnum.Unloading;
@@ -40,8 +40,8 @@ namespace HTGTTA.Scenes
                 if (kbManager.KeyPress(Microsoft.Xna.Framework.Input.Keys.F1))
                     sceneManager.LoadScene("optionsScene");
 
-                if (kbManager.KeyPress(Microsoft.Xna.Framework.Input.Keys.F2))
-                    sceneManager.LoadScene("gameScene");
+                if (kbManager.KeyPress(Microsoft.Xna.Framework.Input.Keys.Escape))
+                    sceneManager.LoadScene("Game");
             }
 
             base.Update(gameTime);
@@ -56,7 +56,7 @@ namespace HTGTTA.Scenes
 
             _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointWrap);
 
-            _spriteBatch.Draw(Game.Content.Load<Texture2D>("Textures/BG1"), new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.Gold);
+            _spriteBatch.Draw(Game.Content.Load<Texture2D>("Screens/mainmenu"), new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height),Color.White);
 
             string str = "This is the main menu, press Esc to exit, F1 for options, F2 to play new game.";
             Vector2 pos = (new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height) - font.MeasureString(str)) / 2;
