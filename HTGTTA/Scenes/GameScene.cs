@@ -64,9 +64,6 @@ namespace HTGTTA.Scenes
 
         public override void LoadScene()
         {
-            HUD = new Hud(Game);
-            Components.Add(HUD);
-
             var animations = new Dictionary<string, Animation>()
             {
                 { "WalkUp", new Animation(Game.Content.Load<Texture2D>("Textures/Sprite/back"), 3) },
@@ -231,6 +228,10 @@ namespace HTGTTA.Scenes
                 RenderInteractionBounds = true,
             };
             Components.Add(player);
+
+            // Added last so it is rendered over the top of all others
+            HUD = new Hud(Game);
+            Components.Add(HUD);
 
             base.LoadScene();
         }
