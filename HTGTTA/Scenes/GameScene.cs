@@ -64,9 +64,6 @@ namespace HTGTTA.Scenes
 
         public override void LoadScene()
         {
-            HUD = new Hud(Game);
-            Components.Add(HUD);
-
             var animations = new Dictionary<string, Animation>()
             {
                 { "WalkUp", new Animation(Game.Content.Load<Texture2D>("Textures/Sprite/back"), 3) },
@@ -92,6 +89,7 @@ namespace HTGTTA.Scenes
                     Height = 328,
                     RenderBounds = true, //for bounds
                     RenderInteractionBounds = true,
+                    RenderCoords = true,
                     Interaction = nothingToDo,
                 },
                 new Sprite(Game, "Textures/Objects/Blank")
@@ -109,6 +107,7 @@ namespace HTGTTA.Scenes
                     Height = 328,
                     RenderBounds = true, //for bounds
                     RenderInteractionBounds = true,
+                    RenderCoords = true,
                 },
                 new Sprite(Game, "Textures/Objects/Blank")
                 {
@@ -118,6 +117,7 @@ namespace HTGTTA.Scenes
                     Height = 328,
                     RenderBounds = true, //for bounds
                     RenderInteractionBounds = true,
+                    RenderCoords = true,
                     Interaction = nothingToDo,
                 },
                 new Sprite (Game, "Textures/Objects/Blank")
@@ -134,6 +134,7 @@ namespace HTGTTA.Scenes
                     Height = 75,
                     RenderBounds = true, //bounds
                     RenderInteractionBounds = true,
+                    RenderCoords = true,
                 },
                 new Sprite(Game,"Textures/Objects/Blank")
                 {
@@ -149,6 +150,7 @@ namespace HTGTTA.Scenes
                     Height = 280,
                     RenderBounds = true, //bounds
                     RenderInteractionBounds = true,
+                    RenderCoords = true,
                 },
                 new Sprite(Game,"Textures/Objects/Blank")
                 {
@@ -164,6 +166,7 @@ namespace HTGTTA.Scenes
                     Height = 450,
                     RenderBounds = true, //bounds
                     RenderInteractionBounds = true,
+                    RenderCoords = true,
                 },
                 new Sprite(Game,"Textures/Objects/Blank")
                 {
@@ -179,6 +182,7 @@ namespace HTGTTA.Scenes
                     Height = 150,
                     RenderBounds = true, //bounds
                     RenderInteractionBounds = true,
+                    RenderCoords = true,
                 },
                 new Sprite(Game,"Textures/Objects/Blank")
                 {
@@ -193,6 +197,7 @@ namespace HTGTTA.Scenes
                     Height = 330,
                     RenderBounds = true, //bounds
                     RenderInteractionBounds = true,
+                    RenderCoords = true,
                 },
                 new Sprite(Game,"Textures/Objects/Blank")
                 {
@@ -207,6 +212,7 @@ namespace HTGTTA.Scenes
                     Height = 560,
                     RenderBounds = true, //bounds
                     RenderInteractionBounds = true,
+                    RenderCoords = true,
                 }
             };
 
@@ -229,8 +235,13 @@ namespace HTGTTA.Scenes
                 },
                 RenderBounds = true,
                 RenderInteractionBounds = true,
+                RenderCoords = true,
             };
             Components.Add(player);
+
+            //ui windows
+            HUD = new Hud(Game);
+            Components.Add(HUD);
 
             base.LoadScene();
         }

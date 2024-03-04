@@ -51,6 +51,7 @@ namespace HTGTTA.Sprites
 
         public bool RenderBounds { get; set; }
         public bool RenderInteractionBounds { get; set; }
+        public bool RenderCoords { get; set; }
 
         protected string TextureAsset { get; set; }
 
@@ -144,6 +145,24 @@ namespace HTGTTA.Sprites
                     else
                         spriteBatch.Draw(_boundsTexture, Bounds, Color.Red);
                 }
+                if (RenderInteractionBounds && BondsOn)
+                {
+                    if (_texture != null)
+                        spriteBatch.Draw(_boundsTexture, InteractionBounds, Color.Green);
+                    else
+                        spriteBatch.Draw(_boundsTexture, InteractionBounds, Color.Green);
+                }
+                if (RenderCoords && BondsOn)
+                {
+                    // Draw text for coords
+                    string textToPrint = $"{Name} - {Position}";
+                    Vector2 textSize = _font.MeasureString(textToPrint);
+                    Vector2 txtPos = Position + (new Vector2(Width / 2, 0) - (textSize * .5f));
+
+                    spriteBatch.DrawString(_font, textToPrint, txtPos, Color.Black);
+                    spriteBatch.DrawString(_font, textToPrint, txtPos + new Vector2(-1, -1), Color.Gold);
+                }
+                
 
                 if (_texture != null)
                 {
@@ -154,21 +173,9 @@ namespace HTGTTA.Sprites
                     _animationManager.Draw(spriteBatch);
                 }
 
-                // Draw text for coords
-                string textToPrint = $"{Name} - {Position}";
-                Vector2 textSize = _font.MeasureString(textToPrint);
-                Vector2 txtPos = Position + (new Vector2(Width / 2, 0) - (textSize * .5f));
+                
 
-                spriteBatch.DrawString(_font, textToPrint, txtPos, Color.Black);
-                spriteBatch.DrawString(_font, textToPrint, txtPos + new Vector2(-1,-1), Color.Gold);
 
-                if (RenderInteractionBounds && BondsOn)
-                {
-                    if (_texture != null)
-                        spriteBatch.Draw(_boundsTexture, InteractionBounds, Color.Green);
-                    else
-                        spriteBatch.Draw(_boundsTexture, InteractionBounds, Color.Green);
-                }
 
                 spriteBatch.End();
             }
