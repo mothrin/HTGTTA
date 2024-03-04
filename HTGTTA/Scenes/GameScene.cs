@@ -239,7 +239,7 @@ namespace HTGTTA.Scenes
             };
             Components.Add(player);
 
-            //ui windows
+            // Added last so it is rendered over the top of all others
             HUD = new Hud(Game);
             Components.Add(HUD);
 

@@ -32,6 +32,8 @@ namespace HTGTTA.Models
 
         protected bool ShowKeyPad = false;
 
+        Texture2D laptopBorder;
+
         public Hud(Game game) : base(game)
         {
             
@@ -178,7 +180,10 @@ namespace HTGTTA.Models
                     textToPrint = interaction.Description;
                     interaction.InteractionType = InteractionTypeEnum.LaptopCodeEnter;
                     userInputRequired = true;
-                    currentPinValue = string.Empty; // reset the pin value.
+                    if (!ShowKeyPad)
+                    {
+                        currentPinValue = string.Empty; // reset the pin value.
+                    }
                     ShowKeyPad = true;
                     //sceneService.LoadScene("laptop");
                     break;
@@ -379,7 +384,7 @@ namespace HTGTTA.Models
             Point size = new Point(420, 672);
             Point pos = new Point(GraphicsDevice.Viewport.Width - 528, 8);
 
-            DrawWindowBase(size, pos, Color.Silver, Color.Black, 2, "Laptop", new Color(.2f,.2f,.2f,1));
+            DrawWindowBase(size, pos, Color.Silver, Color.Black, 2, "Laptop", new Color(.2f,.2f,.2f,1), Color.Silver);
 
             // Characters entered..
             Point textBoxPos = pos + new Point(6, 46);
@@ -398,23 +403,20 @@ namespace HTGTTA.Models
             Point keySize = new Point(128, 128);
             Point keyStartPos = textBoxPos + new Point(0,72);
 
-            
-
             for (int i = 0; i < 12; i++)
             {
                 Point keyPos = keyStartPos;
 
-                keyPos.X += ((keySize.X + 12) * (i % 3)) ;
+                keyPos.X += ((keySize.X + 12) * (i % 3));
                 keyPos.Y += (keySize.Y + 12) * (i / 3);
 
-                
 
-                Color keyColor = Color.LightBlue;
-                Color keyBorder = Color.Navy;
+
+                Color keyColor = Color.DarkGray;
+                Color keyBorder = Color.Black;
 
                 string keyText = (i + 1).ToString();
 
-                
                 if (i == 9) // Delete
                 {
                     keyText = "Del.";
@@ -429,7 +431,7 @@ namespace HTGTTA.Models
                 {
                     keyText = "Ent.";
                 }
-                
+
                 if (!keysBounds.ContainsKey(keyText))
                 {
                     keysBounds.Add(keyText, new Rectangle(keyPos.X, keyPos.Y, 128, 128));
@@ -437,15 +439,30 @@ namespace HTGTTA.Models
 
                 if (_msState.PositionRect.Intersects(keysBounds[keyText])) // Check mouse over and if it is button click event.
                 {
-                    keyColor = Color.CornflowerBlue;
-                    keyBorder = Color.Red;
+                    keyColor = Color.Gray;
+                    keyBorder = Color.WhiteSmoke;
                 }
 
                 strSize = _font.MeasureString(keyText) / 2;
 
-                DrawBox(keySize, keyPos, keyColor, keyBorder, 3);
-                DrawString(keyText, (keyPos + new Point(64,64)).ToVector2() - strSize, Color.Navy);
+                DrawBox(keySize, keyPos, keyColor, keyBorder, 1);
+                DrawString(keyText, (keyPos + new Point(64, 64)).ToVector2() - strSize, Color.Navy);
             }
+
+            // Draw laptop locked image
+            Rectangle laptopRec = new Rectangle(pos.X - 808, pos.Y, 800, 512);
+            _spritebatch.Draw(Game.Content.Load<Texture2D>("Textures/Puzzle UI/LaptopLocked"), laptopRec, Color.White);
+            // put a boarder around the laptop image.
+            if (laptopBorder == null)
+            {
+                laptopBorder = new Texture2D(GraphicsDevice, 800, 512);
+                laptopBorder.FillWithBorder(Color.Transparent, Color.Navy, new Rectangle(1, 1, 1, 1));
+            }
+            _spritebatch.Draw(laptopBorder, laptopRec, Color.White);
+
+            // Draw text on laptop screen
+            Vector2 lapTopTextPos = new Vector2((laptopRec.X + (laptopRec.Width / 2)) - 60, (laptopRec.Y + (laptopRec.Height / 2)) + 48);
+            DrawString(currentPinValue, lapTopTextPos, Color.White, Game.Content.Load<SpriteFont>("Fonts/laptopFont"));
         }
 
         protected void DrawBox(Point size, Point pos, Color bgColor, Color borderCour, int borderThickness)
@@ -458,8 +475,12 @@ namespace HTGTTA.Models
 
 
 
-        protected void DrawWindowBase(Point size, Point pos, Color bgColor, Color borderCour, int borderThickness, string title, Color titleBgColor)
+        protected void DrawWindowBase(Point size, Point pos, Color bgColor, Color borderCour, int borderThickness, string title, Color titleBgColor, Color? titleTextColor = null)
         {
+            if (titleTextColor == null)
+            {
+                titleTextColor = Color.Navy;
+            }
 
             _titleBar = new Texture2D(GraphicsDevice, size.X, 40);
             _titleBar.FillWithBorder(titleBgColor, borderCour, new Rectangle(borderThickness, borderThickness, borderThickness, borderThickness));
@@ -474,14 +495,19 @@ namespace HTGTTA.Models
 
             Vector2 txtPos = (pos.ToVector2() + new Vector2(size.X / 2, 0)) - (new Vector2(textSize.X, _titleBar.Height / 4) * .5f);
 
-            DrawString(text, txtPos, Color.Navy);
+            DrawString(text, txtPos, titleTextColor.Value);
         }
 
-        protected void DrawString(string text, Vector2 pos, Color color)
+        protected void DrawString(string text, Vector2 pos, Color color, SpriteFont font = null)
         {
+            if (font == null)
+            {
+                font = _font;
+            }
+
             Vector2 shadow = Vector2.One * -1;
-            _spritebatch.DrawString(_font, text, pos, color);
-            _spritebatch.DrawString(_font, text, pos + shadow, Color.Gray);
+            _spritebatch.DrawString(font, text, pos, Color.Gray);
+            _spritebatch.DrawString(font, text, pos + shadow, color);
         }
     }
 }
