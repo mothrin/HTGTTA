@@ -5,12 +5,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Randomchaos.Extensions;
 using MonoGame.Randomchaos.Services.Interfaces;
-using MonoGame.Randomchaos.Services.Scene.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Metadata;
-using System.Threading;
 
 namespace HTGTTA.Models
 {
@@ -23,12 +20,17 @@ namespace HTGTTA.Models
         Texture2D _titleBar;
 
         ObjectInterations interactionToDo = null;
+        int maxPinLength = 4;
 
+        private  ISceneService sceneService { get { return Game.Services.GetService<ISceneService>(); } }
+        private IKeyboardStateManager _kbState { get { return Game.Services.GetService<IInputStateService>().KeyboardManager; } }
+        private IMouseStateManager _msState {get { return Game.Services.GetService< IInputStateService>().MouseManager; } }
 
-        ISceneService sceneService { get { return Game.Services.GetService<ISceneService>(); } }
-        IKeyboardStateManager _kbState { get { return Game.Services.GetService<IInputStateService>().KeyboardManager; } }
+        private IAudioService _audio { get { return Game.Services.GetService<IAudioService>(); } }
 
         public Dictionary<string, ObjectInterations> CurrentInteractions = null;
+
+        protected bool ShowKeyPad = false;
 
         public Hud(Game game) : base(game)
         {
@@ -115,6 +117,47 @@ namespace HTGTTA.Models
                 {
                     interactionToDo = null;
                 }
+
+                foreach (var lapTopKey in keysBounds.Keys)
+                {
+                    if (_msState.PositionRect.Intersects(keysBounds[lapTopKey]) && _msState.LeftClicked)
+                    {
+                        if (lapTopKey != "Del." && lapTopKey != "Ent.")
+                        {
+                            if (currentPinValue.Length < maxPinLength)
+                            {
+                                _audio.PlaySFX("Audio/SFX/menu_select");
+                                currentPinValue += lapTopKey;
+                            }
+                            else
+                            {
+                                _audio.PlaySFX("Audio/SFX/menu_cancel");
+                            }
+                        }
+                        else
+                        {
+                            if (lapTopKey == "Del." && currentPinValue.Length > 0)
+                            {
+                                currentPinValue = currentPinValue.Substring(0, currentPinValue.Length - 1);
+                                _audio.PlaySFX("Audio/SFX/menu_select");
+                            }
+                            else if (lapTopKey == "Ent.")
+                            {
+                                // Close the laptop.
+                                ShowKeyPad = false;
+                                interactionToDo = null;
+                                _audio.PlaySFX("Audio/SFX/menu_change");
+
+                                // Moth, in here you need to check if the code is correct, if it is, 
+                                // when they go to open the laptop, they dont load the key pad, but see what's on the laptop
+                            }
+                            else
+                            {
+                                _audio.PlaySFX("Audio/SFX/menu_cancel");
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -135,7 +178,9 @@ namespace HTGTTA.Models
                     textToPrint = interaction.Description;
                     interaction.InteractionType = InteractionTypeEnum.LaptopCodeEnter;
                     userInputRequired = true;
-                    sceneManager.LoadScene("laptop");
+                    currentPinValue = string.Empty; // reset the pin value.
+                    ShowKeyPad = true;
+                    //sceneService.LoadScene("laptop");
                     break;
                 case InteractionTypeEnum.Paper:
                     textToPrint = interaction.Description;
@@ -275,7 +320,7 @@ namespace HTGTTA.Models
         {
             if (CurrentInteractions != null)
             {
-                _spritebatch.Begin();
+                _spritebatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap);
 
                 //option window
                 Point winSize = new Point(500, 45 + CurrentInteractions.Count * _font.LineSpacing);
@@ -316,30 +361,118 @@ namespace HTGTTA.Models
                     DoInteraction(interactionToDo, winPos.Y + winSize.Y);
                 }
 
+                if (ShowKeyPad)
+                {
+                    DrawLaptopKeyPad();
+                }
+
                 _spritebatch.End();
             }
         }
 
-        protected void DrawWindowBase(Point size, Point pos, Color bgColor, Color borderCour, int borderThickness, string title, Color titleBgColor)
-        {
-            Point winSize = size;
-            Point winPos = pos;
+        protected string currentPinValue = string.Empty;
 
-            _bgTexture = new Texture2D(GraphicsDevice, winSize.X, winSize.Y);
+        Dictionary<string, Rectangle> keysBounds = new Dictionary<string, Rectangle>();
+
+        protected void DrawLaptopKeyPad()
+        {
+            Point size = new Point(420, 672);
+            Point pos = new Point(GraphicsDevice.Viewport.Width - 528, 8);
+
+            DrawWindowBase(size, pos, Color.Silver, Color.Black, 2, "Laptop", new Color(.2f,.2f,.2f,1));
+
+            // Characters entered..
+            Point textBoxPos = pos + new Point(6, 46);
+            DrawBox(new Point(size.X-12, 64), textBoxPos, Color.White, Color.Navy, 1);
+
+            string str = currentPinValue;
+
+            if (string.IsNullOrEmpty(str))
+            {
+                str = "Enter Pin...";
+            }
+
+            Vector2 strSize = _font.MeasureString(str);
+            DrawString(str, (textBoxPos + new Point(12, (int)strSize.Y/4)).ToVector2(), Color.DarkGray);
+            // keys 0-9 + enter and delete
+            Point keySize = new Point(128, 128);
+            Point keyStartPos = textBoxPos + new Point(0,72);
+
+            
+
+            for (int i = 0; i < 12; i++)
+            {
+                Point keyPos = keyStartPos;
+
+                keyPos.X += ((keySize.X + 12) * (i % 3)) ;
+                keyPos.Y += (keySize.Y + 12) * (i / 3);
+
+                
+
+                Color keyColor = Color.LightBlue;
+                Color keyBorder = Color.Navy;
+
+                string keyText = (i + 1).ToString();
+
+                
+                if (i == 9) // Delete
+                {
+                    keyText = "Del.";
+                }
+
+                if (i == 10)
+                {
+                    keyText = "0";
+                }
+
+                if (i == 11) // Enter
+                {
+                    keyText = "Ent.";
+                }
+                
+                if (!keysBounds.ContainsKey(keyText))
+                {
+                    keysBounds.Add(keyText, new Rectangle(keyPos.X, keyPos.Y, 128, 128));
+                }
+
+                if (_msState.PositionRect.Intersects(keysBounds[keyText])) // Check mouse over and if it is button click event.
+                {
+                    keyColor = Color.CornflowerBlue;
+                    keyBorder = Color.Red;
+                }
+
+                strSize = _font.MeasureString(keyText) / 2;
+
+                DrawBox(keySize, keyPos, keyColor, keyBorder, 3);
+                DrawString(keyText, (keyPos + new Point(64,64)).ToVector2() - strSize, Color.Navy);
+            }
+        }
+
+        protected void DrawBox(Point size, Point pos, Color bgColor, Color borderCour, int borderThickness)
+        {
+            _bgTexture = new Texture2D(GraphicsDevice, size.X, size.Y);
             _bgTexture.FillWithBorder(bgColor, borderCour, new Rectangle(borderThickness, borderThickness, borderThickness, borderThickness));
 
-            _titleBar = new Texture2D(GraphicsDevice, winSize.X, 40);
+            _spritebatch.Draw(_bgTexture, new Rectangle(pos.X, pos.Y, size.X, size.Y), Color.White);
+        }
+
+
+
+        protected void DrawWindowBase(Point size, Point pos, Color bgColor, Color borderCour, int borderThickness, string title, Color titleBgColor)
+        {
+
+            _titleBar = new Texture2D(GraphicsDevice, size.X, 40);
             _titleBar.FillWithBorder(titleBgColor, borderCour, new Rectangle(borderThickness, borderThickness, borderThickness, borderThickness));
 
-            _spritebatch.Draw(_bgTexture, new Rectangle(winPos.X, winPos.Y, winSize.X, winSize.Y), Color.White);
-            _spritebatch.Draw(_titleBar, new Rectangle(winPos.X, winPos.Y, winSize.X, _titleBar.Height), Color.White);
+            DrawBox(size,pos,bgColor,borderCour, borderThickness);
+            _spritebatch.Draw(_titleBar, new Rectangle(pos.X, pos.Y, size.X, _titleBar.Height), Color.White);
 
             string text = title;
 
             Vector2 textSize = _font.MeasureString(text);
-            Vector2 center = new Vector2(winPos.X / 2, winPos.Y);
+            Vector2 center = new Vector2(pos.X / 2, pos.Y);
 
-            Vector2 txtPos = (winPos.ToVector2() + new Vector2(winSize.X / 2, 0)) - (new Vector2(textSize.X, _titleBar.Height / 4) * .5f);
+            Vector2 txtPos = (pos.ToVector2() + new Vector2(size.X / 2, 0)) - (new Vector2(textSize.X, _titleBar.Height / 4) * .5f);
 
             DrawString(text, txtPos, Color.Navy);
         }

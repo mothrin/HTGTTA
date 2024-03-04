@@ -19,6 +19,24 @@
 /processorParam:Quality=Best
 /build:Audio/Music/Drafty-Places.mp3
 
+#begin Audio/SFX/menu_cancel.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/SFX/menu_cancel.wav
+
+#begin Audio/SFX/menu_change.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/SFX/menu_change.wav
+
+#begin Audio/SFX/menu_select.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/SFX/menu_select.wav
+
 #begin Fonts/font.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor

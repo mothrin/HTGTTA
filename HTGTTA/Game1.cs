@@ -31,6 +31,8 @@ namespace HTGTTA
 
         IInputStateService inputService;
         IKeyboardStateManager kbState;
+        IMouseStateManager mouseStateManager;
+
         public Game1()
         {
             //1080p
@@ -56,7 +58,8 @@ namespace HTGTTA
 
             //input
             kbState = new KeyboardStateManager(this);
-            inputService = new InputHandlerService(this, kbState);
+            mouseStateManager = new MouseStateManager(this);
+            inputService = new InputHandlerService(this, kbState, mouseStateManager);
 
 
             //scenes
