@@ -40,7 +40,7 @@ namespace HTGTTA.Scenes
                 if (kbManager.KeyPress(Microsoft.Xna.Framework.Input.Keys.F1))
                     sceneManager.LoadScene("optionsScene");
 
-                if (kbManager.KeyPress(Microsoft.Xna.Framework.Input.Keys.Escape))
+                if (kbManager.KeyPress(Microsoft.Xna.Framework.Input.Keys.F2))
                     sceneManager.LoadScene("Game");
             }
 

@@ -173,8 +173,8 @@ namespace HTGTTA.Scenes
                     Name = "Bedside Table",
                     Interaction = new Dictionary<string, ObjectInterations>()
                     {
-                        {"Talk to bear", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Bear1,Name = "Bear" , Description = "Hello Mr Cluedo. How are you today?"}  },
-                        {"Look at board", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Board, Name= "Board" , Description = "Cute photos, this note seems to have a code, wonder what it does."} },
+                        {"Talk to bear", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Bear1,Name = "Bear" , Description = "Hello, Mr Cluedo. How are you today?"}  },
+                        {"Look at board", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Board, Name= "Board" , Description = "Cute photos, this note seems to have a code! 2215. wonder what it's for."} },
                         {"Open drawer", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Table, Name= "Drawer" , Description = "It needs a key to open."} },
                     },
                     Position = new Vector2(1284,348),
@@ -265,7 +265,7 @@ namespace HTGTTA.Scenes
 
             _backgroundTexture = Game.Content.Load<Texture2D>("Textures/backgrounds/background"); //background
 
-            _audio.PlaySong("Audio/Music/Drafty-Places", .05f); //music
+            _audio.PlaySong("Audio/Music/Drafty-Places", .005f); //music
 
             
 
@@ -348,6 +348,7 @@ namespace HTGTTA.Scenes
 
             if (Interactions.Count > 0)
             {
+
                 HUD.ShowInteractionOptionsWindow(Interactions);
             }
             else
