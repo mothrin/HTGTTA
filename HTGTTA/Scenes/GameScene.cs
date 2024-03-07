@@ -30,8 +30,8 @@ namespace HTGTTA.Scenes
 
         public List<Sprite> _inventory;
 
-        public bool laptopOpened;
-        public bool diaryRead;
+        public bool laptopOpened = false;
+        public bool DiaryOpen;
         public bool chairGot;
         public bool chairplaced;
         public bool boxOpened;
@@ -100,7 +100,7 @@ namespace HTGTTA.Scenes
                     {
                         {"Look at bed", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Bed,Name = "Bed", Description = "Maybe we should leave this be..." }  },
                         {"Go to bed", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Sleep,Name = "Bed", Description = "I'm so so tired. Should i just go back to bed?" }  },
-                        {"Read diary", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Diary, Name ="Diary",  Description = "I don't think i should read that." }  }
+                        {"Read diary", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Diary, Name ="Diary",  Description = "I don't think i should read that." }  }  
                     },
                     Position = new Vector2(1540,400),
                     Width = 278,
@@ -126,7 +126,7 @@ namespace HTGTTA.Scenes
                     Interaction = new Dictionary<string, ObjectInterations>()
                     {
                         {"Look at desk", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Desk,Name = "Desk", Description = "Hm, just loads of books." }  },
-                        {"Look at paper", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Paper,Name = "Paper", Description = "Just some homework, I think." }  },
+                        {"Look at chair", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Chair,Name = "Chair", Description = "Can't do anything with that." }  },
                         {"Open Laptop", new ObjectInterations(){ InteractionType = InteractionTypeEnum.LaptopCodeEnter, Name ="Laptop",  Description = "Needs a password. I don't remember what it as." }  }
                     },
                     Position = new Vector2(102,972),
@@ -159,7 +159,7 @@ namespace HTGTTA.Scenes
                     {
                         {"Open door", new ObjectInterations(){ InteractionType = InteractionTypeEnum.WarDoorOpen,Name = "Door",Description = "There are too many clothes here, I can't open the door.", }  },
                         {"Move clothes", new ObjectInterations(){ InteractionType = InteractionTypeEnum.ClothesMoved,Name = "Clothes", Description = "No point in moving these, waste of energy..." }  },
-                        {"Look in box", new ObjectInterations(){ InteractionType = InteractionTypeEnum.ChairPlaced,Name = "Box",  Description = "I can't reach that.",}  },
+                        {"Look in box", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Box,Name = "Box",  Description = "I can't reach that.",}  },
                     },
                     Position = new Vector2(858,30),
                     Width = 288,
@@ -263,7 +263,16 @@ namespace HTGTTA.Scenes
             // Create a new SpriteBatch, which can be used to draw textures.
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            _backgroundTexture = Game.Content.Load<Texture2D>("Textures/backgrounds/background"); //background
+            if (DiaryOpen)
+            {
+                _backgroundTexture = Game.Content.Load<Texture2D>("Textures/backgrounds/backgrounddiary"); //background
+            }
+            else
+            {
+                _backgroundTexture = Game.Content.Load<Texture2D>("Textures/backgrounds/background"); //background
+            }
+            
+
 
             _audio.PlaySong("Audio/Music/Drafty-Places", .005f); //music
 
@@ -315,6 +324,10 @@ namespace HTGTTA.Scenes
                     sceneManager.LoadScene("mainMenu");
             }
 
+
+            
+             _backgroundTexture = Game.Content.Load<Texture2D>("Textures/backgrounds/background"); //background
+           
         }
 
         /// This is called when the game should draw itself.
@@ -324,6 +337,15 @@ namespace HTGTTA.Scenes
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+
+            if (DiaryOpen)
+            {
+                _backgroundTexture = Game.Content.Load<Texture2D>("Textures/backgrounds/backgrounddiary"); //background
+            }
+            else
+            {
+                _backgroundTexture = Game.Content.Load<Texture2D>("Textures/backgrounds/background"); //background
+            }
 
             _spriteBatch.Draw(_backgroundTexture,
                 new Rectangle(0, 0, w, h),

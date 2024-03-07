@@ -76,7 +76,7 @@ namespace HTGTTA
         {
             sceneService.AddScene(new GameScene(this, "Game"));
             sceneService.AddScene(new MainMenu(this, "mainMenu"));
-            sceneService.AddScene(new Laptop(this, "laptop"));
+            sceneService.AddScene(new Options(this, "Options"));
 
 
 

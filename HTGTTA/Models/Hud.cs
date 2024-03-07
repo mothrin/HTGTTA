@@ -21,6 +21,7 @@ namespace HTGTTA.Models
        
         Texture2D _bgTexture;
         Texture2D _titleBar;
+        Texture2D _backgroundTexture;
 
         Color EnterPin;
 
@@ -41,9 +42,19 @@ namespace HTGTTA.Models
 
         public Dictionary<string, ObjectInterations> CurrentInteractions = null;
 
-        protected bool ShowKeyPad = false;
+        protected bool OpenLaptop = false;
 
         protected bool LaptopLocked = true;
+
+        protected bool DiaryOpen = false;
+
+        protected bool ChairGot = false;
+
+        protected bool laptopOpened;
+        protected bool ReadDiary = false;
+
+
+        protected bool sleepOptions;
 
         Texture2D laptopBorder;
 
@@ -88,7 +99,11 @@ namespace HTGTTA.Models
                 {
                     interactionToDo = null;
                 }
-
+                if(DiaryOpen)
+                {
+                    _backgroundTexture = Game.Content.Load<Texture2D>("Textures/backgrounds/backgrounddiary");
+                    _audio.PlaySFX("Audio/SFX/book_flip2");
+                }
                 //pin code
                 foreach (var lapTopKey in keysBounds.Keys)
                 {
@@ -116,7 +131,7 @@ namespace HTGTTA.Models
                             }
                             else if(lapTopKey == "X")
                             {
-                                ShowKeyPad = false;
+                                OpenLaptop = false;
                                 interactionToDo = null;
                             }
                             else if (lapTopKey == "Ent.")
@@ -124,7 +139,7 @@ namespace HTGTTA.Models
 
                                 if (currentPinValue == "2215") // correct code
                                 {
-                                    ShowKeyPad = false;
+                                    OpenLaptop = false;
                                     interactionToDo = null;
                                     _audio.PlaySFX("Audio/SFX/menu_change");
                                     LaptopLocked = false;
@@ -190,7 +205,8 @@ namespace HTGTTA.Models
                     DoInteraction(interactionToDo, winPos.Y + winSize.Y);
                 }
 
-                if (ShowKeyPad)
+                //puzzles
+                if (OpenLaptop)
                 {
                     DrawLaptopKeyPad();
                 }
@@ -200,11 +216,14 @@ namespace HTGTTA.Models
                     DrawLaptop();
                 }
 
+                if(DiaryOpen)
+                {
+                    DiaryRead();
+                }
+
                 _spritebatch.End();
             }
         }
-
-
         protected void DoInteraction(ObjectInterations interaction, int startYPos)
         {
             string textToPrint = string.Empty;
@@ -220,15 +239,20 @@ namespace HTGTTA.Models
                 case InteractionTypeEnum.LaptopCodeEnter:
                     textToPrint = interaction.Description;
                     interaction.InteractionType = InteractionTypeEnum.LaptopCodeEnter;
-                    if (!ShowKeyPad)
+                    if (!OpenLaptop)
                     {
                         currentPinValue = string.Empty; // reset the pin value.
                     }
-                    ShowKeyPad = true;
+                    OpenLaptop = true;
                     break;
-                case InteractionTypeEnum.Paper:
+                case InteractionTypeEnum.Chair:
                     textToPrint = interaction.Description;
-                    interaction.InteractionType = InteractionTypeEnum.Paper;
+                    interaction.InteractionType = InteractionTypeEnum.Chair;
+                    if (ReadDiary)
+                    {
+                        ChairGot = true; 
+                        _backgroundTexture = Game.Content.Load<Texture2D>("Textures/backgrounds/backgroundchair"); //background
+                    }
                     break;
                 //door
                 case InteractionTypeEnum.Door:
@@ -256,10 +280,15 @@ namespace HTGTTA.Models
                 case InteractionTypeEnum.Diary:
                     textToPrint = interaction.Description;
                     interaction.InteractionType = InteractionTypeEnum.Diary;
+                    if (laptopOpened)
+                    {
+                        DiaryOpen = true;
+                    }
                     break;
                 case InteractionTypeEnum.Sleep:
                     textToPrint = interaction.Description;
                     interaction.InteractionType = InteractionTypeEnum.Sleep;
+                    sleepOptions = true;
                     break;
 
                 //wardrobe
@@ -267,9 +296,13 @@ namespace HTGTTA.Models
                     textToPrint = interaction.Description;
                     interaction.InteractionType = InteractionTypeEnum.WarDoorOpen;
                     break;
-                case InteractionTypeEnum.ChairPlaced:
+                case InteractionTypeEnum.Box:
                     textToPrint = interaction.Description;
-                    interaction.InteractionType = InteractionTypeEnum.ChairPlaced;
+                    interaction.InteractionType = InteractionTypeEnum.Box;
+                    if (ChairGot)
+                    {
+                        interaction.InteractionType = InteractionTypeEnum.Chair;
+                    }
                     break;
                 case InteractionTypeEnum.ClothesMoved:
                     textToPrint = interaction.Description;
@@ -416,7 +449,7 @@ namespace HTGTTA.Models
             }
             if (inputService.KeyboardManager.KeyPress(Keys.F4)) //close laptop
             {
-                ShowKeyPad = false;
+                OpenLaptop = false;
                 interactionToDo = null;
                 UIup = false;
             }
@@ -439,9 +472,36 @@ namespace HTGTTA.Models
 
             if (inputService.KeyboardManager.KeyPress(Keys.F4)) //close laptop
             {
-                LaptopLocked = true;
+                LaptopLocked= true;
+                laptopOpened = true;
                 UIup = false;
             }
+
+        }
+        protected void DiaryRead()
+        {
+            Point keySize = new Point(60, 60);
+            Point keyPos = new Point(20, 20);
+
+            Color keyColor = Color.DimGray;
+            Color keyBorder = Color.Black;
+            Vector2 strSize = _font.MeasureString("X");
+
+            Rectangle laptopRec = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+            _spritebatch.Draw(Game.Content.Load<Texture2D>("Textures/Puzzle UI/laptop"), laptopRec, Color.White);
+
+            UIup = true;
+
+            if (inputService.KeyboardManager.KeyPress(Keys.F4)) //close diary
+            {
+                DiaryOpen = false;
+                ReadDiary = true;
+                UIup = false;
+                interactionToDo = null;
+            }
+
+            _backgroundTexture = Game.Content.Load<Texture2D>("Textures/backgrounds/backgrounddiary"); //background
+
 
         }
         public void ShowInteractionOptionsWindow(Dictionary<Sprite, Dictionary<string, ObjectInterations>> interactions)
