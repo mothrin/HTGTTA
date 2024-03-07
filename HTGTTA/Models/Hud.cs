@@ -18,7 +18,7 @@ namespace HTGTTA.Models
     {
         SpriteBatch _spritebatch;
         SpriteFont _font;
-       
+
         Texture2D _bgTexture;
         Texture2D _titleBar;
         Texture2D _backgroundTexture;
@@ -31,7 +31,7 @@ namespace HTGTTA.Models
         #region packages
         private ISceneService sceneService { get { return Game.Services.GetService<ISceneService>(); } }
         private IKeyboardStateManager _kbState { get { return Game.Services.GetService<IInputStateService>().KeyboardManager; } }
-        private IMouseStateManager _msState {get { return Game.Services.GetService< IInputStateService>().MouseManager; } }
+        private IMouseStateManager _msState { get { return Game.Services.GetService<IInputStateService>().MouseManager; } }
         private IInputStateService inputService { get { return Game.Services.GetService<IInputStateService>(); } }
         private IAudioService _audio { get { return Game.Services.GetService<IAudioService>(); } }
         #endregion
@@ -39,8 +39,11 @@ namespace HTGTTA.Models
         protected string currentPinValue = string.Empty;
 
         Dictionary<string, Rectangle> keysBounds = new Dictionary<string, Rectangle>();
+        Dictionary<string, Rectangle> Options = new Dictionary<string, Rectangle>();
 
         public Dictionary<string, ObjectInterations> CurrentInteractions = null;
+
+        protected int puzzleNum;
 
         protected bool OpenLaptop = false;
 
@@ -49,6 +52,8 @@ namespace HTGTTA.Models
         protected bool DiaryOpen = false;
 
         protected bool ChairGot = false;
+
+        protected bool Choice = false;
 
         protected bool laptopOpened;
         protected bool ReadDiary = false;
@@ -62,7 +67,7 @@ namespace HTGTTA.Models
 
         public Hud(Game game) : base(game)
         {
-            
+
         }
 
         protected override void LoadContent()
@@ -99,10 +104,10 @@ namespace HTGTTA.Models
                 {
                     interactionToDo = null;
                 }
-                if(DiaryOpen)
+                if (DiaryOpen)
                 {
                     _backgroundTexture = Game.Content.Load<Texture2D>("Textures/backgrounds/backgrounddiary");
-                    _audio.PlaySFX("Audio/SFX/book_flip2");
+                    //_audio.PlaySFX("Audio/SFX/book_flip2");
                 }
                 //pin code
                 foreach (var lapTopKey in keysBounds.Keys)
@@ -129,7 +134,7 @@ namespace HTGTTA.Models
                                 currentPinValue = currentPinValue.Substring(0, currentPinValue.Length - 1);
                                 _audio.PlaySFX("Audio/SFX/menu_select");
                             }
-                            else if(lapTopKey == "X")
+                            else if (lapTopKey == "X")
                             {
                                 OpenLaptop = false;
                                 interactionToDo = null;
@@ -151,7 +156,7 @@ namespace HTGTTA.Models
                                     _audio.PlaySFX("Audio/SFX/menu_cancel");
                                 }
                             }
-                            else 
+                            else
                             {
                                 _audio.PlaySFX("Audio/SFX/menu_cancel");
                             }
@@ -173,7 +178,7 @@ namespace HTGTTA.Models
                 DrawWindowBase(winSize,
                    winPos,
                     new Color(.5f, .5f, .5f, .5f),
-                    Color.Black,2,
+                    Color.Black, 2,
                     "What do you want to do?",
                     new Color(1f, 1f, 1.25f, 1f));
                 //size, position ,bgColour, borderColour, borderThickness, title,titleBgColour
@@ -216,9 +221,13 @@ namespace HTGTTA.Models
                     DrawLaptop();
                 }
 
-                if(DiaryOpen)
+                if (DiaryOpen)
                 {
                     DiaryRead();
+                }
+                if (Choice)
+                {
+                    YesOrNo();
                 }
 
                 _spritebatch.End();
@@ -247,13 +256,17 @@ namespace HTGTTA.Models
                     break;
                 case InteractionTypeEnum.Chair:
                     textToPrint = interaction.Description;
-                    interaction.InteractionType = InteractionTypeEnum.Chair;
+
                     if (ReadDiary)
                     {
-                        ChairGot = true; 
-                        _backgroundTexture = Game.Content.Load<Texture2D>("Textures/backgrounds/backgroundchair"); //background
+                        textToPrint = "Maybe i could use this for something after all. Do i take it?";
+                        Choice = true;
+                        //ChairGot = true; 
+                        //_backgroundTexture = Game.Content.Load<Texture2D>("Textures/backgrounds/backgroundchair"); //background
                     }
+                    interaction.InteractionType = InteractionTypeEnum.Chair;
                     break;
+
                 //door
                 case InteractionTypeEnum.Door:
                     textToPrint = interaction.Description;
@@ -263,6 +276,7 @@ namespace HTGTTA.Models
                     textToPrint = interaction.Description;
                     interaction.InteractionType = InteractionTypeEnum.DoorCode;
                     break;
+
                 //window
                 case InteractionTypeEnum.Window:
                     textToPrint = interaction.Description;
@@ -272,6 +286,7 @@ namespace HTGTTA.Models
                     textToPrint = interaction.Description;
                     interaction.InteractionType = InteractionTypeEnum.WindowOpen;
                     break;
+
                 //bed
                 case InteractionTypeEnum.Bed:
                     textToPrint = interaction.Description;
@@ -288,7 +303,7 @@ namespace HTGTTA.Models
                 case InteractionTypeEnum.Sleep:
                     textToPrint = interaction.Description;
                     interaction.InteractionType = InteractionTypeEnum.Sleep;
-                    sleepOptions = true;
+                    Choice = true;
                     break;
 
                 //wardrobe
@@ -319,7 +334,24 @@ namespace HTGTTA.Models
                     interaction.InteractionType = InteractionTypeEnum.Table;
                     break;
                 case InteractionTypeEnum.Bear1:
-                    textToPrint = interaction.Description;
+                    switch (puzzleNum)
+                    {
+                        case 0:
+                            textToPrint = interaction.Description;
+                            break;
+                        case 1:
+                            textToPrint = "Cludeo: You're best friend knew everything about you, maybe you should read her messages again.";
+                            break;
+                        case 2:
+                            textToPrint = "Cludeo: Look at the photos in the diary more closely, there might be something you're missing.";
+                            break;
+                        case 3:
+                            textToPrint = "Cludeo: Pretty sure you put a key in that box, maybe you should try opening something.";
+                            break;
+                        case 4:
+                            textToPrint = "Cludeo: There is a code for the door, retrace you're steps. There is probably something you're missing...";
+                            break;
+                    }
                     interaction.InteractionType = InteractionTypeEnum.Bear1;
                     break;
                 case InteractionTypeEnum.DrawsOpen:
@@ -382,11 +414,10 @@ namespace HTGTTA.Models
             Point size = new Point(360, 64);
             //Point pos = new Point(765, 630);
 
-            //DrawWindowBase(size, pos, Color.Silver, Color.Black, 2, "Laptop", new Color(.2f,.2f,.2f,1), Color.Silver);
 
             // Characters entered..
             Point textBoxPos = new Point(775, 625);
-            DrawBox(new Point(size.X,size.Y), textBoxPos, Color.DimGray, Color.Black, 1);
+            DrawBox(new Point(size.X, size.Y), textBoxPos, Color.DimGray, Color.Black, 1);
 
             string str = currentPinValue;
 
@@ -396,7 +427,7 @@ namespace HTGTTA.Models
             }
 
             Vector2 strSize = _font.MeasureString(str);
-            DrawString(str, (textBoxPos + new Point(12, (int)strSize.Y/4)).ToVector2(), EnterPin);
+            DrawString(str, (textBoxPos + new Point(12, (int)strSize.Y / 4)).ToVector2(), EnterPin);
 
             // keys 0-9 + enter and delete
             Point keySize = new Point(112, 40);
@@ -455,16 +486,8 @@ namespace HTGTTA.Models
             }
 
         }
-
         protected void DrawLaptop()
         {
-            Point keySize = new Point(60, 60);
-            Point keyPos = new Point(20,20);
-
-            Color keyColor = Color.DimGray;
-            Color keyBorder = Color.Black;
-            Vector2 strSize = _font.MeasureString("X");
-
             Rectangle laptopRec = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
             _spritebatch.Draw(Game.Content.Load<Texture2D>("Textures/Puzzle UI/laptop"), laptopRec, Color.White);
 
@@ -472,21 +495,15 @@ namespace HTGTTA.Models
 
             if (inputService.KeyboardManager.KeyPress(Keys.F4)) //close laptop
             {
-                LaptopLocked= true;
+                LaptopLocked = true;
                 laptopOpened = true;
                 UIup = false;
+                puzzleNum = 1;
             }
 
         }
         protected void DiaryRead()
         {
-            Point keySize = new Point(60, 60);
-            Point keyPos = new Point(20, 20);
-
-            Color keyColor = Color.DimGray;
-            Color keyBorder = Color.Black;
-            Vector2 strSize = _font.MeasureString("X");
-
             Rectangle laptopRec = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
             _spritebatch.Draw(Game.Content.Load<Texture2D>("Textures/Puzzle UI/laptop"), laptopRec, Color.White);
 
@@ -496,12 +513,92 @@ namespace HTGTTA.Models
             {
                 DiaryOpen = false;
                 ReadDiary = true;
+                puzzleNum = 2;
                 UIup = false;
                 interactionToDo = null;
             }
 
             _backgroundTexture = Game.Content.Load<Texture2D>("Textures/backgrounds/backgrounddiary"); //background
 
+
+        }
+
+
+        protected void YesOrNo()
+        {
+
+            Point keySize = new Point(400, 100);
+            Point keyStartPos = new Point((GraphicsDevice.Viewport.Width / 2) - 425, 500);
+            string keyText = "";
+
+
+
+            //DrawBox(keySize, keyPos + new Point(440,0), keyColor, keyBorder, 1);
+            //DrawString("No", (keyPos + new Point(638,0)).ToVector2(), Color.Navy);
+
+            Vector2 strSize = _font.MeasureString(keyText);
+            for (int i = 0; i < 2; i++)
+            {
+                Point keyPos = keyStartPos;
+
+                Color keyColor = Color.Lavender;
+                Color keyBorder = Color.Navy;
+                if (i == 0)
+                {
+                    keyText = "Yes";
+                }
+                if (i == 1)
+                {
+                    keyText = "No";
+                    keyPos.X += (keySize.X + 50);
+                }
+
+                if (!Options.ContainsKey(keyText))
+                {
+                    Options.Add(keyText, new Rectangle(keyPos.X, keyPos.Y, 400, 100));
+                }
+                if (_msState.PositionRect.Intersects(Options[keyText])) // Check mouse over and if it is button click event.
+                {
+                    keyColor = Color.LavenderBlush;
+                    keyBorder = Color.Navy;
+                }
+
+                strSize = _font.MeasureString(keyText) / 2;
+
+                DrawBox(keySize, keyPos, keyColor, keyBorder, 1);
+                DrawString(keyText, (keyPos + new Point(200,50)).ToVector2() - strSize, Color.Navy);
+
+                foreach (var button in Options.Keys)
+                {
+                    if (_msState.PositionRect.Intersects(Options[button]) && _msState.LeftClicked)
+                    {
+                        if (button == "Yes")
+                        { 
+                            //end game
+                        }
+                        if (button == "No")
+                        {
+                            Choice = false;
+                            interactionToDo = null;
+                        }
+                    }
+                }
+            }
+
+
+
+
+
+
+
+
+        }
+        protected void Sleep()
+        {
+
+        }
+        protected void Chair()
+        {
 
         }
         public void ShowInteractionOptionsWindow(Dictionary<Sprite, Dictionary<string, ObjectInterations>> interactions)

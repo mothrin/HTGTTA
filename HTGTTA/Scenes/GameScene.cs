@@ -95,7 +95,6 @@ namespace HTGTTA.Scenes
                 new Sprite(Game, "Textures/Objects/Blank")
                 {
                     Name = "Bed",
-                    Description = "We should probably leave that be...",
                     Interaction = new Dictionary<string, ObjectInterations>()
                     {
                         {"Look at bed", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Bed,Name = "Bed", Description = "Maybe we should leave this be..." }  },
@@ -112,13 +111,17 @@ namespace HTGTTA.Scenes
                 new Sprite(Game, "Textures/Objects/Blank")
                 {
                     Name = "Bed",
+                    Interaction = new Dictionary<string, ObjectInterations> ()
+                    {
+                        {"Look at bed", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Bed,Name = "Bed", Description = "Maybe we should leave this be..." }  },
+
+                    },
                     Position = new Vector2(1580,527),
                     Width = 278,
                     Height = 328,
                     RenderBounds = true, //for bounds
                     RenderInteractionBounds = true,
                     RenderCoords = true,
-                    Interaction = nothingToDo,
                 },
                 new Sprite (Game, "Textures/Objects/Blank")
                 {
@@ -127,7 +130,7 @@ namespace HTGTTA.Scenes
                     {
                         {"Look at desk", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Desk,Name = "Desk", Description = "Hm, just loads of books." }  },
                         {"Look at chair", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Chair,Name = "Chair", Description = "Can't do anything with that." }  },
-                        {"Open Laptop", new ObjectInterations(){ InteractionType = InteractionTypeEnum.LaptopCodeEnter, Name ="Laptop",  Description = "Needs a password. I don't remember what it as." }  }
+                        {"Open Laptop", new ObjectInterations(){ InteractionType = InteractionTypeEnum.LaptopCodeEnter, Name ="Laptop",  Description = "Needs a password. I don't remember what it as." }  }, 
                     },
                     Position = new Vector2(102,972),
                     Width = 570,

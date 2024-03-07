@@ -90,7 +90,7 @@ namespace HTGTTA
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            sceneService.LoadScene("Game");
+            sceneService.LoadScene("mainMenu");
 
             base.LoadContent();
         }

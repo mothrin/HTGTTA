@@ -19,11 +19,11 @@
 /processorParam:Quality=Best
 /build:Audio/Music/Drafty-Places.mp3
 
-#begin Audio/SFX/book_flip.2.ogg
-/importer:OggImporter
-/processor:SongProcessor
+#begin Audio/SFX/book_flip.2.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:Audio/SFX/book_flip.2.ogg
+/build:Audio/SFX/book_flip.2.wav
 
 #begin Audio/SFX/menu_cancel.wav
 /importer:WavImporter

@@ -21,6 +21,7 @@ namespace HTGTTA.Enums
         DiaryOpen,
         Box,
         Chair,
+        TakeChair,
         ClothesMoved,
         WarDoorOpen,
         Door,
