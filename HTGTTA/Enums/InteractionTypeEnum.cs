@@ -10,12 +10,7 @@ namespace HTGTTA.Enums
     {
         Nothing,
         LaptopCodeEnter,
-        Bear1,
-        Bear2,
-        Bear3,
-        Bear4,
-        Bear5,
-        Bear6,
+        Bear,
         DrawsOpen,
         DrawsClose,
         DiaryOpen,

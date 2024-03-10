@@ -20,7 +20,10 @@ namespace HTGTTA.Scenes
         protected SpriteFont _font;
 
         private Texture2D _backgroundTexture;
-        
+        public Texture2D chairTexture;
+
+
+
 
         public Dictionary<Sprite, Dictionary<string, ObjectInterations>> Interactions = new Dictionary<Sprite, Dictionary<string, ObjectInterations>>();
 
@@ -28,7 +31,7 @@ namespace HTGTTA.Scenes
 
         public List<Sprite> _items;
 
-        public List<Sprite> _inventory;
+        private List<Object> _objects;
 
         public bool laptopOpened = false;
         public bool DiaryOpen;
@@ -41,20 +44,24 @@ namespace HTGTTA.Scenes
         public bool clothesMoved;
 
 
+
         Vector2 lastPosition; //collision
 
+
+        #region packages
         // packages
         /// <summary>   The input service. </summary>
         IInputStateService inputService { get { return Game.Services.GetService<IInputStateService>(); } }
         /// <summary>   State of the kB. </summary>
         IKeyboardStateManager kbState { get { return inputService.KeyboardManager; } }
+        #endregion
 
-        protected Hud HUD;
 
         private IAudioService _audio { get { return Game.Services.GetService<IAudioService>(); } }
 
         ISceneService sceneService { get { return Game.Services.GetService<ISceneService>(); } }
 
+        protected Hud HUD;
 
         public GameScene(Game game, string name) : base(game, name)
         {
@@ -114,7 +121,7 @@ namespace HTGTTA.Scenes
                     Interaction = new Dictionary<string, ObjectInterations> ()
                     {
                         {"Look at bed", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Bed,Name = "Bed", Description = "Maybe we should leave this be..." }  },
-
+                        {"Go to bed", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Sleep,Name = "Bed", Description = "I'm so so tired. Should i just go back to bed?" }  }
                     },
                     Position = new Vector2(1580,527),
                     Width = 278,
@@ -176,7 +183,7 @@ namespace HTGTTA.Scenes
                     Name = "Bedside Table",
                     Interaction = new Dictionary<string, ObjectInterations>()
                     {
-                        {"Talk to bear", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Bear1,Name = "Bear" , Description = "Hello, Mr Cluedo. How are you today?"}  },
+                        {"Talk to bear", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Bear,Name = "Bear" , Description = "Hello, Mr Cluedo. How are you today?"}  },
                         {"Look at board", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Board, Name= "Board" , Description = "Cute photos, this note seems to have a code! 2215. wonder what it's for."} },
                         {"Open drawer", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Table, Name= "Drawer" , Description = "It needs a key to open."} },
                     },
@@ -242,6 +249,33 @@ namespace HTGTTA.Scenes
             };
             Components.Add(player);
 
+
+            chairTexture = Game.Content.Load<Texture2D>("Textures/Objects/Chair");
+            Texture2D bookTexture = Game.Content.Load<Texture2D>("Textures/Objects/books");
+            _objects = new List<Object>()
+            {
+                new Object(Game,chairTexture)
+                {
+                    Name = "Chair",
+                    Position = new Vector2(275,790),
+                    Width = 220,
+                    Height = 185,
+                },
+                new Object(Game,bookTexture)
+                {
+                    Name = "Books",
+                    Position = new Vector2(115,915),
+                    Width = 140,
+                    Height = 130,
+                }
+
+            };
+
+            foreach (var thing in _objects)
+            {
+                Components.Add(thing);
+            }
+
             // Added last so it is rendered over the top of all others
             HUD = new Hud(Game);
             Components.Add(HUD);
@@ -265,18 +299,7 @@ namespace HTGTTA.Scenes
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            if (DiaryOpen)
-            {
-                _backgroundTexture = Game.Content.Load<Texture2D>("Textures/backgrounds/backgrounddiary"); //background
-            }
-            else
-            {
-                _backgroundTexture = Game.Content.Load<Texture2D>("Textures/backgrounds/background"); //background
-            }
-            
-
-
+    
             _audio.PlaySong("Audio/Music/Drafty-Places", .005f); //music
 
             
@@ -324,12 +347,8 @@ namespace HTGTTA.Scenes
             if (State == SceneStateEnum.Loaded)
             {
                 if (kbManager.KeyPress(Microsoft.Xna.Framework.Input.Keys.F2))
-                    sceneManager.LoadScene("mainMenu");
+                    sceneManager.LoadScene("Options");
             }
-
-
-            
-             _backgroundTexture = Game.Content.Load<Texture2D>("Textures/backgrounds/background"); //background
            
         }
 
@@ -347,7 +366,7 @@ namespace HTGTTA.Scenes
             }
             else
             {
-                _backgroundTexture = Game.Content.Load<Texture2D>("Textures/backgrounds/background"); //background
+                _backgroundTexture = Game.Content.Load<Texture2D>("Textures/backgrounds/background2"); //background
             }
 
             _spriteBatch.Draw(_backgroundTexture,

@@ -43,7 +43,7 @@ namespace HTGTTA.Models
 
         public Dictionary<string, ObjectInterations> CurrentInteractions = null;
 
-        protected int puzzleNum;
+        protected int puzzleNum; //hints
 
         protected bool OpenLaptop = false;
 
@@ -58,12 +58,13 @@ namespace HTGTTA.Models
         protected bool laptopOpened;
         protected bool ReadDiary = false;
 
-
+        protected string typeChoice;
         protected bool sleepOptions;
 
-        Texture2D laptopBorder;
+        public Texture2D chairTexture { get; set; }
 
-        protected bool UIup;
+
+    protected bool UIup; //changes interaction key
 
         public Hud(Game game) : base(game)
         {
@@ -260,9 +261,8 @@ namespace HTGTTA.Models
                     if (ReadDiary)
                     {
                         textToPrint = "Maybe i could use this for something after all. Do i take it?";
+                        typeChoice = "chair";
                         Choice = true;
-                        //ChairGot = true; 
-                        //_backgroundTexture = Game.Content.Load<Texture2D>("Textures/backgrounds/backgroundchair"); //background
                     }
                     interaction.InteractionType = InteractionTypeEnum.Chair;
                     break;
@@ -303,6 +303,7 @@ namespace HTGTTA.Models
                 case InteractionTypeEnum.Sleep:
                     textToPrint = interaction.Description;
                     interaction.InteractionType = InteractionTypeEnum.Sleep;
+                    typeChoice = "Sleep";
                     Choice = true;
                     break;
 
@@ -333,26 +334,26 @@ namespace HTGTTA.Models
                     textToPrint = interaction.Description;
                     interaction.InteractionType = InteractionTypeEnum.Table;
                     break;
-                case InteractionTypeEnum.Bear1:
+                case InteractionTypeEnum.Bear:
                     switch (puzzleNum)
                     {
                         case 0:
                             textToPrint = interaction.Description;
                             break;
                         case 1:
-                            textToPrint = "Cludeo: You're best friend knew everything about you, maybe you should read her messages again.";
+                            textToPrint = "Cludeo: Your best friend knew everything about you, maybe you should read her messages again.";
                             break;
                         case 2:
                             textToPrint = "Cludeo: Look at the photos in the diary more closely, there might be something you're missing.";
                             break;
                         case 3:
-                            textToPrint = "Cludeo: Pretty sure you put a key in that box, maybe you should try opening something.";
+                            textToPrint = "Cludeo: Pretty sure you put a key in that box when you were alive, maybe you should try opening something with it.";
                             break;
                         case 4:
                             textToPrint = "Cludeo: There is a code for the door, retrace you're steps. There is probably something you're missing...";
                             break;
                     }
-                    interaction.InteractionType = InteractionTypeEnum.Bear1;
+                    interaction.InteractionType = InteractionTypeEnum.Bear;
                     break;
                 case InteractionTypeEnum.DrawsOpen:
                     textToPrint = interaction.Description;
@@ -574,7 +575,15 @@ namespace HTGTTA.Models
                     {
                         if (button == "Yes")
                         { 
-                            //end game
+                            if(typeChoice=="Sleep")
+                            {
+                                //end game
+                            }
+                            if(typeChoice=="Chair")
+                            {
+                                ChairGot = true;
+                                interactionToDo = null;
+                            }
                         }
                         if (button == "No")
                         {
@@ -584,26 +593,10 @@ namespace HTGTTA.Models
                     }
                 }
             }
-
-
-
-
-
-
-
-
-        }
-        protected void Sleep()
-        {
-
-        }
-        protected void Chair()
-        {
-
         }
         public void ShowInteractionOptionsWindow(Dictionary<Sprite, Dictionary<string, ObjectInterations>> interactions)
         {
-            Point winSize = new Point(500, 100);
+            Point winSize = new Point(600, 100);
             Point winPos = new Point(8, 8);
 
             _spritebatch.Begin();
