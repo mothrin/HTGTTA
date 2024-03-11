@@ -107,8 +107,8 @@ namespace HTGTTA.Models
                 }
                 if (DiaryOpen)
                 {
-                    _backgroundTexture = Game.Content.Load<Texture2D>("Textures/backgrounds/backgrounddiary");
-                    //_audio.PlaySFX("Audio/SFX/book_flip2");
+                    //_backgroundTexture = Game.Content.Load<Texture2D>("Textures/backgrounds/backgrounddiary");
+                    _audio.PlaySFX("Audio/SFX/book_flip2");
                 }
                 //pin code
                 foreach (var lapTopKey in keysBounds.Keys)
@@ -481,7 +481,7 @@ namespace HTGTTA.Models
                 DrawBox(keySize, keyPos + new Point(0, 50), keyColor, keyBorder, 1);
                 DrawString(keyText, (keyPos + new Point(56, 64)).ToVector2() - strSize, Color.Gray);
             }
-            if (inputService.KeyboardManager.KeyPress(Keys.F4)) //close laptop
+            if (inputService.KeyboardManager.KeyPress(Keys.Q)) //close laptop
             {
                 OpenLaptop = false;
                 interactionToDo = null;
@@ -499,7 +499,7 @@ namespace HTGTTA.Models
 
             UIup = true;
 
-            if (inputService.KeyboardManager.KeyPress(Keys.F4)) //close laptop
+            if (inputService.KeyboardManager.KeyPress(Keys.Q)) //close laptop
             {
                 OpenLaptop = false;
                 interactionToDo = null;
@@ -512,13 +512,13 @@ namespace HTGTTA.Models
             Rectangle laptopRec = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
             _spritebatch.Draw(Game.Content.Load<Texture2D>("Textures/Puzzle UI/laptop"), laptopRec, Color.White);
 
+            puzzleNum = 2;
+            ReadDiary = true;
             UIup = true;
 
-            if (inputService.KeyboardManager.KeyPress(Keys.F4)) //close diary
+            if (inputService.KeyboardManager.KeyPress(Keys.Q)) //close diary
             {
                 DiaryOpen = false;
-                ReadDiary = true;
-                puzzleNum = 2;
                 UIup = false;
                 interactionToDo = null;
             }
@@ -625,7 +625,7 @@ namespace HTGTTA.Models
             {
                 if (UIup)
                 {
-                    text = "Press to F4 to leave";
+                    text = "Press to Q to leave";
                 }
                 else
                 {

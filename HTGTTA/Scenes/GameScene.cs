@@ -346,7 +346,7 @@ namespace HTGTTA.Scenes
             }
             if (State == SceneStateEnum.Loaded)
             {
-                if (kbManager.KeyPress(Microsoft.Xna.Framework.Input.Keys.F2))
+                if (kbManager.KeyPress(Microsoft.Xna.Framework.Input.Keys.Escape))
                     sceneManager.LoadScene("Options");
             }
            
