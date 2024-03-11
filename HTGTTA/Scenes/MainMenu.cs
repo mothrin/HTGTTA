@@ -15,7 +15,6 @@ namespace HTGTTA.Scenes
 {
     public class MainMenu : SceneFadeBase
     {
-        SpriteBatch _spriteBatch;
 
         Texture2D _bgTexture;
         Texture2D _titleBar;
@@ -42,9 +41,10 @@ namespace HTGTTA.Scenes
         }
         protected override void LoadContent()
         {
-            _spriteBatch = new SpriteBatch(GraphicsDevice); // for screen switching
+            // = new SpriteBatch(GraphicsDevice); // for screen switching
             _font = Game.Content.LoadLocalized<SpriteFont>("Fonts/UIFont");
             //_spritebatch = new SpriteBatch(GraphicsDevice); // for ui
+            base.LoadContent();
         }
 
         public override void Update(GameTime gameTime)
@@ -82,7 +82,7 @@ namespace HTGTTA.Scenes
             base.Draw(gameTime);
 
 
-            //DrawFader(gameTime);
+            DrawFader(gameTime);
         }
 
         public void MenuButtons()
@@ -140,7 +140,7 @@ namespace HTGTTA.Scenes
                         }
                         if (button == "Options")
                         {
-                            sceneManager.LoadScene("optionsScene");
+                            sceneManager.LoadScene("Options");
                         }
                         if (button == "Quit")
                         {

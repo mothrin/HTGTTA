@@ -145,8 +145,7 @@ namespace HTGTTA.Models
 
                                 if (currentPinValue == "2215") // correct code
                                 {
-                                    OpenLaptop = false;
-                                    interactionToDo = null;
+                                   
                                     _audio.PlaySFX("Audio/SFX/menu_change");
                                     LaptopLocked = false;
 
@@ -214,13 +213,16 @@ namespace HTGTTA.Models
                 //puzzles
                 if (OpenLaptop)
                 {
-                    DrawLaptopKeyPad();
+                    if (LaptopLocked)
+                    {
+                        DrawLaptopKeyPad();
+                    }
+                    if (!LaptopLocked)
+                    {
+                        DrawLaptop();
+                    }
                 }
 
-                if (!LaptopLocked)
-                {
-                    DrawLaptop();
-                }
 
                 if (DiaryOpen)
                 {
@@ -492,14 +494,16 @@ namespace HTGTTA.Models
             Rectangle laptopRec = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
             _spritebatch.Draw(Game.Content.Load<Texture2D>("Textures/Puzzle UI/laptop"), laptopRec, Color.White);
 
+            laptopOpened = true;
+            puzzleNum = 1;
+
             UIup = true;
 
             if (inputService.KeyboardManager.KeyPress(Keys.F4)) //close laptop
             {
-                LaptopLocked = true;
-                laptopOpened = true;
+                OpenLaptop = false;
+                interactionToDo = null;
                 UIup = false;
-                puzzleNum = 1;
             }
 
         }
