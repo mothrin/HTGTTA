@@ -18,11 +18,10 @@ namespace HTGTTA.Scenes
 
 
         protected SpriteFont _font;
+        protected SpriteFont _uiFont;
 
         private Texture2D _backgroundTexture;
         public Texture2D chairTexture;
-
-
 
 
         public Dictionary<Sprite, Dictionary<string, ObjectInterations>> Interactions = new Dictionary<Sprite, Dictionary<string, ObjectInterations>>();
@@ -62,6 +61,8 @@ namespace HTGTTA.Scenes
         ISceneService sceneService { get { return Game.Services.GetService<ISceneService>(); } }
 
         protected Hud HUD;
+        protected GamePlayTimer GamePlayTimer;
+        protected bool ConfirmGameExit = false;
 
         public GameScene(Game game, string name) : base(game, name)
         {
@@ -280,7 +281,18 @@ namespace HTGTTA.Scenes
             HUD = new Hud(Game);
             Components.Add(HUD);
 
+            GamePlayTimer = new GamePlayTimer(Game, new System.TimeSpan(0,15,0));
+            Components.Add(GamePlayTimer);
+
+            GamePlayTimer.StartTimer();
+
             base.LoadScene();
+        }
+
+        public override void UnloadScene()
+        {
+            GamePlayTimer.StopTimer();
+            base.UnloadScene();
         }
 
         /// Allows the game to perform any initialization it needs to before starting to run.
@@ -320,7 +332,6 @@ namespace HTGTTA.Scenes
 
         public override void Update(GameTime gameTime)
         {
-
             if (State == SceneStateEnum.Loaded)
             {
                 lastPosition = player.Position;
@@ -330,26 +341,50 @@ namespace HTGTTA.Scenes
             
             if (State == SceneStateEnum.Loaded)
             {
-                foreach (var item in _items)
-                {
+                // Disable the player when the game is paused so they can't move about..
+                player.Enabled = !GamePlayTimer.IsPaused && !ConfirmGameExit;
 
-                    if (player.Bounds.Intersects(item.Bounds))
+                if (!GamePlayTimer.IsPaused)
+                {
+                    foreach (var item in _items)
                     {
-                        player.Position = lastPosition;
-                    }
-                }
 
-                if (inputService.KeyboardManager.KeyPress(Keys.F1))
+                        if (player.Bounds.Intersects(item.Bounds))
+                        {
+                            player.Position = lastPosition;
+                        }
+                    }
+
+                    if (inputService.KeyboardManager.KeyPress(Keys.F1))
+                    {
+                        Sprite.BondsOn = !Sprite.BondsOn;
+                    }
+
+                    if (kbManager.KeyPress(Keys.Escape))
+                    {
+                        //sceneManager.LoadScene("Options");
+                        ConfirmGameExit = true;
+                    }
+
+                    if (ConfirmGameExit)
+                    {
+                        if (kbManager.KeyPress(Keys.Y))
+                        {
+                            sceneManager.LoadScene("mainMenu");
+                        }
+                        if (kbManager.KeyPress(Keys.N))
+                        {
+                            ConfirmGameExit = false;
+                        }
+                    }
+                }                
+
+                if (!ConfirmGameExit && kbManager.KeyPress(Keys.P))
                 {
-                    Sprite.BondsOn = !Sprite.BondsOn;
+                    GamePlayTimer.IsPaused = !GamePlayTimer.IsPaused;
                 }
             }
-            if (State == SceneStateEnum.Loaded)
-            {
-                if (kbManager.KeyPress(Microsoft.Xna.Framework.Input.Keys.Escape))
-                    sceneManager.LoadScene("Options");
-            }
-           
+
         }
 
         /// This is called when the game should draw itself.
@@ -384,20 +419,40 @@ namespace HTGTTA.Scenes
             foreach (var item in _items)
             {
                 _font = Game.Content.Load<SpriteFont>("Fonts/font");
+                _uiFont = Game.Content.Load<SpriteFont>("Fonts/UIfont");
                 if (player.InteractionBounds.Intersects(item.InteractionBounds))
                 {
                     Interactions.Add(item, item.Interaction);
                 }
             }
 
-            if (Interactions.Count > 0)
+            if (!GamePlayTimer.IsPaused)
             {
+                if (Interactions.Count > 0)
+                {
+                    HUD.ShowInteractionOptionsWindow(Interactions);
+                }
+                else
+                {
+                    HUD.CurrentInteractions = null;
+                }
 
-                HUD.ShowInteractionOptionsWindow(Interactions);
-            }
-            else
-            {
-                HUD.CurrentInteractions = null;
+                if (ConfirmGameExit)
+                {
+                    Texture2D tmpgb = new Texture2D(GraphicsDevice,1,1);
+                    tmpgb.SetData(new Color[] { new Color(0, 0, 0, .85f) });
+                    _spriteBatch.Begin();
+
+                    _spriteBatch.Draw(tmpgb, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White);
+
+                    string exitMessage = "Are you sure you want to quit the game Y/N";
+
+                    float l = _uiFont.MeasureString(exitMessage).X /2;
+
+                    _spriteBatch.DrawString(_uiFont, exitMessage, (new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height) / 2) - new Vector2(l,0) , Color.Red);
+
+                    _spriteBatch.End();
+                }
             }
 
             DrawFader(gameTime);
