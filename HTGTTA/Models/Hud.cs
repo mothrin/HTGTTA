@@ -1,19 +1,12 @@
 ﻿using HTGTTA.Enums;
 using HTGTTA.Sprites;
-using Microsoft.VisualBasic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Randomchaos.Extensions;
 using MonoGame.Randomchaos.Services.Interfaces;
-using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.ComponentModel.Design;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Xml.Linq;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace HTGTTA.Models
 {
@@ -92,6 +85,17 @@ namespace HTGTTA.Models
 
 
         public bool UIup; //changes interaction key
+
+        private List<string> doorKeyTextures = new List<string>()
+        {
+            "circle", "plusmin",
+            "bear", "camera",
+            "triangle", "dots",
+            "heart", "tree",
+            "star", "flag"
+        };
+
+        public List<Object> HidableSprites = new List<Object>();
 
         public Hud(Game game) : base(game)
         {
@@ -843,6 +847,8 @@ namespace HTGTTA.Models
                 interactionToDo = null;
             }
         }
+
+        
         protected void DoorLock()
         {
             Rectangle laptopRec = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
@@ -851,79 +857,20 @@ namespace HTGTTA.Models
             puzzleNum = 5;
             UIup = true;
 
-
-
-
-            Point keyPos = new Point(0, 0);
+            Point keyPos = new Point(150, 120);
             Point keySize = new Point(150, 150);
 
 
             for (int i = 0; i < 10; i++)
             {
-
-
                 Color keyColor = Color.DimGray;
                 Color keyBorder = Color.Black;
 
-                string keyText="";
+                string keyText = $"Textures/Puzzle UI/DoorIcons/{doorKeyTextures[i]}";
 
+                keyPos.X = 150 + ((keySize.X + 12) * (i % 2));
+                keyPos.Y = 120+ (keySize.Y + 12) * (i / 2);
 
-                if (i == 0) 
-                {
-                    keyText = "<";
-                    keyPos = new Point(150, 120);
-                }
-
-                if (i == 1)
-                {
-                    keyText = "O"; //diary
-                    keyPos = new Point(320, 120);
-                }
-
-                if (i == 2) 
-                {
-                    keyText =">";
-                    keyPos = new Point(150, 290);
-                }
-                if (i == 3) 
-                {
-                    keyText = "-";
-                    keyPos = new Point(320, 290);
-                }
-
-                if (i == 4)
-                {
-                    keyText = "^";
-                    keyPos = new Point(150, 460);
-                }
-
-                if (i == 5) 
-                {
-                    keyText ="~";//laptop
-                    keyPos = new Point(320, 460);
-                }
-                if (i == 6) 
-                {
-                    keyText ="*"; //Drawer
-                    keyPos = new Point(150, 630);
-                }
-
-                if (i == 7)//muffin
-                {
-                    keyText = "X";
-                    keyPos = new Point(320, 630);
-                }
-
-                if (i == 8) 
-                {
-                    keyText = "|";
-                    keyPos = new Point(150, 800);
-                }
-                if (i == 9) 
-                {
-                    keyText ="#";
-                    keyPos = new Point(320, 800);
-                }
 
                 if (!DoorKey.ContainsKey(keyText))
                 {
@@ -939,7 +886,8 @@ namespace HTGTTA.Models
 
 
                 DrawBox(keySize, keyPos , keyColor, keyBorder, 1);
-                DrawString(keyText, (keyPos + new Point(60, 50)).ToVector2(), Color.Black);
+                //DrawString(keyText, (keyPos + new Point(60, 50)).ToVector2(), Color.Black);
+                _spritebatch.Draw(Game.Content.Load<Texture2D>(keyText), new Rectangle(keyPos.X + 43, keyPos.Y + 43, 64, 64), Color.White);
             }
 
             if (inputService.KeyboardManager.KeyPress(Keys.Q)) //close Door UI
@@ -1007,7 +955,14 @@ namespace HTGTTA.Models
                             if(typeChoice=="Chair")
                             {
                                 chairGot = true;
-                                chairTexture = Game.Content.Load<Texture2D>("Textures/Objects/Blank");
+                                //chairTexture = Game.Content.Load<Texture2D>("Textures/Objects/Blank");
+                                var chair = HidableSprites.FirstOrDefault(f => f.Name == typeChoice);
+
+                                if (chair != null)
+                                {
+                                    chair.Visible = false;
+                                }
+
                                 Choice = false;
                                 interactionToDo = null;
                                 chairTook = true;

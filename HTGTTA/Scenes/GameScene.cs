@@ -37,7 +37,6 @@ namespace HTGTTA.Scenes
 
         public bool laptopOpened = false;
         public bool DiaryOpen;
-        public bool chairGot = false;
         public bool chairplaced;
         public bool boxOpened;
         public bool keyGot;
@@ -256,14 +255,10 @@ namespace HTGTTA.Scenes
             };
             Components.Add(player);
 
-            if (chairGot == true)
-            { chairTexture = Game.Content.Load<Texture2D>("Textures/Objects/Blank"); }
+            chairTexture = Game.Content.Load<Texture2D>("Textures/Objects/Chair");
 
-            else
-            { chairTexture = Game.Content.Load<Texture2D>("Textures/Objects/Chair"); }
 
-            
-             Texture2D bookTexture = Game.Content.Load<Texture2D>("Textures/Objects/books");
+            Texture2D bookTexture = Game.Content.Load<Texture2D>("Textures/Objects/books");
             _objects = new List<Object>()
             {
                 new Object(Game,chairTexture)
@@ -283,22 +278,23 @@ namespace HTGTTA.Scenes
 
             };
 
-                foreach (var thing in _objects)
-                {
-                    Components.Add(thing);
-                }
-
-                // Added last so it is rendered over the top of all others
-                HUD = new Hud(Game);
-                Components.Add(HUD);
-
-                GamePlayTimer = new GamePlayTimer(Game, new System.TimeSpan(0, 15, 0));
-                Components.Add(GamePlayTimer);
-
-                GamePlayTimer.StartTimer();
-
-                base.LoadScene();
+            foreach (var thing in _objects)
+            {
+                Components.Add(thing);
             }
+
+            // Added last so it is rendered over the top of all others
+            HUD = new Hud(Game);
+            HUD.HidableSprites.AddRange(_objects);
+            Components.Add(HUD);
+
+            GamePlayTimer = new GamePlayTimer(Game, new System.TimeSpan(0, 15, 0));
+            Components.Add(GamePlayTimer);
+
+            GamePlayTimer.StartTimer();
+
+            base.LoadScene();
+        }
 
         public override void UnloadScene()
         {
