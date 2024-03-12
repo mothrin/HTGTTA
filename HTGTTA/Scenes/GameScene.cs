@@ -19,6 +19,7 @@ namespace HTGTTA.Scenes
 
         protected SpriteFont _font;
         protected SpriteFont _uiFont;
+        protected SpriteFont _buttonfont;
 
         private Texture2D _backgroundTexture;
         public Texture2D chairTexture;
@@ -44,6 +45,7 @@ namespace HTGTTA.Scenes
         public bool paperRead;
         public bool clothesMoved;
 
+        protected bool UIup;
 
         protected bool Choice = false;
         protected string typeChoice;
@@ -322,7 +324,7 @@ namespace HTGTTA.Scenes
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             _backgroundTexture = Game.Content.Load<Texture2D>("Textures/backgrounds/background2"); //background
-            //_backgroundTexture = Game.Content.Load<Texture2D>("Textures/Puzzle UI/Box");
+            //_backgroundTexture = Game.Content.Load<Texture2D>("Textures/Puzzle UI/PadLock");
 
             _audio.PlaySong("Audio/Music/Drafty-Places", .005f); //music
 
@@ -355,9 +357,11 @@ namespace HTGTTA.Scenes
             {
                 // Disable the player when the game is paused so they can't move about..
                 player.Enabled = !GamePlayTimer.IsPaused && !ConfirmGameExit;
+                
 
                 if (!GamePlayTimer.IsPaused)
                 {
+                    //so player can't walk into objects
                     foreach (var item in _items)
                     {
 
@@ -366,12 +370,12 @@ namespace HTGTTA.Scenes
                             player.Position = lastPosition;
                         }
                     }
-
+                    //for debugging purposes
                     if (inputService.KeyboardManager.KeyPress(Keys.F1))
                     {
                         Sprite.BondsOn = !Sprite.BondsOn;
                     }
-
+                    //closes game
                     if (kbManager.KeyPress(Keys.F2))
                     {
                         //sceneManager.LoadScene("Options");
@@ -380,13 +384,10 @@ namespace HTGTTA.Scenes
 
                     if (ConfirmGameExit)
                     {
-                        if (choiceExit == true)
-                        {
-                            sceneManager.LoadScene("mainMenu");
-                        }
                         if (kbManager.KeyPress(Keys.Y))
                         {
                             sceneManager.LoadScene("mainMenu");
+                            ConfirmGameExit = false;
                         }
                         if (kbManager.KeyPress(Keys.N))
                         {
@@ -394,7 +395,7 @@ namespace HTGTTA.Scenes
                         }
                     }
                 }
-
+                //pauses game time
                 if (!ConfirmGameExit && kbManager.KeyPress(Keys.P))
                 {
                     GamePlayTimer.IsPaused = !GamePlayTimer.IsPaused;
@@ -428,6 +429,7 @@ namespace HTGTTA.Scenes
             {
                 _font = Game.Content.Load<SpriteFont>("Fonts/font");
                 _uiFont = Game.Content.Load<SpriteFont>("Fonts/UIfont");
+                _buttonfont = Game.Content.Load<SpriteFont>("Fonts/DoorButtons");
                 if (player.InteractionBounds.Intersects(item.InteractionBounds))
                 {
                     Interactions.Add(item, item.Interaction);
@@ -465,7 +467,7 @@ namespace HTGTTA.Scenes
                     length = _uiFont.MeasureString(exitMessage).X / 2;
 
                     _spriteBatch.DrawString(_uiFont, exitMessage, (new Vector2(w, h) / 2) - new Vector2(length, 50), Color.Lavender);
-
+                    
                     _spriteBatch.End();
                 }
             }
