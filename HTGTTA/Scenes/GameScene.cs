@@ -32,9 +32,11 @@ namespace HTGTTA.Scenes
 
         private List<Object> _objects;
 
+        public bool choiceExit;
+
         public bool laptopOpened = false;
         public bool DiaryOpen;
-        public bool chairGot;
+        public bool chairGot = false;
         public bool chairplaced;
         public bool boxOpened;
         public bool keyGot;
@@ -43,6 +45,8 @@ namespace HTGTTA.Scenes
         public bool clothesMoved;
 
 
+        protected bool Choice = false;
+        protected string typeChoice;
 
         Vector2 lastPosition; //collision
 
@@ -107,7 +111,7 @@ namespace HTGTTA.Scenes
                     {
                         {"Look at bed", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Bed,Name = "Bed", Description = "Maybe we should leave this be..." }  },
                         {"Go to bed", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Sleep,Name = "Bed", Description = "I'm so so tired. Should i just go back to bed?" }  },
-                        {"Read diary", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Diary, Name ="Diary",  Description = "I don't think i should read that." }  }  
+                        {"Read diary", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Diary, Name ="Diary",  Description = "I don't think i should read that." }  }
                     },
                     Position = new Vector2(1540,400),
                     Width = 278,
@@ -138,7 +142,7 @@ namespace HTGTTA.Scenes
                     {
                         {"Look at desk", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Desk,Name = "Desk", Description = "Hm, just loads of books." }  },
                         {"Look at chair", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Chair,Name = "Chair", Description = "Can't do anything with that." }  },
-                        {"Open Laptop", new ObjectInterations(){ InteractionType = InteractionTypeEnum.LaptopCodeEnter, Name ="Laptop",  Description = "Needs a password. I don't remember what it as." }  }, 
+                        {"Open Laptop", new ObjectInterations(){ InteractionType = InteractionTypeEnum.LaptopCodeEnter, Name ="Laptop",  Description = "Needs a password. I don't remember what it as." }  },
                     },
                     Position = new Vector2(102,972),
                     Width = 570,
@@ -250,9 +254,14 @@ namespace HTGTTA.Scenes
             };
             Components.Add(player);
 
+            if (chairGot == true)
+            { chairTexture = Game.Content.Load<Texture2D>("Textures/Objects/Blank"); }
 
-            chairTexture = Game.Content.Load<Texture2D>("Textures/Objects/Chair");
-            Texture2D bookTexture = Game.Content.Load<Texture2D>("Textures/Objects/books");
+            else
+            { chairTexture = Game.Content.Load<Texture2D>("Textures/Objects/Chair"); }
+
+            
+             Texture2D bookTexture = Game.Content.Load<Texture2D>("Textures/Objects/books");
             _objects = new List<Object>()
             {
                 new Object(Game,chairTexture)
@@ -272,22 +281,22 @@ namespace HTGTTA.Scenes
 
             };
 
-            foreach (var thing in _objects)
-            {
-                Components.Add(thing);
+                foreach (var thing in _objects)
+                {
+                    Components.Add(thing);
+                }
+
+                // Added last so it is rendered over the top of all others
+                HUD = new Hud(Game);
+                Components.Add(HUD);
+
+                GamePlayTimer = new GamePlayTimer(Game, new System.TimeSpan(0, 15, 0));
+                Components.Add(GamePlayTimer);
+
+                GamePlayTimer.StartTimer();
+
+                base.LoadScene();
             }
-
-            // Added last so it is rendered over the top of all others
-            HUD = new Hud(Game);
-            Components.Add(HUD);
-
-            GamePlayTimer = new GamePlayTimer(Game, new System.TimeSpan(0,15,0));
-            Components.Add(GamePlayTimer);
-
-            GamePlayTimer.StartTimer();
-
-            base.LoadScene();
-        }
 
         public override void UnloadScene()
         {
@@ -311,10 +320,13 @@ namespace HTGTTA.Scenes
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-    
+
+            _backgroundTexture = Game.Content.Load<Texture2D>("Textures/backgrounds/background2"); //background
+            //_backgroundTexture = Game.Content.Load<Texture2D>("Textures/Puzzle UI/Box");
+
             _audio.PlaySong("Audio/Music/Drafty-Places", .005f); //music
 
-            
+
 
             base.LoadContent();
         }
@@ -336,9 +348,9 @@ namespace HTGTTA.Scenes
             {
                 lastPosition = player.Position;
             }
-             
+
             base.Update(gameTime);
-            
+
             if (State == SceneStateEnum.Loaded)
             {
                 // Disable the player when the game is paused so they can't move about..
@@ -360,7 +372,7 @@ namespace HTGTTA.Scenes
                         Sprite.BondsOn = !Sprite.BondsOn;
                     }
 
-                    if (kbManager.KeyPress(Keys.Escape))
+                    if (kbManager.KeyPress(Keys.F2))
                     {
                         //sceneManager.LoadScene("Options");
                         ConfirmGameExit = true;
@@ -368,6 +380,10 @@ namespace HTGTTA.Scenes
 
                     if (ConfirmGameExit)
                     {
+                        if (choiceExit == true)
+                        {
+                            sceneManager.LoadScene("mainMenu");
+                        }
                         if (kbManager.KeyPress(Keys.Y))
                         {
                             sceneManager.LoadScene("mainMenu");
@@ -377,7 +393,7 @@ namespace HTGTTA.Scenes
                             ConfirmGameExit = false;
                         }
                     }
-                }                
+                }
 
                 if (!ConfirmGameExit && kbManager.KeyPress(Keys.P))
                 {
@@ -395,14 +411,6 @@ namespace HTGTTA.Scenes
 
             _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
 
-            if (DiaryOpen)
-            {
-                _backgroundTexture = Game.Content.Load<Texture2D>("Textures/backgrounds/backgrounddiary"); //background
-            }
-            else
-            {
-                _backgroundTexture = Game.Content.Load<Texture2D>("Textures/backgrounds/background2"); //background
-            }
 
             _spriteBatch.Draw(_backgroundTexture,
                 new Rectangle(0, 0, w, h),
@@ -439,17 +447,24 @@ namespace HTGTTA.Scenes
 
                 if (ConfirmGameExit)
                 {
-                    Texture2D tmpgb = new Texture2D(GraphicsDevice,1,1);
+                    Texture2D tmpgb = new Texture2D(GraphicsDevice, 1, 1);
                     tmpgb.SetData(new Color[] { new Color(0, 0, 0, .85f) });
                     _spriteBatch.Begin();
 
-                    _spriteBatch.Draw(tmpgb, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White);
+                    _spriteBatch.Draw(tmpgb, new Rectangle(0, 0, w,h), Color.White);
 
-                    string exitMessage = "Are you sure you want to quit the game Y/N";
+                    string exitMessage = "Are you sure you want to quit the game?";
 
-                    float l = _uiFont.MeasureString(exitMessage).X /2;
+ 
+                    float length = _uiFont.MeasureString(exitMessage).X / 2;
 
-                    _spriteBatch.DrawString(_uiFont, exitMessage, (new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height) / 2) - new Vector2(l,0) , Color.Red);
+                    _spriteBatch.DrawString(_uiFont, exitMessage, (new Vector2(w, h) / 2) - new Vector2(length, 100), Color.Lavender);
+
+
+                    exitMessage = "Y - Yes, N - No";
+                    length = _uiFont.MeasureString(exitMessage).X / 2;
+
+                    _spriteBatch.DrawString(_uiFont, exitMessage, (new Vector2(w, h) / 2) - new Vector2(length, 50), Color.Lavender);
 
                     _spriteBatch.End();
                 }
@@ -457,7 +472,5 @@ namespace HTGTTA.Scenes
 
             DrawFader(gameTime);
         }
-
-
     }
 }

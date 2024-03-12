@@ -18,7 +18,6 @@ namespace HTGTTA.Scenes
 
         Texture2D _bgTexture;
         Texture2D _titleBar;
-        Texture2D _backgroundTexture;
 
         private SpriteFont _font;
         bool exiting;
@@ -29,6 +28,7 @@ namespace HTGTTA.Scenes
         private IMouseStateManager _msState { get { return Game.Services.GetService<IInputStateService>().MouseManager; } }
         private IInputStateService inputService { get { return Game.Services.GetService<IInputStateService>(); } }
         private ISceneService sceneService { get { return Game.Services.GetService<ISceneService>(); } }
+        private IAudioService _audio { get { return Game.Services.GetService<IAudioService>(); } }
         #endregion
 
         Dictionary<string, Rectangle> ButtonBounds = new Dictionary<string, Rectangle>();
@@ -42,6 +42,7 @@ namespace HTGTTA.Scenes
         protected override void LoadContent()
         {
             // = new SpriteBatch(GraphicsDevice); // for screen switching
+            _audio.PlaySong("Audio/Music/Mysterious-Puzzle_Looping", .005f); 
             _font = Game.Content.LoadLocalized<SpriteFont>("Fonts/UIFont");
             //_spritebatch = new SpriteBatch(GraphicsDevice); // for ui
             base.LoadContent();

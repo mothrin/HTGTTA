@@ -19,6 +19,12 @@
 /processorParam:Quality=Best
 /build:Audio/Music/Drafty-Places.mp3
 
+#begin Audio/Music/Mysterious-Puzzle_Looping.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Audio/Music/Mysterious-Puzzle_Looping.mp3
+
 #begin Audio/SFX/book_flip.2.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
@@ -167,18 +173,6 @@
 /processorParam:TextureFormat=Color
 /build:Textures/backgrounds/paused.png
 
-#begin Textures/backgrounds/paused.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Textures/backgrounds/paused.png
-
 #begin Textures/Objects/bed.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -286,6 +280,42 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/Objects/wardrobe.png
+
+#begin Textures/Puzzle UI/Box.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Puzzle UI/Box.png
+
+#begin Textures/Puzzle UI/BoxNoKey.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Puzzle UI/BoxNoKey.png
+
+#begin Textures/Puzzle UI/Diary.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Puzzle UI/Diary.png
 
 #begin Textures/Puzzle UI/laptop.png
 /importer:TextureImporter

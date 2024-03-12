@@ -1,5 +1,6 @@
 ﻿using HTGTTA.Enums;
 using HTGTTA.Sprites;
+using Microsoft.VisualBasic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -11,6 +12,8 @@ using System.Collections.Immutable;
 using System.ComponentModel.Design;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace HTGTTA.Models
 {
@@ -20,8 +23,10 @@ namespace HTGTTA.Models
         SpriteFont _font;
 
         Texture2D _bgTexture;
+        Texture2D _boxBG;
         Texture2D _titleBar;
         Texture2D _backgroundTexture;
+
 
         Color EnterPin;
 
@@ -39,6 +44,7 @@ namespace HTGTTA.Models
         protected string currentPinValue = string.Empty;
 
         Dictionary<string, Rectangle> keysBounds = new Dictionary<string, Rectangle>();
+        Dictionary<string,Rectangle>itemBounds = new Dictionary<string, Rectangle>();
         Dictionary<string, Rectangle> Options = new Dictionary<string, Rectangle>();
 
         public Dictionary<string, ObjectInterations> CurrentInteractions = null;
@@ -46,17 +52,28 @@ namespace HTGTTA.Models
         protected int puzzleNum; //hints
 
         protected bool OpenLaptop = false;
-
         protected bool LaptopLocked = true;
+        protected bool laptopOpened = false;
 
+        protected bool ReadDiary = false;
         protected bool DiaryOpen = false;
 
-        protected bool ChairGot = false;
+        public bool chairGot;
+        protected bool PlacedChair;
+
+        protected bool BoxGot;
+        protected bool itemDescBox;
+        protected string itemDescription;
+        public string itemText = "";
+
+        protected bool KeyTaken;
+
+        protected bool DrawerOpened;
+        protected bool PaperRead;
+
+        protected bool DoorCode;
 
         protected bool Choice = false;
-
-        protected bool laptopOpened;
-        protected bool ReadDiary = false;
 
         protected string typeChoice;
         protected bool sleepOptions;
@@ -64,7 +81,7 @@ namespace HTGTTA.Models
         public Texture2D chairTexture { get; set; }
 
 
-    protected bool UIup; //changes interaction key
+        protected bool UIup; //changes interaction key
 
         public Hud(Game game) : base(game)
         {
@@ -105,12 +122,15 @@ namespace HTGTTA.Models
                 {
                     interactionToDo = null;
                 }
-                if (DiaryOpen)
+
+                foreach (var item in itemBounds.Keys)
                 {
-                    //_backgroundTexture = Game.Content.Load<Texture2D>("Textures/backgrounds/backgrounddiary");
-                    _audio.PlaySFX("Audio/SFX/book_flip2");
+                    if (_msState.PositionRect.Intersects(itemBounds[item]) && _msState.LeftClicked)
+                    {
+                        itemDescBox = true;
+                    }
                 }
-                //pin code
+                        //pin code
                 foreach (var lapTopKey in keysBounds.Keys)
                 {
                     if (_msState.PositionRect.Intersects(keysBounds[lapTopKey]) && _msState.LeftClicked)
@@ -222,15 +242,29 @@ namespace HTGTTA.Models
                         DrawLaptop();
                     }
                 }
-
-
                 if (DiaryOpen)
                 {
                     DiaryRead();
                 }
+                if(PlacedChair)
+                {
+                    LookInBox();
+                }
+                if(DrawerOpened)
+                {
+                    Drawer();
+                }
+                if(DoorCode)
+                {
+                    DoorLock();
+                }
                 if (Choice)
                 {
                     YesOrNo();
+                }
+                if(itemDescBox)
+                {
+                    //DrawDesciptionBox();
                 }
 
                 _spritebatch.End();
@@ -263,7 +297,7 @@ namespace HTGTTA.Models
                     if (ReadDiary)
                     {
                         textToPrint = "Maybe i could use this for something after all. Do i take it?";
-                        typeChoice = "chair";
+                        typeChoice = "Chair";
                         Choice = true;
                     }
                     interaction.InteractionType = InteractionTypeEnum.Chair;
@@ -277,6 +311,10 @@ namespace HTGTTA.Models
                 case InteractionTypeEnum.DoorCode:
                     textToPrint = interaction.Description;
                     interaction.InteractionType = InteractionTypeEnum.DoorCode;
+                    if (PaperRead)
+                    {
+                        DoorCode = true;
+                    }
                     break;
 
                 //window
@@ -317,10 +355,19 @@ namespace HTGTTA.Models
                 case InteractionTypeEnum.Box:
                     textToPrint = interaction.Description;
                     interaction.InteractionType = InteractionTypeEnum.Box;
-                    if (ChairGot)
+                    if (PlacedChair)
                     {
-                        interaction.InteractionType = InteractionTypeEnum.Chair;
+                        textToPrint = "Look in Box again?";
+                        typeChoice = "PlaceChair";
+                        Choice = true;
                     }
+                    if (chairGot)
+                    {
+                        textToPrint = "I might be able to reach that box now. Do I place the chair?";
+                        typeChoice = "PlaceChair";
+                        Choice = true;
+                    }
+
                     break;
                 case InteractionTypeEnum.ClothesMoved:
                     textToPrint = interaction.Description;
@@ -335,6 +382,12 @@ namespace HTGTTA.Models
                 case InteractionTypeEnum.Table:
                     textToPrint = interaction.Description;
                     interaction.InteractionType = InteractionTypeEnum.Table;
+                    if (KeyTaken)
+                    {
+                        textToPrint = "Pretty sure I got a key for this. Do I use it?";
+                        typeChoice = "UseKey";
+                        Choice = true;
+                    }
                     break;
                 case InteractionTypeEnum.Bear:
                     switch (puzzleNum)
@@ -356,14 +409,6 @@ namespace HTGTTA.Models
                             break;
                     }
                     interaction.InteractionType = InteractionTypeEnum.Bear;
-                    break;
-                case InteractionTypeEnum.DrawsOpen:
-                    textToPrint = interaction.Description;
-                    interaction.InteractionType = InteractionTypeEnum.DrawsOpen;
-                    break;
-                case InteractionTypeEnum.DrawsClose:
-                    textToPrint = interaction.Description;
-                    interaction.InteractionType = InteractionTypeEnum.DrawsClose;
                     break;
 
                 //drawers
@@ -391,7 +436,7 @@ namespace HTGTTA.Models
                    new Color(.5f, .5f, .5f, .5f),
                    Color.Black, 2,
                    string.IsNullOrEmpty(interaction.Name) ? "FIX THIS" : interaction.Name,
-                   new Color(1f, 1f, 1.25f, 1f));
+                   new Color(1f, 1f, 1.25f, .5f));
 
             //size, position, base window, border, border thickness, interaction Name, header colour
 
@@ -509,8 +554,8 @@ namespace HTGTTA.Models
         }
         protected void DiaryRead()
         {
-            Rectangle laptopRec = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
-            _spritebatch.Draw(Game.Content.Load<Texture2D>("Textures/Puzzle UI/laptop"), laptopRec, Color.White);
+            Rectangle diaryRec = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+            _spritebatch.Draw(Game.Content.Load<Texture2D>("Textures/Puzzle UI/Diary"), diaryRec, Color.White);
 
             puzzleNum = 2;
             ReadDiary = true;
@@ -523,12 +568,164 @@ namespace HTGTTA.Models
                 interactionToDo = null;
             }
 
-            _backgroundTexture = Game.Content.Load<Texture2D>("Textures/backgrounds/backgrounddiary"); //background
-
 
         }
 
+        protected void LookInBox()
+        {
+            Rectangle boxRec = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+            _boxBG = Game.Content.Load<Texture2D>("Textures/Puzzle UI/Box");
 
+            _spritebatch.Draw(_boxBG, boxRec, Color.White);
+            puzzleNum = 3;
+
+            UIup = true;
+
+
+            // keys 0-9 + enter and delete
+            Point size = new Point(112, 40);
+            Point keyPos = new Point(112, 40);
+
+            for (int i = 0; i < 8; i++)
+            {
+                if (i == 0) 
+                {
+                    itemText = "Buttons";
+                    itemDescription = "Buttons. Wow so interesting...";
+                    keyPos = new Point(395, 750);
+                    size = new Point(105, 120);
+                }
+
+                if (i == 1)
+                {
+                    itemText = "Coins";
+                    itemDescription = "1 pound and 35p! Wow rich!";
+                    keyPos = new Point(395, 915);
+                    size = new Point(145, 40);
+                }
+
+                if (i == 2) // Enter
+                {
+                    itemText = "Folder";
+                    itemDescription = "Yawnnnn, Homework...";
+                    keyPos = new Point(130, 560);
+                    size = new Point(250, 385);
+                }
+
+                if (i == 3) // Enter
+                {
+                    itemText = "Scrolls";
+                    itemDescription = "Some silly doodles, guess I was an artist when I was alive...";
+                    keyPos = new Point(855, 330);
+                    size = new Point(460, 320);
+                }
+
+                if (i == 4) // Enter
+                {
+                    itemText = "Bunny";
+                    itemDescription = "Cute! You must be the Muffin I heard about. Nice to meet you!";
+                    keyPos = new Point(1070, 700);
+                    size = new Point(115, 220);
+                }
+                if (i == 5) // Enter
+                {
+                    itemText = "Key";
+                    itemDescription = "A key is always useful in these situations";
+                    //typeChoice = "Key";
+                    //Choice = true;
+                    keyPos = new Point(880, 860);
+                    size = new Point(160, 90);
+                }
+                if (i == 6) // Enter
+                {
+                    itemText = "Roll";
+                    itemDescription = "I don't even know what that is.";
+                    keyPos = new Point(515, 375);
+                    size = new Point(320, 530);
+                }
+                if (i == 7)
+                {
+                    itemText = "Book";
+                    itemDescription = "\"The complex nature of Project:Zorya by Elle Boseley\"\n Hm. Seems like a pretty cool book, I must've liked it in life.";
+                    keyPos = new Point(1495, 630);
+                    size = new Point(425, 450);
+                }
+                if (!itemBounds.ContainsKey(itemText))
+                {
+                    itemBounds.Add(itemText, new Rectangle(keyPos.X, keyPos.Y, size.X, size.Y));
+                }
+                //DrawBox(size, keyPos, color, color, 0);
+                foreach (var item in itemBounds.Keys)
+                {
+                    Point winSize = new Point(1500, 150);
+                    Point winPos = new Point(210, 200);
+                    if (_msState.PositionRect.Intersects(itemBounds[itemText]))
+                    {
+                        DrawWindowBase(winSize,
+                        winPos,
+                        new Color(.5f, .5f, .5f, .5f),
+                        Color.Black, 2,
+                        itemText,
+                        new Color(1f, 1f, 1.25f, 1f));
+
+                        //Description box
+                        Vector2 txtPos = (winPos.ToVector2() + new Vector2(winSize.X / 2, 0)) - (new Vector2(0, _titleBar.Height / 4) * .5f);
+                        txtPos = new Vector2(215, txtPos.Y + _font.LineSpacing);
+                        DrawString(itemDescription, txtPos, Color.Navy); //shadow colour
+                        if(_msState.PositionRect.Intersects(itemBounds[itemText]) && _msState.LeftClicked)
+                        {
+                            if(itemText=="Key")
+                            {
+                                _boxBG = Game.Content.Load<Texture2D>("Textures/Puzzle UI/BoxNoKey");
+                                KeyTaken = true;
+                                LookInBox();
+                                //typeChoice = "Key";
+                                //Choice = true;
+                            }
+                        }
+                    }
+                }
+
+                if (inputService.KeyboardManager.KeyPress(Keys.Q)) //close UI
+                {
+                    PlacedChair = false;
+                    UIup = false;
+                    interactionToDo = null;
+                }
+            }
+
+        }
+        protected void Drawer()
+        {
+            Rectangle laptopRec = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+            _spritebatch.Draw(Game.Content.Load<Texture2D>("Textures/Puzzle UI/laptop"), laptopRec, Color.White);
+
+            puzzleNum = 4;
+            PaperRead = true;
+            UIup = true;
+
+            if (inputService.KeyboardManager.KeyPress(Keys.Q)) //close diary
+            {
+                DrawerOpened = false;
+                UIup = false;
+                interactionToDo = null;
+            }
+        }
+        protected void DoorLock()
+        {
+            Rectangle laptopRec = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+            _spritebatch.Draw(Game.Content.Load<Texture2D>("Textures/Puzzle UI/laptop"), laptopRec, Color.White);
+
+            puzzleNum = 5;
+            UIup = true;
+
+            if (inputService.KeyboardManager.KeyPress(Keys.Q)) //close diary
+            {
+                DoorCode = false;
+                UIup = false;
+                interactionToDo = null;
+            }
+        }
         protected void YesOrNo()
         {
 
@@ -585,7 +782,25 @@ namespace HTGTTA.Models
                             }
                             if(typeChoice=="Chair")
                             {
-                                ChairGot = true;
+                                chairGot = true;
+                                chairTexture = Game.Content.Load<Texture2D>("Textures/Objects/Blank");
+                                Choice = false;
+                                interactionToDo = null;
+                            }
+                            if (typeChoice== "PlaceChair")
+                            {
+                                PlacedChair = true;
+                                Choice = false;
+                                interactionToDo = null;
+                            }
+                            if(typeChoice=="Key")
+                            {
+                                
+                            }
+                            if(typeChoice== "UseKey")
+                            {
+                                DrawerOpened = true;
+                                Choice = false;
                                 interactionToDo = null;
                             }
                         }

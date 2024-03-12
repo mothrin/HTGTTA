@@ -36,7 +36,7 @@ namespace HTGTTA.Models
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            _font = Game.Content.Load<SpriteFont>("Fonts/timefont");
+            _font = Game.Content.Load<SpriteFont>("Fonts/timeFont");
             PausedTexture = Game.Content.Load<Texture2D>("Textures/backgrounds/paused");
             base.LoadContent();
         }
@@ -90,14 +90,16 @@ namespace HTGTTA.Models
 
             if (IsPaused)
             {
-                _spriteBatch.Draw(PausedTexture, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.Red);
+                _spriteBatch.Draw(PausedTexture, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White);
             }
 
-            string timeString = $"Time: {CurrentTime} / {MaxTime} = {CurrentTimeLeft}";
-            float l = _font.MeasureString(timeString).X + 16;
+            string timeString = $"{CurrentTime}";
+            //string timeString = $"{CurrentTime} / {MaxTime} = {CurrentTimeLeft}";
+            //string timeString = $"{CurrentTimeLeft}";
+            float l = _font.MeasureString(timeString).X /2 ;
 
-            _spriteBatch.DrawString(_font, timeString, new Vector2(GraphicsDevice.Viewport.Width - (int)l, 8), Color.Black);
-            _spriteBatch.DrawString(_font, timeString, new Vector2(GraphicsDevice.Viewport.Width - (int)l, 8) - Vector2.One, Color.Red);
+            _spriteBatch.DrawString(_font, timeString, new Vector2(GraphicsDevice.Viewport.Width/2 - (int)l, 8), Color.Black);
+            _spriteBatch.DrawString(_font, timeString, new Vector2(GraphicsDevice.Viewport.Width/2 - (int)l, 8) - Vector2.One, Color.DarkBlue);
 
             _spriteBatch.End();
         }

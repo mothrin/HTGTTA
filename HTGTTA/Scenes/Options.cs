@@ -17,7 +17,6 @@ namespace HTGTTA.Scenes
 
         Texture2D _bgTexture;
         Texture2D _titleBar;
-        Texture2D _backgroundTexture;
 
         private SpriteFont _font;
         bool exiting;
@@ -71,7 +70,7 @@ namespace HTGTTA.Scenes
 
             _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointWrap);
 
-            _spriteBatch.Draw(Game.Content.Load<Texture2D>("Screens/mainmenu"), new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White);
+            _spriteBatch.Draw(Game.Content.Load<Texture2D>("Screens/Menu"), new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White);
 
             MenuButtons();
 
@@ -87,12 +86,12 @@ namespace HTGTTA.Scenes
         public void MenuButtons()
         {
             Point keySize = new Point(400, 100);
-            Point keyStartPos = new Point((GraphicsDevice.Viewport.Width / 2 - 200), 200);
+            Point keyStartPos = new Point((GraphicsDevice.Viewport.Width / 2 - 200), 300);
             string keyText = "";
 
 
             Vector2 strSize = _font.MeasureString(keyText);
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 4; i++)
             {
                 Point keyPos = keyStartPos;
 
@@ -117,11 +116,6 @@ namespace HTGTTA.Scenes
                     keyText = "Help";
                     keyPos.Y += (keySize.Y + 275);
                 }
-                if (i == 4)
-                {
-                    keyText = "Main Menu";
-                    keyPos.Y += (keySize.Y + 400);
-                }
 
                 if (!ButtonBounds.ContainsKey(keyText))
                 {
@@ -145,7 +139,7 @@ namespace HTGTTA.Scenes
                     {
                         if (button == "Back")
                         {
-                            sceneManager.LoadScene("Game");
+                            sceneManager.LoadScene("mainMenu");
                         }
                         if (button == "Volume")
                         {
@@ -158,10 +152,6 @@ namespace HTGTTA.Scenes
                         if(button == " Help")
                         {
                             //sceneManager.LoadScene("Help");
-                        }
-                        if(button == "Main Menu")
-                        {
-                            sceneManager.LoadScene("mainMenu");
                         }
                     }
                 }

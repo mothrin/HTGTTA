@@ -16,11 +16,9 @@ namespace HTGTTA.Enums
         DiaryOpen,
         Box,
         Chair,
-        TakeChair,
+        PlacedChair,
         ClothesMoved,
         WarDoorOpen,
-        Door,
-        DoorCode,
         Window,
         WindowOpen,
         Desk,
@@ -32,5 +30,9 @@ namespace HTGTTA.Enums
         Sleep,
         Plant,
         Mirror,
+        BoxGot,
+        KeyTaken,
+        Door,
+        DoorCode,
     }
 }
