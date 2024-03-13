@@ -88,7 +88,7 @@ namespace HTGTTA.Models
 
         private List<string> doorKeyTextures = new List<string>()
         {
-            "circle", "plusmin",
+            "plusmin", "circle",
             "bear", "camera",
             "triangle", "dots",
             "heart", "tree",

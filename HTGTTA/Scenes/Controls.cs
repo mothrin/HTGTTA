@@ -1,18 +1,18 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Randomchaos.Extensions;
-using MonoGame.Randomchaos.Services.Interfaces;
+﻿using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
 using MonoGame.Randomchaos.Services.Interfaces.Enums;
+using MonoGame.Randomchaos.Services.Interfaces;
 using MonoGame.Randomchaos.Services.Scene.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MonoGame.Randomchaos.Extensions;
 
 namespace HTGTTA.Scenes
 {
-    public class Options : SceneFadeBase
+    public class Controls : SceneFadeBase
     {
 
         Texture2D _bgTexture;
@@ -30,7 +30,7 @@ namespace HTGTTA.Scenes
         #endregion
 
         Dictionary<string, Rectangle> ButtonBounds = new Dictionary<string, Rectangle>();
-        public Options(Game game, string name) : base(game, name) { }
+        public Controls(Game game, string name) : base(game, name) { }
 
 
         public override void Initialize()
@@ -91,7 +91,7 @@ namespace HTGTTA.Scenes
 
 
             Vector2 strSize = _font.MeasureString(keyText);
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 1; i++)
             {
                 Point keyPos = keyStartPos;
 
@@ -101,21 +101,7 @@ namespace HTGTTA.Scenes
                 {
                     keyText = "Back";
                 }
-                if (i == 1)
-                {
-                    keyText = "Volume";
-                    keyPos.Y += (keySize.Y + 25);
-                }
-                if (i == 2)
-                {
-                    keyText = "Controls";
-                    keyPos.Y += (keySize.Y + 150);
-                }
-                if (i == 3)
-                {
-                    keyText = "Help";
-                    keyPos.Y += (keySize.Y + 275);
-                }
+
 
                 if (!ButtonBounds.ContainsKey(keyText))
                 {
@@ -143,15 +129,15 @@ namespace HTGTTA.Scenes
                         }
                         if (button == "Volume")
                         {
-                            sceneManager.LoadScene("Volume");
+                            //sceneManager.LoadScene("Volume");
                         }
                         if (button == "Controls")
                         {
-                            sceneManager.LoadScene("Controls");
+                            //sceneManager.LoadScene("Controls");
                         }
-                        if(button == " Help")
+                        if (button == " Help")
                         {
-                            sceneManager.LoadScene("Help");
+                            //sceneManager.LoadScene("Help");
                         }
                     }
                 }
