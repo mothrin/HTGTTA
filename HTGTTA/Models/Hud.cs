@@ -179,41 +179,7 @@ namespace HTGTTA.Models
                     }
                 }
 
-                foreach (var button in DoorKey.Keys)
-                {
-                    if (_msState.PositionRect.Intersects(DoorKey[button]) && _msState.LeftClicked && DoorCode)
-                    {
-                        codeCount++;
-                        _audio.PlaySFX("Audio/SFX/menu_select");
-                        //currentPinValue += lapTopKey;
-                        switch(codeCount)
-                        {
-                            case 1:icon1 = button;
-                                break;
-                            case 2:icon2 = button;
-                                break;
-                            case 3:icon3 = button;
-                                break;
-                            case 4: icon4 = button; 
-                                break;
-                        }
-                        //DoorCodeInput = DoorCodeInput + button;
-                        DoorCodeInput = DoorCodeInput + button;
-                        //
-                        if (DoorCodeInput == "Textures/Puzzle UI/DoorIcons/triangleTextures/Puzzle UI/DoorIcons/circleTextures/Puzzle UI/DoorIcons/heartTextures/Puzzle UI/DoorIcons/star")
-                        {
-                            _audio.PlaySFX("Audio/SFX/menu_change");
-                            DoorOpened = true;
-                            DoorCode = false;
-                            PaperRead = false;
-                        }
-                        if (codeCount > 4)
-                        {
-                            codeCount = 0;
-                            DoorCodeInput = "";
-                        }
-                    }
-                }
+                
                 //pin code
                 foreach (var lapTopKey in keysBounds.Keys)
                 {
@@ -260,6 +226,57 @@ namespace HTGTTA.Models
                                 _audio.PlaySFX("Audio/SFX/menu_cancel");
                             }
                         }
+                    }
+                }
+
+                if (DoorCode)
+                {
+                    foreach (var button in DoorKey.Keys)
+                    {
+                        if (_msState.PositionRect.Intersects(DoorKey[button]) && _msState.LeftClicked && DoorCode)
+                        {
+                            codeCount++;
+                            _audio.PlaySFX("Audio/SFX/menu_select");
+                            //currentPinValue += lapTopKey;
+                            switch (codeCount)
+                            {
+                                case 1:
+                                    icon1 = button;
+                                    break;
+                                case 2:
+                                    icon2 = button;
+                                    break;
+                                case 3:
+                                    icon3 = button;
+                                    break;
+                                case 4:
+                                    icon4 = button;
+                                    break;
+                            }
+                            //DoorCodeInput = DoorCodeInput + button;
+                            DoorCodeInput = DoorCodeInput + button;
+                            //
+                            if (DoorCodeInput == "Textures/Puzzle UI/DoorIcons/triangleTextures/Puzzle UI/DoorIcons/circleTextures/Puzzle UI/DoorIcons/heartTextures/Puzzle UI/DoorIcons/star")
+                            {
+                                _audio.PlaySFX("Audio/SFX/menu_change");
+                                DoorOpened = true;
+                                DoorCode = false;
+                                PaperRead = false;
+                            }
+                            if (codeCount > 4)
+                            {
+                                codeCount = 0;
+                                DoorCodeInput = "";
+                            }
+                        }
+                    }
+
+                    if (inputService.KeyboardManager.KeyPress(Keys.Q)) //close Door UI
+                    {
+                        DoorCode = false;
+                        UIup = false;
+                        interactionToDo = null;
+                        //codeCount = 0;
                     }
                 }
             }
@@ -947,7 +964,7 @@ namespace HTGTTA.Models
                 string keyText = $"Textures/Puzzle UI/DoorIcons/{doorKeyTextures[i]}";
 
                 keyPos.X = 150 + ((keySize.X + 12) * (i % 2));
-                keyPos.Y = 120+ (keySize.Y + 12) * (i / 2);
+                keyPos.Y = 120 + (keySize.Y + 12) * (i / 2);
 
 
                 if (!DoorKey.ContainsKey(keyText))
@@ -962,16 +979,8 @@ namespace HTGTTA.Models
                     keyBorder = Color.Black;
                 }
 
-                DrawBox(keySize, keyPos , keyColor, keyBorder, 1);
+                DrawBox(keySize, keyPos, keyColor, keyBorder, 1);
                 _spritebatch.Draw(Game.Content.Load<Texture2D>(keyText), new Rectangle(keyPos.X + 43, keyPos.Y + 43, 64, 64), Color.White);
-
-                if (inputService.KeyboardManager.KeyPress(Keys.G)) //close Door UI
-                {
-                    DoorCode = false;
-                    UIup = false;
-                    interactionToDo = null;
-                    //codeCount = 0;
-                }
             }
         }
 
