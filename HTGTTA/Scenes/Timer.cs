@@ -12,12 +12,19 @@ using MonoGame.Randomchaos.Extensions;
 
 namespace HTGTTA.Scenes
 {
-    public class Controls : SceneFadeBase
+    public class Timer : SceneFadeBase
     {
         private SpriteFont _font;
 
+        #region packages
+        private IKeyboardStateManager _kbState { get { return Game.Services.GetService<IInputStateService>().KeyboardManager; } }
+        private IMouseStateManager _msState { get { return Game.Services.GetService<IInputStateService>().MouseManager; } }
+        private IInputStateService inputService { get { return Game.Services.GetService<IInputStateService>(); } }
+        private ISceneService sceneService { get { return Game.Services.GetService<ISceneService>(); } }
+        #endregion
+
         Dictionary<string, Rectangle> ButtonBounds = new Dictionary<string, Rectangle>();
-        public Controls(Game game, string name) : base(game, name) { }
+        public Timer(Game game, string name) : base(game, name) { }
 
         public override void Initialize()
         {
@@ -48,9 +55,9 @@ namespace HTGTTA.Scenes
 
             _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointWrap);
 
-            _spriteBatch.Draw(Game.Content.Load<Texture2D>("Screens/Controls"), new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White);
+            _spriteBatch.Draw(Game.Content.Load<Texture2D>("Screens/Menu"), new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White);
 
-            DrawString("Press F1 to go back.", new Point(10,10).ToVector2(), Color.Gray);
+            DrawString("Press F1 to go back.", new Point(10, 10).ToVector2(), Color.Gray);
 
             _spriteBatch.End();
 
@@ -61,7 +68,7 @@ namespace HTGTTA.Scenes
             DrawFader(gameTime);
         }
 
- 
+
         protected void DrawString(string text, Vector2 pos, Color color, SpriteFont font = null)
         {
             if (font == null)

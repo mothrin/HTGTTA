@@ -77,9 +77,11 @@ namespace HTGTTA
             sceneService.AddScene(new GameScene(this, "Game"));
             sceneService.AddScene(new MainMenu(this, "mainMenu"));
             sceneService.AddScene(new Options(this, "Options"));
-            sceneService.AddScene(new Volume(this, "Volume"));
+            sceneService.AddScene(new Timer(this, "Timer"));
             sceneService.AddScene(new Controls(this, "Controls"));
             sceneService.AddScene(new Help(this, "Help"));
+            sceneService.AddScene(new Ending(this, "Ending"));
+            sceneService.AddScene(new Ending2(this, "Ending2"));
 
 
             base.Initialize();

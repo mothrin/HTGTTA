@@ -44,7 +44,8 @@ namespace HTGTTA.Scenes
             // = new SpriteBatch(GraphicsDevice); // for screen switching
             _audio.PlaySong("Audio/Music/Mysterious-Puzzle_Looping", .005f); 
             _font = Game.Content.LoadLocalized<SpriteFont>("Fonts/UIFont");
-            //_spritebatch = new SpriteBatch(GraphicsDevice); // for ui
+            
+
             base.LoadContent();
         }
 

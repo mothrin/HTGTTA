@@ -7,6 +7,7 @@ using MonoGame.Randomchaos.Extensions;
 using MonoGame.Randomchaos.Services.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 
 namespace HTGTTA.Models
 {
@@ -14,12 +15,11 @@ namespace HTGTTA.Models
     {
         SpriteBatch _spritebatch;
         SpriteFont _font;
-
         Texture2D _bgTexture;
+
         Texture2D _boxBG;
         Texture2D _drawerBG;
         Texture2D _titleBar;
-        Texture2D _backgroundTexture;
 
 
         Color EnterPin;
@@ -36,6 +36,7 @@ namespace HTGTTA.Models
         #endregion
 
         protected string currentPinValue = string.Empty;
+        protected string DoorCodeInput = string.Empty;
 
         Dictionary<string, Rectangle> keysBounds = new Dictionary<string, Rectangle>();
         Dictionary<string,Rectangle> BoxitemBounds = new Dictionary<string, Rectangle>();
@@ -47,39 +48,50 @@ namespace HTGTTA.Models
 
         protected int puzzleNum; //hints
 
-        protected bool OpenLaptop = false;
-        protected bool LaptopLocked = true;
-        protected bool laptopOpened = false;
+        protected bool OpenLaptop = false; //Brings up laptop UI if true
+        protected bool LaptopLocked = true; //Shows locked laptop screen if true
+        protected bool laptopOpened = false; //shows unlocked laptop screen is true
 
-        protected bool ReadDiary;
-        protected bool DiaryOpen;
+        protected bool ReadDiary; // if true, diary ui pops up
+        protected bool DiaryOpen; // allows player to progress to next puzzle
 
-        public bool chairGot;
-        protected bool PlacedChair;
-        protected bool chairTook;
+        public bool chairGot; //if true player can place infront of wardrobe
+        protected bool PlacedChair; //if true player can continuously look in box without yes or no option 
+        protected bool chairTook; // if player has taken chair, they can't continuously take it after
 
-        protected bool BoxGot;
-        protected string BoxType;
-        protected bool itemDescBox;
-        protected string itemDescription;
-        public string itemText = "";
-        protected bool KeyClicked;
-        protected bool boxLooked;
+        protected bool itemDescBox; //if true description for item is shown
+        protected string itemDescription; //decription for item
+        public string itemText = ""; //Name of item
 
-        protected bool KeyTaken;
+        protected bool BoxGot; //if true player can
+        protected string BoxType; //determines if player can taken key or not so correct ui can be shown
+        protected bool KeyClicked; //if true the boxtype changes to the one without a key
 
-        protected bool DrawerOpened;
-        protected string DrawerType;
-        protected bool PaperClicked;
-        protected bool PaperRead = true;
-        protected bool drawerLooked;
+        protected bool boxLooked; //if true the plaeyr can continue to next puzzle
+        protected bool KeyTaken; //if true the player can open the drawer with yez or no buttons
 
-        protected bool DoorCode;
+        protected bool DrawerOpened; //if true drawer ui pops up
+        protected string DrawerType; //determines which ui is to be shown
+        protected bool PaperClicked; //if clicked ui changes 
 
-        protected bool Choice = false;
+        protected bool drawerLooked; //if true player can progress to next puzzle
+        protected bool PaperRead =true; //when true the player can put in the code to the door
 
-        protected string typeChoice;
-        protected bool sleepOptions;
+        protected bool DoorCode; //when true door ui pops up
+        public bool DoorOpened; //when true game ends 
+        protected int codeCount = 0; //keeps track of code length
+        protected string icon1; //door code
+        protected string icon2; //door code
+        protected string icon3; //door code
+        protected string icon4; //door code
+
+         
+        public bool SleepYes; // when true game ends
+
+        protected bool Choice = false; //for yes and no buttons
+
+        protected string typeChoice; //to dictate what happens when yes is pressed depending on puzzle type
+        protected bool sleepOptions; //
 
         public Texture2D chairTexture { get; set; }
 
@@ -88,11 +100,11 @@ namespace HTGTTA.Models
 
         private List<string> doorKeyTextures = new List<string>()
         {
-            "plusmin", "circle",
-            "bear", "camera",
-            "triangle", "dots",
-            "heart", "tree",
-            "star", "flag"
+            "book", "circle",
+            "triangle", "tree",
+            "hexagon", "square",
+            "heart", "rabbit",
+            "flag", "star"
         };
 
         public List<Object> HidableSprites = new List<Object>();
@@ -166,6 +178,42 @@ namespace HTGTTA.Models
                         }
                     }
                 }
+
+                foreach (var button in DoorKey.Keys)
+                {
+                    if (_msState.PositionRect.Intersects(DoorKey[button]) && _msState.LeftClicked && DoorCode)
+                    {
+                        codeCount++;
+                        _audio.PlaySFX("Audio/SFX/menu_select");
+                        //currentPinValue += lapTopKey;
+                        switch(codeCount)
+                        {
+                            case 1:icon1 = button;
+                                break;
+                            case 2:icon2 = button;
+                                break;
+                            case 3:icon3 = button;
+                                break;
+                            case 4: icon4 = button; 
+                                break;
+                        }
+                        //DoorCodeInput = DoorCodeInput + button;
+                        DoorCodeInput = DoorCodeInput + button;
+                        //
+                        if (DoorCodeInput == "Textures/Puzzle UI/DoorIcons/triangleTextures/Puzzle UI/DoorIcons/circleTextures/Puzzle UI/DoorIcons/heartTextures/Puzzle UI/DoorIcons/star")
+                        {
+                            _audio.PlaySFX("Audio/SFX/menu_change");
+                            DoorOpened = true;
+                            DoorCode = false;
+                            PaperRead = false;
+                        }
+                        if (codeCount > 4)
+                        {
+                            codeCount = 0;
+                            DoorCodeInput = "";
+                        }
+                    }
+                }
                 //pin code
                 foreach (var lapTopKey in keysBounds.Keys)
                 {
@@ -190,11 +238,6 @@ namespace HTGTTA.Models
                                 EnterPin = Color.Gray;
                                 currentPinValue = currentPinValue.Substring(0, currentPinValue.Length - 1);
                                 _audio.PlaySFX("Audio/SFX/menu_select");
-                            }
-                            else if (lapTopKey == "X")
-                            {
-                                OpenLaptop = false;
-                                interactionToDo = null;
                             }
                             else if (lapTopKey == "Ent.")
                             {
@@ -355,6 +398,10 @@ namespace HTGTTA.Models
                     {
                         DoorCode = true;
                     }
+                    if(DoorOpened)
+                    {
+                        textToPrint = "I unlocked it!";
+                    }
                     break;
 
                 //window
@@ -440,13 +487,13 @@ namespace HTGTTA.Models
                             textToPrint = "Cludeo: Your best friend knew everything about you, maybe you should read her messages again.";
                             break;
                         case 2:
-                            textToPrint = "Cludeo: Look at the photos in the diary more closely, there might be something you're missing.";
+                            textToPrint = "Cludeo: Read the diary more closely, there might be something you're missing. That chair might be useful for something.";
                             break;
                         case 3:
                             textToPrint = "Cludeo: Pretty sure you put a key in that box when you were alive, maybe you should try opening something with it.";
                             break;
                         case 4:
-                            textToPrint = "Cludeo: There is a code for the door, retrace you're steps. There is probably something you're missing...";
+                            textToPrint = "Cludeo: There is a code for the door, retrace you're steps. There seems to be a symbol representing each puzzle.";
                             break;
                     }
                     interaction.InteractionType = InteractionTypeEnum.Bear;
@@ -611,7 +658,6 @@ namespace HTGTTA.Models
 
 
         }
-
         protected void LookInBox()
         {
             Rectangle boxRec = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
@@ -675,8 +721,6 @@ namespace HTGTTA.Models
                     {
                         itemText = "Key";
                         itemDescription = "A key is always useful in these situations";
-                        //typeChoice = "Key";
-                        //Choice = true;
                         keyPos = new Point(880, 860);
                         size = new Point(160, 90);
                     }
@@ -698,7 +742,6 @@ namespace HTGTTA.Models
                     {
                         BoxitemBounds.Add(itemText, new Rectangle(keyPos.X, keyPos.Y, size.X, size.Y));
                     }
-                    //DrawBox(size, keyPos, color, color, 0);
                     foreach (var item in BoxitemBounds.Keys)
                     {
                         Point winSize = new Point(1500, 150);
@@ -724,9 +767,6 @@ namespace HTGTTA.Models
             puzzleNum = 3;
 
             UIup = true;
-
-
-
             if (inputService.KeyboardManager.KeyPress(Keys.Q)) //close UI
             {
                 PlacedChair = false;
@@ -847,8 +887,6 @@ namespace HTGTTA.Models
                 interactionToDo = null;
             }
         }
-
-        
         protected void DoorLock()
         {
             Rectangle laptopRec = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
@@ -857,9 +895,49 @@ namespace HTGTTA.Models
             puzzleNum = 5;
             UIup = true;
 
-            Point keyPos = new Point(150, 120);
+            Point keyPos = new Point(160, 120);
             Point keySize = new Point(150, 150);
 
+            #region code input
+            Point Size1 = new Point(170, 155);
+            Point textBoxPos1 = new Point(585, 705);
+            DrawBox(new Point(Size1.X, Size1.Y), textBoxPos1, Color.DimGray, Color.DimGray, 1);
+
+            Point Size2 = new Point(160, 155);
+            Point textBoxPos2 = new Point(800, 705);
+            DrawBox(new Point(Size2.X, Size2.Y), textBoxPos2, Color.DimGray, Color.DimGray, 1);
+
+            Point Size3 = new Point(160, 155);
+            Point textBoxPos3 = new Point(1015, 705);
+            DrawBox(new Point(Size3.X, Size3.Y), textBoxPos3, Color.DimGray, Color.DimGray, 1);
+
+            Point Size4 = new Point(160, 155);
+            Point textBoxPos4 = new Point(1220, 705);
+            DrawBox(new Point(Size4.X, Size4.Y), textBoxPos4, Color.DimGray, Color.DimGray, 1);
+
+            if (codeCount == 1)
+            {
+                _spritebatch.Draw(Game.Content.Load<Texture2D>(icon1), new Rectangle(textBoxPos1.X, textBoxPos1.Y, 150, 145), Color.White);
+            }
+            if (codeCount == 2)
+            {
+                _spritebatch.Draw(Game.Content.Load<Texture2D>(icon1), new Rectangle(textBoxPos1.X, textBoxPos1.Y, 150, 145), Color.White);
+                _spritebatch.Draw(Game.Content.Load<Texture2D>(icon2), new Rectangle(textBoxPos2.X, textBoxPos2.Y, 150, 145), Color.White);
+            }
+            if (codeCount == 3)
+            {
+                _spritebatch.Draw(Game.Content.Load<Texture2D>(icon1), new Rectangle(textBoxPos1.X, textBoxPos1.Y, 150, 145), Color.White);
+                _spritebatch.Draw(Game.Content.Load<Texture2D>(icon2), new Rectangle(textBoxPos2.X, textBoxPos2.Y, 150, 145), Color.White);
+                _spritebatch.Draw(Game.Content.Load<Texture2D>(icon3), new Rectangle(textBoxPos3.X, textBoxPos3.Y, 150, 145), Color.White);
+            }
+            if (codeCount == 4)
+            {
+                _spritebatch.Draw(Game.Content.Load<Texture2D>(icon1), new Rectangle(textBoxPos1.X, textBoxPos1.Y, 150, 145), Color.White);
+                _spritebatch.Draw(Game.Content.Load<Texture2D>(icon2), new Rectangle(textBoxPos2.X, textBoxPos2.Y, 150, 145), Color.White);
+                _spritebatch.Draw(Game.Content.Load<Texture2D>(icon3), new Rectangle(textBoxPos3.X, textBoxPos3.Y, 150, 145), Color.White);
+                _spritebatch.Draw(Game.Content.Load<Texture2D>(icon4), new Rectangle(textBoxPos4.X, textBoxPos4.Y, 150, 145), Color.White);
+            }
+            #endregion
 
             for (int i = 0; i < 10; i++)
             {
@@ -884,20 +962,20 @@ namespace HTGTTA.Models
                     keyBorder = Color.Black;
                 }
 
-
                 DrawBox(keySize, keyPos , keyColor, keyBorder, 1);
-                //DrawString(keyText, (keyPos + new Point(60, 50)).ToVector2(), Color.Black);
                 _spritebatch.Draw(Game.Content.Load<Texture2D>(keyText), new Rectangle(keyPos.X + 43, keyPos.Y + 43, 64, 64), Color.White);
-            }
 
-            if (inputService.KeyboardManager.KeyPress(Keys.Q)) //close Door UI
-            {
-                DoorCode = false;
-                UIup = false;
-                interactionToDo = null;
+                if (inputService.KeyboardManager.KeyPress(Keys.G)) //close Door UI
+                {
+                    DoorCode = false;
+                    UIup = false;
+                    interactionToDo = null;
+                    //codeCount = 0;
+                }
             }
-
         }
+
+
         protected void YesOrNo()
         {
 
@@ -950,7 +1028,7 @@ namespace HTGTTA.Models
                         { 
                             if(typeChoice=="Sleep")
                             {
-                                //end game
+                                SleepYes = true;
                             }
                             if(typeChoice=="Chair")
                             {
@@ -970,6 +1048,12 @@ namespace HTGTTA.Models
                             if (typeChoice== "PlaceChair")
                             {
                                 chairGot = false;
+                                var chair2 = HidableSprites.FirstOrDefault(f => f.Name == typeChoice);
+
+                                if (chair2 != null)
+                                {
+                                    chair2.Visible = true;
+                                }
                                 PlacedChair = true;
                                 Choice = false;
                                 interactionToDo = null;

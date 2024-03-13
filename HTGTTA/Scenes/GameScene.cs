@@ -23,6 +23,7 @@ namespace HTGTTA.Scenes
 
         private Texture2D _backgroundTexture;
         public Texture2D chairTexture;
+        public Texture2D chair2Texture;
 
 
         public Dictionary<Sprite, Dictionary<string, ObjectInterations>> Interactions = new Dictionary<Sprite, Dictionary<string, ObjectInterations>>();
@@ -35,14 +36,9 @@ namespace HTGTTA.Scenes
 
         public bool choiceExit;
 
-        public bool laptopOpened = false;
-        public bool DiaryOpen;
-        public bool chairplaced;
-        public bool boxOpened;
-        public bool keyGot;
-        public bool drawerOpened;
-        public bool paperRead;
-        public bool clothesMoved;
+        public bool DoorOpened;
+        public bool SleepYes;
+
 
         protected bool UIup;
 
@@ -100,9 +96,6 @@ namespace HTGTTA.Scenes
                     Position = new Vector2(1500,273),
                     Width = 278,
                     Height = 328,
-                    RenderBounds = true, //for bounds
-                    RenderInteractionBounds = true,
-                    RenderCoords = true,
                     Interaction = nothingToDo,
                 },
                 new Sprite(Game, "Textures/Objects/Blank")
@@ -117,9 +110,6 @@ namespace HTGTTA.Scenes
                     Position = new Vector2(1540,400),
                     Width = 278,
                     Height = 328,
-                    RenderBounds = true, //for bounds
-                    RenderInteractionBounds = true,
-                    RenderCoords = true,
                 },
                 new Sprite(Game, "Textures/Objects/Blank")
                 {
@@ -127,14 +117,11 @@ namespace HTGTTA.Scenes
                     Interaction = new Dictionary<string, ObjectInterations> ()
                     {
                         {"Look at bed", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Bed,Name = "Bed", Description = "Maybe we should leave this be..." }  },
-                        {"Go to bed", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Sleep,Name = "Bed", Description = "I'm so so tired. Should i just go back to bed?" }  }
+                        {"Go to bed", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Sleep,Name = "Bed", Description = "I'm so so tired. Should I just go back to bed?" }  }
                     },
                     Position = new Vector2(1580,527),
                     Width = 278,
                     Height = 328,
-                    RenderBounds = true, //for bounds
-                    RenderInteractionBounds = true,
-                    RenderCoords = true,
                 },
                 new Sprite (Game, "Textures/Objects/Blank")
                 {
@@ -148,9 +135,6 @@ namespace HTGTTA.Scenes
                     Position = new Vector2(102,972),
                     Width = 570,
                     Height = 75,
-                    RenderBounds = true, //bounds
-                    RenderInteractionBounds = true,
-                    RenderCoords = true,
                 },
                 new Sprite(Game,"Textures/Objects/Blank")
                 {
@@ -164,9 +148,6 @@ namespace HTGTTA.Scenes
                     Position = new Vector2(483,220),
                     Width = 345,
                     Height = 280,
-                    RenderBounds = true, //bounds
-                    RenderInteractionBounds = true,
-                    RenderCoords = true,
                 },
                 new Sprite(Game,"Textures/Objects/Blank")
                 {
@@ -180,9 +161,6 @@ namespace HTGTTA.Scenes
                     Position = new Vector2(858,30),
                     Width = 288,
                     Height = 450,
-                    RenderBounds = true, //bounds
-                    RenderInteractionBounds = true,
-                    RenderCoords = true,
                 },
                 new Sprite(Game,"Textures/Objects/Blank")
                 {
@@ -196,9 +174,6 @@ namespace HTGTTA.Scenes
                     Position = new Vector2(1284,348),
                     Width = 171,
                     Height = 150,
-                    RenderBounds = true, //bounds
-                    RenderInteractionBounds = true,
-                    RenderCoords = true,
                 },
                 new Sprite(Game,"Textures/Objects/Blank")
                 {
@@ -211,9 +186,6 @@ namespace HTGTTA.Scenes
                     Position = new Vector2(195,120),
                     Width = 255,
                     Height = 330,
-                    RenderBounds = true, //bounds
-                    RenderInteractionBounds = true,
-                    RenderCoords = true,
                 },
                 new Sprite(Game,"Textures/Objects/Blank")
                 {
@@ -226,9 +198,6 @@ namespace HTGTTA.Scenes
                     Position = new Vector2(0,105),
                     Width = 65,
                     Height = 560,
-                    RenderBounds = true, //bounds
-                    RenderInteractionBounds = true,
-                    RenderCoords = true,
                 }
             };
 
@@ -249,14 +218,11 @@ namespace HTGTTA.Scenes
                     Left = Keys.A,
                     Right = Keys.D,
                 },
-                RenderBounds = true,
-                RenderInteractionBounds = true,
-                RenderCoords = true,
             };
             Components.Add(player);
 
             chairTexture = Game.Content.Load<Texture2D>("Textures/Objects/Chair");
-
+            chair2Texture = Game.Content.Load<Texture2D>("Textures/Objects/Blank");
 
             Texture2D bookTexture = Game.Content.Load<Texture2D>("Textures/Objects/books");
             _objects = new List<Object>()
@@ -274,8 +240,15 @@ namespace HTGTTA.Scenes
                     Position = new Vector2(115,915),
                     Width = 140,
                     Height = 130,
-                }
+                },
+                new Object(Game,chair2Texture)
+                {
+                    Name = "Chair2",
+                    Position = new Vector2(940, 330),
+                    Width = 170,
+                    Height = 270,
 
+                }
             };
 
             foreach (var thing in _objects)
@@ -285,7 +258,7 @@ namespace HTGTTA.Scenes
 
             // Added last so it is rendered over the top of all others
             HUD = new Hud(Game);
-            HUD.HidableSprites.AddRange(_objects);
+            HUD.HidableSprites.AddRange(_objects); //for chair
             Components.Add(HUD);
 
             GamePlayTimer = new GamePlayTimer(Game, new System.TimeSpan(0, 15, 0));
@@ -353,7 +326,15 @@ namespace HTGTTA.Scenes
             {
                 // Disable the player when the game is paused so they can't move about..
                 player.Enabled = !GamePlayTimer.IsPaused && !ConfirmGameExit;
-                
+
+                if (HUD.DoorOpened)
+                {
+                    sceneManager.LoadScene("Ending");
+                }
+                if (HUD.SleepYes)
+                {
+                    sceneManager.LoadScene("Ending2");
+                }
 
                 if (!GamePlayTimer.IsPaused)
                 {
@@ -367,12 +348,12 @@ namespace HTGTTA.Scenes
                         }
                     }
                     //for debugging purposes
-                    if (inputService.KeyboardManager.KeyPress(Keys.F1))
+                    if (inputService.KeyboardManager.KeyPress(Keys.F10))
                     {
                         Sprite.BondsOn = !Sprite.BondsOn;
                     }
                     //closes game
-                    if (kbManager.KeyPress(Keys.F2))
+                    if (kbManager.KeyPress(Keys.F1))
                     {
                         //sceneManager.LoadScene("Options");
                         ConfirmGameExit = true;
@@ -396,6 +377,7 @@ namespace HTGTTA.Scenes
                 {
                     GamePlayTimer.IsPaused = !GamePlayTimer.IsPaused;
                 }
+
             }
 
         }

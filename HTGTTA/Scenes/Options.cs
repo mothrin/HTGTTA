@@ -103,7 +103,7 @@ namespace HTGTTA.Scenes
                 }
                 if (i == 1)
                 {
-                    keyText = "Volume";
+                    keyText = "Timer";
                     keyPos.Y += (keySize.Y + 25);
                 }
                 if (i == 2)
@@ -141,15 +141,15 @@ namespace HTGTTA.Scenes
                         {
                             sceneManager.LoadScene("mainMenu");
                         }
-                        if (button == "Volume")
+                        if (button == "Timer")
                         {
-                            sceneManager.LoadScene("Volume");
+                            sceneManager.LoadScene("Timer");
                         }
                         if (button == "Controls")
                         {
                             sceneManager.LoadScene("Controls");
                         }
-                        if(button == " Help")
+                        if(button == "Help")
                         {
                             sceneManager.LoadScene("Help");
                         }

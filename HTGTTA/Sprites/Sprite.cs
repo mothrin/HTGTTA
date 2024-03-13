@@ -10,7 +10,7 @@ namespace HTGTTA.Sprites
 {
     public class Sprite : DrawableGameComponent
     {
-        public static bool BondsOn = true;
+        public static bool BondsOn = false;
 
         #region Fields
 
@@ -59,7 +59,7 @@ namespace HTGTTA.Sprites
 
         public virtual Rectangle Bounds //for collision and bounds
         {
-            get { return new Rectangle((int)Position.X, (int)Position.Y, Width, Height); }
+            get{return new Rectangle((int)Position.X, (int)Position.Y, Width, Height);  }
         }
 
         public virtual Rectangle InteractionBounds // for interaction
@@ -138,21 +138,21 @@ namespace HTGTTA.Sprites
             {
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
 
-                if (RenderBounds && BondsOn)
+                if (BondsOn)
                 {
                     if (_texture != null)
                         spriteBatch.Draw(_boundsTexture, Bounds, Color.Red);
                     else
                         spriteBatch.Draw(_boundsTexture, Bounds, Color.Red);
                 }
-                if (RenderInteractionBounds && BondsOn)
+                if (BondsOn)
                 {
                     if (_texture != null)
                         spriteBatch.Draw(_boundsTexture, InteractionBounds, Color.Green);
                     else
                         spriteBatch.Draw(_boundsTexture, InteractionBounds, Color.Green);
                 }
-                if (RenderCoords && BondsOn)
+                if (BondsOn)
                 {
                     // Draw text for coords
                     string textToPrint = $"{Name} - {Position}";

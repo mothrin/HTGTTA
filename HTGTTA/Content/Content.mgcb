@@ -90,6 +90,30 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/UIFont.spritefont
 
+#begin Screens/Controls.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Screens/Controls.png
+
+#begin Screens/help.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Screens/help.png
+
 #begin Screens/mainmenu.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -125,6 +149,30 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/backgrounds/background2.png
+
+#begin Textures/backgrounds/Ending.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/backgrounds/Ending.png
+
+#begin Textures/backgrounds/Ending2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/backgrounds/Ending2.png
 
 #begin Textures/backgrounds/paused.png
 /importer:TextureImporter
@@ -282,7 +330,7 @@
 /processorParam:TextureFormat=Color
 /build:Textures/Puzzle UI/Diary.png
 
-#begin Textures/Puzzle UI/DoorIcons/bear.png
+#begin Textures/Puzzle UI/DoorIcons/book.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -292,9 +340,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Textures/Puzzle UI/DoorIcons/bear.png
+/build:Textures/Puzzle UI/DoorIcons/book.png
 
-#begin Textures/Puzzle UI/DoorIcons/camera.png
+#begin Textures/Puzzle UI/DoorIcons/Circle.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -304,31 +352,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Textures/Puzzle UI/DoorIcons/camera.png
-
-#begin Textures/Puzzle UI/DoorIcons/circle.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Textures/Puzzle UI/DoorIcons/circle.png
-
-#begin Textures/Puzzle UI/DoorIcons/dots.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Textures/Puzzle UI/DoorIcons/dots.png
+/build:Textures/Puzzle UI/DoorIcons/Circle.png
 
 #begin Textures/Puzzle UI/DoorIcons/flag.png
 /importer:TextureImporter
@@ -354,7 +378,7 @@
 /processorParam:TextureFormat=Color
 /build:Textures/Puzzle UI/DoorIcons/heart.png
 
-#begin Textures/Puzzle UI/DoorIcons/plusmin.png
+#begin Textures/Puzzle UI/DoorIcons/hexagon.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -364,7 +388,31 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Textures/Puzzle UI/DoorIcons/plusmin.png
+/build:Textures/Puzzle UI/DoorIcons/hexagon.png
+
+#begin Textures/Puzzle UI/DoorIcons/rabbit.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Puzzle UI/DoorIcons/rabbit.png
+
+#begin Textures/Puzzle UI/DoorIcons/Square.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Puzzle UI/DoorIcons/Square.png
 
 #begin Textures/Puzzle UI/DoorIcons/star.png
 /importer:TextureImporter
