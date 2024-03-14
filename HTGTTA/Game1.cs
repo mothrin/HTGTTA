@@ -80,8 +80,9 @@ namespace HTGTTA
             sceneService.AddScene(new Timer(this, "Timer"));
             sceneService.AddScene(new Controls(this, "Controls"));
             sceneService.AddScene(new Help(this, "Help"));
-            sceneService.AddScene(new Ending(this, "Ending"));
-            sceneService.AddScene(new Ending2(this, "Ending2"));
+            sceneService.AddScene(new Ending(this, "Ending","mainMenu"));
+            sceneService.AddScene(new Ending2(this, "Ending2", "mainMenu"));
+            sceneService.AddScene(new Ending3(this, "Ending3", "mainMenu"));
 
 
             base.Initialize();

@@ -168,7 +168,7 @@ namespace HTGTTA.Scenes
                     Interaction = new Dictionary<string, ObjectInterations>()
                     {
                         {"Talk to bear", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Bear,Name = "Bear" , Description = "Hello, Mr Cluedo. How are you today?"}  },
-                        {"Look at board", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Board, Name= "Board" , Description = "Cute photos, this note seems to have a code! 2215. wonder what it's for."} },
+                        {"Look at board", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Board, Name= "Board" , Description = "Cute photos, this note seems to have a code! 2215. Wonder what it's for."} },
                         {"Open drawer", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Table, Name= "Drawer" , Description = "It needs a key to open."} },
                     },
                     Position = new Vector2(1284,348),
@@ -243,7 +243,7 @@ namespace HTGTTA.Scenes
                 },
                 new Object(Game,chair2Texture)
                 {
-                    Name = "Chair2",
+                    Name = "PlaceChair",
                     Position = new Vector2(940, 330),
                     Width = 170,
                     Height = 270,
@@ -335,14 +335,21 @@ namespace HTGTTA.Scenes
                 {
                     sceneManager.LoadScene("Ending2");
                 }
+                if(HUD.LeaveTrapdoor)
+                {
+                    sceneManager.LoadScene("Ending3");
+                }
 
                 if (!GamePlayTimer.IsPaused)
                 {
                     //so player can't walk into objects
                     foreach (var item in _items)
                     {
-
                         if (player.Bounds.Intersects(item.Bounds))
+                        {
+                            player.Position = lastPosition;
+                        }
+                        if(HUD.UIup || HUD.Choice)
                         {
                             player.Position = lastPosition;
                         }

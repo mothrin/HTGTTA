@@ -7,6 +7,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MonoGame.Randomchaos.Services.Coroutine.Models;
+using MonoGame.Randomchaos.Services.Interfaces.Enums;
+using System.Collections;
 
 namespace HTGTTA.Scenes
 {
@@ -14,12 +17,28 @@ namespace HTGTTA.Scenes
     {
 
         Texture2D _bgTexture;
+        public string endingType;
         protected string NextScene;
+        protected bool waiting;
 
         private IAudioService _audio { get { return Game.Services.GetService<IAudioService>(); } }
 
 
-        public Ending(Game game, string name) : base(game, name) { }
+        public Ending(Game game, string name, string nextScene) : base(game, name) { NextScene = nextScene; }
+        public override void Update(GameTime gameTime)
+        {
+            if (State == SceneStateEnum.Loaded && !waiting)
+            {
+                coroutineService.StartCoroutine(WaitSecondsAndExit(10));
+            }
+
+            if (State == SceneStateEnum.Loaded && (kbManager.KeysPressed().Length > 0 || msManager.LeftButtonDown || msManager.RightButtonDown))
+            {
+                sceneManager.LoadScene(NextScene);
+            }
+
+            base.Update(gameTime);
+        }
         public override void Initialize()
         {
             base.Initialize();
@@ -30,7 +49,10 @@ namespace HTGTTA.Scenes
             _audio.PlaySong("Audio/Music/Mysterious-Puzzle_Looping", .005f);
 
 
-             _bgTexture = Game.Content.Load<Texture2D>("Textures/backgrounds/Ending");
+            _bgTexture = Game.Content.Load<Texture2D>("Textures/backgrounds/Ending");
+
+
+
 
             base.LoadContent();
         }
@@ -50,6 +72,15 @@ namespace HTGTTA.Scenes
 
 
             DrawFader(gameTime);
+        }
+        protected IEnumerator WaitSecondsAndExit(float seconds)
+        {
+            waiting = true;
+            yield return new WaitForSeconds(Game, seconds);
+
+            if (State == SceneStateEnum.Loaded)
+                sceneManager.LoadScene(NextScene);
+
         }
     }
 }

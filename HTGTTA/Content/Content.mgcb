@@ -150,7 +150,7 @@
 /processorParam:TextureFormat=Color
 /build:Textures/backgrounds/background2.png
 
-#begin Textures/backgrounds/Ending.png
+#begin Textures/backgrounds/Ending1.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -160,7 +160,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Textures/backgrounds/Ending.png
+/build:Textures/backgrounds/Ending1.png
 
 #begin Textures/backgrounds/Ending2.png
 /importer:TextureImporter
@@ -173,6 +173,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/backgrounds/Ending2.png
+
+#begin Textures/backgrounds/Ending3.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/backgrounds/Ending3.png
 
 #begin Textures/backgrounds/paused.png
 /importer:TextureImporter
@@ -509,6 +521,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/Puzzle UI/PadLock.png
+
+#begin Textures/Puzzle UI/trapdoor.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Puzzle UI/trapdoor.png
 
 #begin Textures/Sprite/back.png
 /importer:TextureImporter

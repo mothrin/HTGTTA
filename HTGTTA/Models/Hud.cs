@@ -39,10 +39,10 @@ namespace HTGTTA.Models
         protected string DoorCodeInput = string.Empty;
 
         Dictionary<string, Rectangle> keysBounds = new Dictionary<string, Rectangle>();
-        Dictionary<string,Rectangle> BoxitemBounds = new Dictionary<string, Rectangle>();
+        Dictionary<string, Rectangle> BoxitemBounds = new Dictionary<string, Rectangle>();
         Dictionary<string, Rectangle> DraweritemBounds = new Dictionary<string, Rectangle>();
         Dictionary<string, Rectangle> Options = new Dictionary<string, Rectangle>();
-        Dictionary<string, Rectangle> DoorKey = new Dictionary<string, Rectangle>(); 
+        Dictionary<string, Rectangle> DoorKey = new Dictionary<string, Rectangle>();
 
         public Dictionary<string, ObjectInterations> CurrentInteractions = null;
 
@@ -64,20 +64,20 @@ namespace HTGTTA.Models
         public string itemText = ""; //Name of item
 
         protected bool BoxGot; //if true player can
-        protected string BoxType; //determines if player can taken key or not so correct ui can be shown
+        protected string BoxType; //determines if player can taken key or not so correct UI can be shown
         protected bool KeyClicked; //if true the boxtype changes to the one without a key
 
-        protected bool boxLooked; //if true the plaeyr can continue to next puzzle
-        protected bool KeyTaken; //if true the player can open the drawer with yez or no buttons
+        protected bool boxLooked; //if true the player can continue to next puzzle
+        protected bool KeyTaken; //if true the player can open the drawer with yes or no buttons
 
-        protected bool DrawerOpened; //if true drawer ui pops up
-        protected string DrawerType; //determines which ui is to be shown
-        protected bool PaperClicked; //if clicked ui changes 
+        protected bool DrawerOpened; //if true drawer UI pops up
+        protected string DrawerType; //determines which UI is to be shown
+        protected bool PaperClicked; //if clicked UI changes 
 
         protected bool drawerLooked; //if true player can progress to next puzzle
-        protected bool PaperRead =true; //when true the player can put in the code to the door
+        protected bool PaperRead; //when true the player can put in the code to the door
 
-        protected bool DoorCode; //when true door ui pops up
+        protected bool DoorCode; //when true door UI pops up
         public bool DoorOpened; //when true game ends 
         protected int codeCount = 0; //keeps track of code length
         protected string icon1; //door code
@@ -85,15 +85,15 @@ namespace HTGTTA.Models
         protected string icon3; //door code
         protected string icon4; //door code
 
-         
+        protected bool moveClothes;
+        public bool LeaveTrapdoor;
+
+
         public bool SleepYes; // when true game ends
 
-        protected bool Choice = false; //for yes and no buttons
-
+        public bool Choice; //for yes and no buttons
         protected string typeChoice; //to dictate what happens when yes is pressed depending on puzzle type
-        protected bool sleepOptions; //
 
-        public Texture2D chairTexture { get; set; }
 
 
         public bool UIup; //changes interaction key
@@ -179,7 +179,7 @@ namespace HTGTTA.Models
                     }
                 }
 
-                
+
                 //pin code
                 foreach (var lapTopKey in keysBounds.Keys)
                 {
@@ -210,7 +210,7 @@ namespace HTGTTA.Models
 
                                 if (currentPinValue == "2215") // correct code
                                 {
-                                   
+
                                     _audio.PlaySFX("Audio/SFX/menu_change");
                                     LaptopLocked = false;
 
@@ -237,7 +237,6 @@ namespace HTGTTA.Models
                         {
                             codeCount++;
                             _audio.PlaySFX("Audio/SFX/menu_select");
-                            //currentPinValue += lapTopKey;
                             switch (codeCount)
                             {
                                 case 1:
@@ -253,9 +252,7 @@ namespace HTGTTA.Models
                                     icon4 = button;
                                     break;
                             }
-                            //DoorCodeInput = DoorCodeInput + button;
                             DoorCodeInput = DoorCodeInput + button;
-                            //
                             if (DoorCodeInput == "Textures/Puzzle UI/DoorIcons/triangleTextures/Puzzle UI/DoorIcons/circleTextures/Puzzle UI/DoorIcons/heartTextures/Puzzle UI/DoorIcons/star")
                             {
                                 _audio.PlaySFX("Audio/SFX/menu_change");
@@ -276,7 +273,7 @@ namespace HTGTTA.Models
                         DoorCode = false;
                         UIup = false;
                         interactionToDo = null;
-                        //codeCount = 0;
+                        codeCount = 0;
                     }
                 }
             }
@@ -342,7 +339,7 @@ namespace HTGTTA.Models
                 {
                     DiaryRead();
                 }
-                if(PlacedChair)
+                if (PlacedChair)
                 {
                     LookInBox();
                 }
@@ -358,9 +355,9 @@ namespace HTGTTA.Models
                 {
                     YesOrNo();
                 }
-                if(itemDescBox)
+                if (moveClothes)
                 {
-                    //DrawDesciptionBox();
+                    Trapdoor();
                 }
 
                 _spritebatch.End();
@@ -389,7 +386,7 @@ namespace HTGTTA.Models
                     break;
                 case InteractionTypeEnum.Chair:
                     textToPrint = interaction.Description;
-                    if(chairTook)
+                    if (chairTook)
                     {
                         textToPrint = "I have the chair on me.";
                         break;
@@ -415,7 +412,7 @@ namespace HTGTTA.Models
                     {
                         DoorCode = true;
                     }
-                    if(DoorOpened)
+                    if (DoorOpened)
                     {
                         textToPrint = "I unlocked it!";
                     }
@@ -465,7 +462,7 @@ namespace HTGTTA.Models
                         typeChoice = "PlaceChair";
                         Choice = true;
                     }
-                    if(boxLooked)
+                    if (boxLooked)
                     {
                         PlacedChair = true;
                     }
@@ -473,6 +470,12 @@ namespace HTGTTA.Models
                 case InteractionTypeEnum.ClothesMoved:
                     textToPrint = interaction.Description;
                     interaction.InteractionType = InteractionTypeEnum.ClothesMoved;
+                    if (PaperRead)
+                    {
+                        textToPrint = "Do I move the clothes?";
+                        typeChoice = "clothes";
+                        Choice = true;
+                    }
                     break;
 
                 //bedside table
@@ -679,7 +682,7 @@ namespace HTGTTA.Models
         {
             Rectangle boxRec = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
 
-            if(BoxType == "Key")
+            if (BoxType == "Key")
             {
                 _boxBG = Game.Content.Load<Texture2D>("Textures/Puzzle UI/BoxNoKey");
                 _spritebatch.Draw(_boxBG, boxRec, Color.White);
@@ -983,7 +986,25 @@ namespace HTGTTA.Models
                 _spritebatch.Draw(Game.Content.Load<Texture2D>(keyText), new Rectangle(keyPos.X + 43, keyPos.Y + 43, 64, 64), Color.White);
             }
         }
+        protected void Trapdoor()
+        {
+            Rectangle diaryRec = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+            _spritebatch.Draw(Game.Content.Load<Texture2D>("Textures/Puzzle UI/trapdoor"), diaryRec, Color.White);
 
+
+
+            UIup = true;
+            LeaveTrapdoor = true;
+
+
+            if (inputService.KeyboardManager.KeyPress(Keys.Q)) //close diary
+            {
+                moveClothes = false;
+                UIup = false;
+                interactionToDo = null;
+            }
+        }
+    
 
         protected void YesOrNo()
         {
@@ -1042,7 +1063,6 @@ namespace HTGTTA.Models
                             if(typeChoice=="Chair")
                             {
                                 chairGot = true;
-                                //chairTexture = Game.Content.Load<Texture2D>("Textures/Objects/Blank");
                                 var chair = HidableSprites.FirstOrDefault(f => f.Name == typeChoice);
 
                                 if (chair != null)
@@ -1058,8 +1078,7 @@ namespace HTGTTA.Models
                             {
                                 chairGot = false;
                                 var chair2 = HidableSprites.FirstOrDefault(f => f.Name == typeChoice);
-
-                                if (chair2 != null)
+                                if (chair2 == null)
                                 {
                                     chair2.Visible = true;
                                 }
@@ -1075,6 +1094,18 @@ namespace HTGTTA.Models
                                 Choice = false;
                                 interactionToDo = null;
                                 drawerLooked = true;
+                            }
+                            if(typeChoice=="clothes")
+                            {
+                                moveClothes = true;
+                                Choice = false;
+                                interactionToDo = null;
+                            }
+                            if(typeChoice=="trapdoor")
+                            {
+                                LeaveTrapdoor = true;
+                                Choice = false;
+                                interactionToDo = null;
                             }
 
                         }
