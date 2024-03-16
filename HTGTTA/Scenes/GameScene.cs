@@ -262,6 +262,7 @@ namespace HTGTTA.Scenes
             Components.Add(HUD);
 
             GamePlayTimer = new GamePlayTimer(Game, new System.TimeSpan(0, 15, 0));
+            
             Components.Add(GamePlayTimer);
 
             GamePlayTimer.StartTimer();
@@ -343,7 +344,7 @@ namespace HTGTTA.Scenes
                 {
                     sceneManager.LoadScene("Ending5");
                 }
-                if (GamePlayTimer.TimeRanOut)
+                if (GamePlayTimer.IsOutOfTime)
                 {
                     sceneManager.LoadScene("Ending4");
                 }

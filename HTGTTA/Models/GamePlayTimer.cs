@@ -20,8 +20,6 @@ namespace HTGTTA.Models
         public TimeSpan CurrentTime { get; set; } = TimeSpan.Zero;
         public TimeSpan CurrentTimeLeft { get; set; }
         public bool IsPaused { get; set; } = false;
-
-        public bool TimeRanOut;
         public bool IsRunning { get; protected set; } = false;
         public bool IsOutOfTime { get; protected set; } = false;
 
@@ -71,10 +69,7 @@ namespace HTGTTA.Models
                     {
                         CurrentTime += TimeSpan.FromSeconds(1);
                     }
-                    if (IsOutOfTime)
-                    {
-                        TimeRanOut = true;
-                    }
+                                        
                     CurrentTimeLeft = MaxTime - CurrentTime;
 
                     IsOutOfTime = CurrentTimeLeft.TotalSeconds <= 0;
