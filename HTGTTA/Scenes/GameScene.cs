@@ -261,7 +261,7 @@ namespace HTGTTA.Scenes
             HUD.HidableSprites.AddRange(_objects); //for chair
             Components.Add(HUD);
 
-            GamePlayTimer = new GamePlayTimer(Game, new System.TimeSpan(0, 15, 0));
+            GamePlayTimer = new GamePlayTimer(Game);
             
             Components.Add(GamePlayTimer);
 

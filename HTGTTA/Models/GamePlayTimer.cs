@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using HTGTTA.Enums;
+using HTGTTA.Services;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Randomchaos.Services.Coroutine.Models;
 using MonoGame.Randomchaos.Services.Interfaces;
@@ -16,23 +18,20 @@ namespace HTGTTA.Models
         protected SpriteFont _font;
 
         protected string timeString;
-        public TimeSpan MaxTime { get; set; } = new TimeSpan(0, 10,0);
+
+        protected HTGTTAService _HTGTTAService { get { return Game.Services.GetService<HTGTTAService>(); } }
+
+        public TimeSpan MaxTime { get { return _HTGTTAService.MaxTime; } set { _HTGTTAService.MaxTime = value; } }
         public TimeSpan CurrentTime { get; set; } = TimeSpan.Zero;
         public TimeSpan CurrentTimeLeft { get; set; }
         public bool IsPaused { get; set; } = false;
         public bool IsRunning { get; protected set; } = false;
         public bool IsOutOfTime { get; protected set; } = false;
 
-        public string TimerType { get; set; }
+        public TimerTypeEnum TimerType { get { return _HTGTTAService.TimerType; } set { _HTGTTAService.TimerType = value; } }
         protected Texture2D PausedTexture { get; set; }
         //protected Timer Timer;
-        public GamePlayTimer(Game game, TimeSpan? maxTime = null) : base(game)
-        {
-            if (maxTime != null)
-            {
-                MaxTime = maxTime.Value;
-            }
-        }
+        public GamePlayTimer(Game game) : base(game) { }
 
 
         protected override void LoadContent()
@@ -59,7 +58,7 @@ namespace HTGTTA.Models
 
         protected IEnumerator TimeTicker()
         {
-            while (IsRunning)
+            while (IsRunning && TimerType != TimerTypeEnum.Relaxed)
             {
                 if (!IsPaused && !IsOutOfTime) // If it's not paused, wait for a second and move the time on.
                 {
@@ -95,19 +94,18 @@ namespace HTGTTA.Models
             {
                 _spriteBatch.Draw(PausedTexture, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White);
             }
-            if (TimerType == "Normal")
-            {
-                timeString = $"{CurrentTime}";
-            }
-            if (TimerType == "Tense")
-            {
-                timeString = $"{CurrentTimeLeft}";
-                MaxTime= new TimeSpan(0, 5, 0);
 
-            }
-            if (TimerType == "Relaxed")
+            switch (TimerType)
             {
-                timeString = "";
+                case TimerTypeEnum.Normal:
+                    timeString = $"{CurrentTime}";
+                    break;
+                case TimerTypeEnum.Tense:
+                    timeString = $"{CurrentTimeLeft}";
+                    break;
+                case TimerTypeEnum.Relaxed:
+                    timeString = "";
+                    break;
             }
 
             //timeString = $"{CurrentTime} / {MaxTime} = {CurrentTimeLeft}";

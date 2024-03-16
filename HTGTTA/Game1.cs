@@ -2,6 +2,7 @@
 using HTGTTA.Models;
 using HTGTTA.Scenes;
 using HTGTTA.Scenes.StartingScreens;
+using HTGTTA.Services;
 using HTGTTA.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -50,6 +51,9 @@ namespace HTGTTA
             //different features
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+
+            // Add the game service for global variables.
+            Services.AddService(new HTGTTAService());
 
             // Set up coroutine service
             new CoroutineService(this);

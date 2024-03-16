@@ -9,6 +9,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MonoGame.Randomchaos.Extensions;
+using HTGTTA.Enums;
+using HTGTTA.Services;
 
 namespace HTGTTA.Scenes
 {
@@ -19,6 +21,7 @@ namespace HTGTTA.Scenes
         Texture2D _titleBar;
         private SpriteFont _font;
 
+
         #region packages
         private IKeyboardStateManager _kbState { get { return Game.Services.GetService<IInputStateService>().KeyboardManager; } }
         private IMouseStateManager _msState { get { return Game.Services.GetService<IInputStateService>().MouseManager; } }
@@ -26,7 +29,9 @@ namespace HTGTTA.Scenes
         private ISceneService sceneService { get { return Game.Services.GetService<ISceneService>(); } }
         #endregion
 
-        public string TimerType;
+        protected HTGTTAService _HTGTTAService { get { return Game.Services.GetService<HTGTTAService>(); } }
+        public TimerTypeEnum TimerType { get { return _HTGTTAService.TimerType; } set { _HTGTTAService.TimerType = value; } }
+        public TimeSpan MaxTime { get { return _HTGTTAService.MaxTime; } set { _HTGTTAService.MaxTime = value; } }
 
         Dictionary<string, Rectangle> ButtonBounds = new Dictionary<string, Rectangle>();
         public Timer(Game game, string name) : base(game, name) { }
@@ -90,20 +95,43 @@ namespace HTGTTA.Scenes
                 Point keyPos = keyStartPos;
 
                 Color keyColor = Color.Gray;
+                Color selectedColor = Color.Gold;
+                Color selectedHoverColor = Color.Orange;
                 Color keyBorder = Color.DimGray;
+                Color hoverColor = Color.LavenderBlush;
+                Color hoverBorderColor = Color.Gray;
+
                 if (i == 0)
                 {
-                    keyText = "Normal";
+                    keyText = TimerTypeEnum.Normal.ToString();
+
+                    if (TimerType == TimerTypeEnum.Normal)
+                    {
+                        keyColor = selectedColor;
+                        hoverColor = selectedHoverColor;
+                    }
                 }
                 if (i == 1)
                 {
-                    keyText = "Tense";
+                    keyText = TimerTypeEnum.Tense.ToString();
                     keyPos.Y += (keySize.Y + 25);
+
+                    if (TimerType == TimerTypeEnum.Tense)
+                    {
+                        keyColor = selectedColor;
+                        hoverColor = selectedHoverColor;
+                    }
                 }
                 if (i == 2)
                 {
-                    keyText = "Relaxed";
+                    keyText = TimerTypeEnum.Relaxed.ToString();
                     keyPos.Y += (keySize.Y + 150);
+
+                    if (TimerType == TimerTypeEnum.Relaxed)
+                    {
+                        keyColor = selectedColor;
+                        hoverColor = selectedHoverColor;
+                    }
                 }
 
                 if (!ButtonBounds.ContainsKey(keyText))
@@ -112,8 +140,8 @@ namespace HTGTTA.Scenes
                 }
                 if (_msState.PositionRect.Intersects(ButtonBounds[keyText])) // Check mouse over and if it is button click event.
                 {
-                    keyColor = Color.LavenderBlush;
-                    keyBorder = Color.Gray;
+                    keyColor = hoverColor;
+                    keyBorder = hoverBorderColor;
                 }
 
                 strSize = _font.MeasureString(keyText) / 2;
@@ -128,15 +156,18 @@ namespace HTGTTA.Scenes
                     {
                         if (button == "Normal")
                         {
-                            TimerType = "Normal";
+                            TimerType =  TimerTypeEnum.Normal;
+                            MaxTime = new TimeSpan(0, 15, 0);
                         }
                         if (button == "Tense")
                         {
-                            TimerType = "Tense";
+                            TimerType = TimerTypeEnum.Tense;
+                            MaxTime = new TimeSpan(0, 5, 0);
                         }
                         if (button == "Relaxed")
                         {
-                            TimerType = "Relaxed";
+                            TimerType = TimerTypeEnum.Relaxed;
+                            MaxTime = new TimeSpan(0, 15, 0);
                         }
                     }
                 }
