@@ -154,7 +154,7 @@ namespace HTGTTA.Scenes
                     Name = "Wardrobe",
                     Interaction = new Dictionary<string, ObjectInterations>()
                     {
-                        {"Open door", new ObjectInterations(){ InteractionType = InteractionTypeEnum.WarDoorOpen,Name = "Door",Description = "There are too many clothes here, I can't open the door.", }  },
+                        {"Look at wardrobe", new ObjectInterations(){ InteractionType = InteractionTypeEnum.WarDoorOpen,Name = "Door",Description = "There are too many clothes here, I can't open the door.", }  },
                         {"Move clothes", new ObjectInterations(){ InteractionType = InteractionTypeEnum.ClothesMoved,Name = "Clothes", Description = "No point in moving these, waste of energy..." }  },
                         {"Look in box", new ObjectInterations(){ InteractionType = InteractionTypeEnum.Box,Name = "Box",  Description = "I can't reach that.",}  },
                     },
@@ -337,8 +337,17 @@ namespace HTGTTA.Scenes
                 }
                 if(HUD.LeaveTrapdoor)
                 {
-                    sceneManager.LoadScene("Ending3");
+                    sceneManager.LoadScene("trapdoor"); //ending 3
                 }
+                if (HUD.LeaveWindow)
+                {
+                    sceneManager.LoadScene("Ending5");
+                }
+                if (GamePlayTimer.TimeRanOut)
+                {
+                    sceneManager.LoadScene("Ending4");
+                }
+
 
                 if (!GamePlayTimer.IsPaused)
                 {

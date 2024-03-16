@@ -1,6 +1,7 @@
 ﻿using HTGTTA.Enums;
 using HTGTTA.Models;
 using HTGTTA.Scenes;
+using HTGTTA.Scenes.StartingScreens;
 using HTGTTA.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -82,7 +83,15 @@ namespace HTGTTA
             sceneService.AddScene(new Help(this, "Help"));
             sceneService.AddScene(new Ending(this, "Ending","mainMenu"));
             sceneService.AddScene(new Ending2(this, "Ending2", "mainMenu"));
+            sceneService.AddScene(new Trapdoor(this, "trapdoor", "Ending3"));
             sceneService.AddScene(new Ending3(this, "Ending3", "mainMenu"));
+            sceneService.AddScene(new Ending4(this, "Ending4", "mainMenu"));
+            sceneService.AddScene(new Ending5(this, "Ending5", "mainMenu"));
+            sceneService.AddScene(new Intro1(this, "Intro1", "Intro2"));
+            sceneService.AddScene(new Intro2(this, "Intro2", "Intro3"));
+            sceneService.AddScene(new Intro3(this, "Intro3", "Intro4"));
+            sceneService.AddScene(new Intro4(this, "Intro4", "Game"));
+
 
 
             base.Initialize();

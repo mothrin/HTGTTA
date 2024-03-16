@@ -1,4 +1,5 @@
-﻿using HTGTTA.Models;
+﻿using HTGTTA.Manager;
+using HTGTTA.Models;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -9,6 +10,11 @@ namespace HTGTTA.Sprites
     
     public class Player : Sprite
     {
+
+
+        public float spriteSpeed = 5f; //player speed
+
+        public Vector2 Velocity; //player position
         public override Rectangle Bounds
         {
             get { return new Rectangle((int)Position.X + (Width / 4), (int)Position.Y + (2 * (Height / 3)), Width / 2, Height / 4); }

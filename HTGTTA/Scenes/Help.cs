@@ -48,7 +48,7 @@ namespace HTGTTA.Scenes
 
             _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointWrap);
 
-            _spriteBatch.Draw(Game.Content.Load<Texture2D>("Screens/Menu"), new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White);
+            _spriteBatch.Draw(Game.Content.Load<Texture2D>("Screens/HelpMenu"), new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White);
 
             DrawString("Press F1 to go back.", new Point(10, 10).ToVector2(), Color.Gray);
 

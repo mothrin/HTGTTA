@@ -138,7 +138,7 @@ namespace HTGTTA.Scenes
                     {
                         if (button == "Start New Game")
                         {
-                            sceneManager.LoadScene("Game");
+                            sceneManager.LoadScene("Intro1");
                         }
                         if (button == "Options")
                         {

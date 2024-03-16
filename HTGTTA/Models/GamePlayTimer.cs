@@ -14,16 +14,20 @@ namespace HTGTTA.Models
 
         protected SpriteBatch _spriteBatch;
         protected SpriteFont _font;
-        public TimeSpan MaxTime { get; set; } = new TimeSpan(0, 15, 0);
+
+        protected string timeString;
+        public TimeSpan MaxTime { get; set; } = new TimeSpan(0, 10,0);
         public TimeSpan CurrentTime { get; set; } = TimeSpan.Zero;
         public TimeSpan CurrentTimeLeft { get; set; }
         public bool IsPaused { get; set; } = false;
 
+        public bool TimeRanOut;
         public bool IsRunning { get; protected set; } = false;
         public bool IsOutOfTime { get; protected set; } = false;
 
+        public string TimerType { get; set; }
         protected Texture2D PausedTexture { get; set; }
-
+        //protected Timer Timer;
         public GamePlayTimer(Game game, TimeSpan? maxTime = null) : base(game)
         {
             if (maxTime != null)
@@ -67,7 +71,10 @@ namespace HTGTTA.Models
                     {
                         CurrentTime += TimeSpan.FromSeconds(1);
                     }
-
+                    if (IsOutOfTime)
+                    {
+                        TimeRanOut = true;
+                    }
                     CurrentTimeLeft = MaxTime - CurrentTime;
 
                     IsOutOfTime = CurrentTimeLeft.TotalSeconds <= 0;
@@ -88,14 +95,30 @@ namespace HTGTTA.Models
         {
             _spriteBatch.Begin();
 
+            timeString = $"{CurrentTime}";
             if (IsPaused)
             {
                 _spriteBatch.Draw(PausedTexture, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White);
             }
+            if (TimerType == "Normal")
+            {
+                timeString = $"{CurrentTime}";
+            }
+            if (TimerType == "Tense")
+            {
+                timeString = $"{CurrentTimeLeft}";
+                MaxTime= new TimeSpan(0, 5, 0);
 
-            string timeString = $"{CurrentTime}";
-            //string timeString = $"{CurrentTime} / {MaxTime} = {CurrentTimeLeft}";
-            //string timeString = $"{CurrentTimeLeft}";
+            }
+            if (TimerType == "Relaxed")
+            {
+                timeString = "";
+            }
+
+            //timeString = $"{CurrentTime} / {MaxTime} = {CurrentTimeLeft}";
+
+            //timeString = $"{CurrentTime}";
+
             float l = _font.MeasureString(timeString).X /2 ;
 
             _spriteBatch.DrawString(_font, timeString, new Vector2(GraphicsDevice.Viewport.Width/2 - (int)l, 8), Color.Black);

@@ -16,10 +16,6 @@ namespace HTGTTA.Sprites
 
         protected SpriteBatch spriteBatch;
 
-        protected AnimationManager _animationManager;
-
-        protected Dictionary<string, Animation> _animations;
-
         protected Vector2 _position;
 
         protected Texture2D _texture;
@@ -27,6 +23,9 @@ namespace HTGTTA.Sprites
 
         protected SpriteFont _font;
 
+        protected AnimationManager _animationManager;
+
+        protected Dictionary<string, Animation> _animations;
 
         public int Width { get; set; }
         public int Height { get; set; }
@@ -37,9 +36,7 @@ namespace HTGTTA.Sprites
 
         public Input Input;
 
-        public float spriteSpeed = 5f; //player speed
 
-        public Vector2 Velocity; //player position
 
         #endregion
 

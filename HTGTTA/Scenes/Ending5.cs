@@ -13,7 +13,7 @@ using System.Collections;
 
 namespace HTGTTA.Scenes
 {
-    public class Ending : SceneFadeBase
+    public class Ending5 : SceneFadeBase
     {
 
         Texture2D _bgTexture;
@@ -24,7 +24,7 @@ namespace HTGTTA.Scenes
         private IAudioService _audio { get { return Game.Services.GetService<IAudioService>(); } }
 
 
-        public Ending(Game game, string name, string nextScene) : base(game, name) { NextScene = nextScene; }
+        public Ending5(Game game, string name, string nextScene) : base(game, name) { NextScene = nextScene; }
         public override void Update(GameTime gameTime)
         {
             if (State == SceneStateEnum.Loaded && !waiting)
@@ -49,7 +49,7 @@ namespace HTGTTA.Scenes
             _audio.PlaySong("Audio/Music/Mysterious-Puzzle_Looping", .005f);
 
 
-            _bgTexture = Game.Content.Load<Texture2D>("Textures/backgrounds/Ending1");
+            _bgTexture = Game.Content.Load<Texture2D>("Textures/backgrounds/Ending5");
 
 
 

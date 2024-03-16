@@ -46,14 +46,15 @@ namespace HTGTTA.Models
 
         public Dictionary<string, ObjectInterations> CurrentInteractions = null;
 
-        protected int puzzleNum; //hints
+        protected int puzzleNum= 2; //hints
+        protected bool keyPress;
 
-        protected bool OpenLaptop = false; //Brings up laptop UI if true
+        protected bool OpenLaptop; //Brings up laptop UI if true
         protected bool LaptopLocked = true; //Shows locked laptop screen if true
-        protected bool laptopOpened = false; //shows unlocked laptop screen is true
+        protected bool laptopOpened ; //shows unlocked laptop screen is true
 
-        protected bool ReadDiary; // if true, diary ui pops up
-        protected bool DiaryOpen; // allows player to progress to next puzzle
+        protected bool ReadDiary; // allows player to progress to next puzzle
+        protected bool DiaryOpen; // if true, diary ui pops up
 
         public bool chairGot; //if true player can place infront of wardrobe
         protected bool PlacedChair; //if true player can continuously look in box without yes or no option 
@@ -88,6 +89,8 @@ namespace HTGTTA.Models
         protected bool moveClothes;
         public bool LeaveTrapdoor;
 
+        protected bool windowkey;
+        public bool LeaveWindow;
 
         public bool SleepYes; // when true game ends
 
@@ -123,22 +126,23 @@ namespace HTGTTA.Models
         }
         public override void Update(GameTime gameTime)
         {
+            //this is to see what number the player presses to interact with the object
             if (CurrentInteractions != null)
             {
                 string key = null;
-                if (_kbState.KeyDown(Keys.D1) && CurrentInteractions.Count > 0)
+                if (_kbState.KeyDown(Keys.D1) && CurrentInteractions.Count > 0 && !Choice)
                 {
                     key = CurrentInteractions.Keys.ElementAt(0);
                     interactionToDo = CurrentInteractions[key];
                 }
 
-                if (_kbState.KeyDown(Keys.D2) && CurrentInteractions.Count > 1)
+                if (_kbState.KeyDown(Keys.D2) && CurrentInteractions.Count > 1 && !Choice)
                 {
                     key = CurrentInteractions.Keys.ElementAt(1);
                     interactionToDo = CurrentInteractions[key];
                 }
 
-                if (_kbState.KeyDown(Keys.D3) && CurrentInteractions.Count > 2)
+                if (_kbState.KeyDown(Keys.D3) && CurrentInteractions.Count > 2 && !Choice)
                 {
                     key = CurrentInteractions.Keys.ElementAt(2);
                     interactionToDo = CurrentInteractions[key];
@@ -147,7 +151,9 @@ namespace HTGTTA.Models
                 if (interactionToDo != null && interactionToDo.InteractionType == InteractionTypeEnum.Nothing)
                 {
                     interactionToDo = null;
+                    
                 }
+                // this is to see if the player has clicked on the key within the box so that the ui can be changed accordingly
                 foreach (var item in BoxitemBounds.Keys)
                 {
                     if (_msState.PositionRect.Intersects(BoxitemBounds[item]) && _msState.LeftClicked && !KeyClicked)
@@ -163,6 +169,7 @@ namespace HTGTTA.Models
                         }
                     }
                 }
+                //this is to see if the player has clicked the paper within the box so the ui can be changed accordingly
                 foreach (var item in DraweritemBounds.Keys)
                 {
                     if (_msState.PositionRect.Intersects(DraweritemBounds[item]) && _msState.LeftClicked && !PaperClicked)
@@ -180,32 +187,32 @@ namespace HTGTTA.Models
                 }
 
 
-                //pin code
+                //this codes is to check what laptop buttons the player is presses so it can respond accordingly
                 foreach (var lapTopKey in keysBounds.Keys)
                 {
                     if (_msState.PositionRect.Intersects(keysBounds[lapTopKey]) && _msState.LeftClicked && LaptopLocked)
                     {
-                        if (lapTopKey != "Del." && lapTopKey != "Ent.")
+                        if (lapTopKey != "Del." && lapTopKey != "Ent.") // means button is being pressed
                         {
-                            if (currentPinValue.Length < maxPinLength)
+                            if (currentPinValue.Length < maxPinLength) // limits player input to max of 4 numbers
                             {
                                 _audio.PlaySFX("Audio/SFX/menu_select");
                                 currentPinValue += lapTopKey;
                             }
                             else
                             {
-                                _audio.PlaySFX("Audio/SFX/menu_cancel");
+                                _audio.PlaySFX("Audio/SFX/menu_cancel"); 
                             }
                         }
                         else
                         {
-                            if (lapTopKey == "Del." && currentPinValue.Length > 0)
+                            if (lapTopKey == "Del." && currentPinValue.Length > 0) //removes last entered digit 
                             {
                                 EnterPin = Color.Gray;
                                 currentPinValue = currentPinValue.Substring(0, currentPinValue.Length - 1);
                                 _audio.PlaySFX("Audio/SFX/menu_select");
                             }
-                            else if (lapTopKey == "Ent.")
+                            else if (lapTopKey == "Ent.") //inputs code that player has entered
                             {
 
                                 if (currentPinValue == "2215") // correct code
@@ -228,7 +235,7 @@ namespace HTGTTA.Models
                         }
                     }
                 }
-
+                //this codes if to check for the door padlock button presses and respond accordingly
                 if (DoorCode)
                 {
                     foreach (var button in DoorKey.Keys)
@@ -288,29 +295,23 @@ namespace HTGTTA.Models
                 Point winSize = new Point(500, 45 + CurrentInteractions.Count * _font.LineSpacing);
                 Point winPos = new Point(8, 8 + 110);
 
-                DrawWindowBase(winSize,
-                   winPos,
-                    new Color(.5f, .5f, .5f, .5f),
-                    Color.Black, 2,
-                    "What do you want to do?",
-                    new Color(1f, 1f, 1.25f, 1f));
-                //size, position ,bgColour, borderColour, borderThickness, title,titleBgColour
+                DrawWindowBase(winSize,winPos,new Color(.5f, .5f, .5f, .5f),Color.Black, 2,"What do you want to do?",new Color(1f, 1f, 1.25f, 1f)); //draws box for options
 
 
-                Vector2 txtPos = (winPos.ToVector2() + new Vector2(winSize.X / 2, 0)) - (new Vector2(0, _titleBar.Height / 4) * .5f);
+                Vector2 txtPos = (winPos.ToVector2() + new Vector2(winSize.X / 2, 0)) - (new Vector2(0, _titleBar.Height / 4) * .5f); //where box is to be drawn
                 txtPos.X = 16;
 
                 int idx = 1;
-                foreach (string key in CurrentInteractions.Keys)
+                foreach (string key in CurrentInteractions.Keys) // draws interaction options
                 {
-                    string text = $"Press {idx} - {key}";
+                    string text = $"Press {idx} - {key}"; //tells player what number to press
 
-                    if (CurrentInteractions[key].InteractionType == InteractionTypeEnum.Nothing)
+                    if (CurrentInteractions[key].InteractionType == InteractionTypeEnum.Nothing)//if there is nothing to interact with 
                     {
                         text = "Nothing to do here....";
                     }
 
-                    Vector2 textSize = _font.MeasureString(text);
+                    Vector2 textSize = _font.MeasureString(text); 
                     txtPos += new Vector2(0, _font.LineSpacing);
 
                     idx++;
@@ -320,51 +321,50 @@ namespace HTGTTA.Models
 
                 if (interactionToDo != null)
                 {
-                    DoInteraction(interactionToDo, winPos.Y + winSize.Y);
+                    DoInteraction(interactionToDo, winPos.Y + winSize.Y); //this goes to switch case within method
                 }
 
-                //puzzles
-                if (OpenLaptop)
+                //puzzles (boolean logic)
+                if (OpenLaptop) 
                 {
-                    if (LaptopLocked)
+                    if (LaptopLocked) //will show locked laptop ui
                     {
                         DrawLaptopKeyPad();
                     }
-                    if (!LaptopLocked)
+                    if (!LaptopLocked) //if laptop has been unlocked open laptop 
                     {
                         DrawLaptop();
                     }
                 }
-                if (DiaryOpen)
+                if (DiaryOpen) //opens diary ui
                 {
                     DiaryRead();
                 }
-                if (PlacedChair)
+                if (PlacedChair) //can only look in box if chair is placed
                 {
                     LookInBox();
                 }
-                if (DrawerOpened)
+                if (DrawerOpened) //can only look in drawer if unlocked
                 {
                     Drawer();
                 }
-                if (DoorCode)
+                if (DoorCode) 
                 {
                     DoorLock();
                 }
-                if (Choice)
+                if (Choice) //triggers yes or no buttons
                 {
                     YesOrNo();
                 }
-                if (moveClothes)
-                {
-                    Trapdoor();
-                }
+
 
                 _spritebatch.End();
             }
         }
         protected void DoInteraction(ObjectInterations interaction, int startYPos)
         {
+            //in here is where the decription box text is determined based on what the player chooses to interact with
+            //it can either trigger interaction, ui to pop up or for yes or no buttons to pop up
             string textToPrint = string.Empty;
 
 
@@ -380,7 +380,7 @@ namespace HTGTTA.Models
                     interaction.InteractionType = InteractionTypeEnum.LaptopCodeEnter;
                     if (!OpenLaptop)
                     {
-                        currentPinValue = string.Empty; // reset the pin value.
+                        currentPinValue = string.Empty; // resets the pin value.
                     }
                     OpenLaptop = true;
                     break;
@@ -391,7 +391,7 @@ namespace HTGTTA.Models
                         textToPrint = "I have the chair on me.";
                         break;
                     }
-                    if (ReadDiary)
+                    if (ReadDiary && !UIup)
                     {
                         textToPrint = "Maybe i could use this for something after all. Do i take it?";
                         typeChoice = "Chair";
@@ -426,6 +426,16 @@ namespace HTGTTA.Models
                 case InteractionTypeEnum.WindowOpen:
                     textToPrint = interaction.Description;
                     interaction.InteractionType = InteractionTypeEnum.WindowOpen;
+                    if(windowkey)
+                    {
+                        textToPrint = "I have a key. Do I try using it?";
+                        typeChoice = "window";
+                        Choice= true;
+                    }
+                    else if(KeyTaken)
+                    {
+                        textToPrint = "Hmm, this key isn't for this.";
+                    }
                     break;
 
                 //bed
@@ -444,8 +454,11 @@ namespace HTGTTA.Models
                 case InteractionTypeEnum.Sleep:
                     textToPrint = interaction.Description;
                     interaction.InteractionType = InteractionTypeEnum.Sleep;
-                    typeChoice = "Sleep";
-                    Choice = true;
+                    if(!UIup)
+                    {
+                        typeChoice = "Sleep";
+                        Choice = true;
+                    }
                     break;
 
                 //wardrobe
@@ -456,7 +469,7 @@ namespace HTGTTA.Models
                 case InteractionTypeEnum.Box:
                     textToPrint = interaction.Description;
                     interaction.InteractionType = InteractionTypeEnum.Box;
-                    if (chairGot)
+                    if (chairGot && !UIup)
                     {
                         textToPrint = "I might be able to reach that box now. Do I place the chair?";
                         typeChoice = "PlaceChair";
@@ -470,7 +483,7 @@ namespace HTGTTA.Models
                 case InteractionTypeEnum.ClothesMoved:
                     textToPrint = interaction.Description;
                     interaction.InteractionType = InteractionTypeEnum.ClothesMoved;
-                    if (PaperRead)
+                    if (PaperRead && !UIup)
                     {
                         textToPrint = "Do I move the clothes?";
                         typeChoice = "clothes";
@@ -486,7 +499,7 @@ namespace HTGTTA.Models
                 case InteractionTypeEnum.Table:
                     textToPrint = interaction.Description;
                     interaction.InteractionType = InteractionTypeEnum.Table;
-                    if (KeyTaken)
+                    if (KeyTaken && !UIup)
                     {
                         textToPrint = "Pretty sure I got a key for this. Do I use it?";
                         typeChoice = "UseKey";
@@ -504,16 +517,16 @@ namespace HTGTTA.Models
                             textToPrint = interaction.Description;
                             break;
                         case 1:
-                            textToPrint = "Cludeo: Your best friend knew everything about you, maybe you should read her messages again.";
+                            textToPrint = "Cluedo: Your best friend knew everything about you, maybe you should read her messages again.";
                             break;
                         case 2:
-                            textToPrint = "Cludeo: Read the diary more closely, there might be something you're missing. That chair might be useful for something.";
+                            textToPrint = "Cluedo: Read the diary more closely, there might be something you're missing. \nThat chair might be useful for something.";
                             break;
                         case 3:
-                            textToPrint = "Cludeo: Pretty sure you put a key in that box when you were alive, maybe you should try opening something with it.";
+                            textToPrint = "Cluedo: Pretty sure you put a key in that box when you were alive, \nMaybe you should try opening something with it.";
                             break;
                         case 4:
-                            textToPrint = "Cludeo: There is a code for the door, retrace you're steps. There seems to be a symbol representing each puzzle.";
+                            textToPrint = "Cluedo: There is a code for the door, retrace you're steps.\n There seems to be a symbol representing each puzzle.";
                             break;
                     }
                     interaction.InteractionType = InteractionTypeEnum.Bear;
@@ -523,6 +536,11 @@ namespace HTGTTA.Models
                 case InteractionTypeEnum.Drawers:
                     textToPrint = interaction.Description;
                     interaction.InteractionType = InteractionTypeEnum.Drawers;
+                    if(ReadDiary)
+                    {
+                        textToPrint = "Oh cool, guess there was something in here! I found a key!";
+                        windowkey = true;
+                    }
                     break;
                 case InteractionTypeEnum.Plant:
                     textToPrint = interaction.Description;
@@ -535,26 +553,18 @@ namespace HTGTTA.Models
 
             }
 
-            //Description box
+            //Description box title and 
             Point winSize = new Point(1500, 150);
             Point winPos = new Point(210, 600 + startYPos);
 
-            DrawWindowBase(winSize,
-                  winPos,
-                   new Color(.5f, .5f, .5f, .5f),
-                   Color.Black, 2,
-                   string.IsNullOrEmpty(interaction.Name) ? "FIX THIS" : interaction.Name,
-                   new Color(1f, 1f, 1.25f, .5f));
-
-            //size, position, base window, border, border thickness, interaction Name, header colour
+            DrawWindowBase(winSize,winPos,new Color(.5f, .5f, .5f, .5f),Color.Black, 2, string.IsNullOrEmpty(interaction.Name) ? "FIX THIS" : interaction.Name, new Color(1f, 1f, 1.25f, .5f));
 
             Vector2 textSize = _font.MeasureString(textToPrint);
 
             //Description box
             Vector2 txtPos = (winPos.ToVector2() + new Vector2(winSize.X / 2, 0)) - (new Vector2(0, _titleBar.Height / 4) * .5f);
             txtPos = new Vector2(215, txtPos.Y + _font.LineSpacing);
-            DrawString(textToPrint, txtPos, Color.Navy); //shadow colour
-            //txtPos = new Vector2(215, txtPos.Y + 2*_font.LineSpacing);
+            DrawString(textToPrint, txtPos, Color.Navy);
         }
 
         //Screens
@@ -568,8 +578,6 @@ namespace HTGTTA.Models
             UIup = true;
 
             Point size = new Point(360, 64);
-            //Point pos = new Point(765, 630);
-
 
             // Characters entered..
             Point textBoxPos = new Point(775, 625);
@@ -986,24 +994,6 @@ namespace HTGTTA.Models
                 _spritebatch.Draw(Game.Content.Load<Texture2D>(keyText), new Rectangle(keyPos.X + 43, keyPos.Y + 43, 64, 64), Color.White);
             }
         }
-        protected void Trapdoor()
-        {
-            Rectangle diaryRec = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
-            _spritebatch.Draw(Game.Content.Load<Texture2D>("Textures/Puzzle UI/trapdoor"), diaryRec, Color.White);
-
-
-
-            UIup = true;
-            LeaveTrapdoor = true;
-
-
-            if (inputService.KeyboardManager.KeyPress(Keys.Q)) //close diary
-            {
-                moveClothes = false;
-                UIup = false;
-                interactionToDo = null;
-            }
-        }
     
 
         protected void YesOrNo()
@@ -1097,13 +1087,13 @@ namespace HTGTTA.Models
                             }
                             if(typeChoice=="clothes")
                             {
-                                moveClothes = true;
+                                LeaveTrapdoor = true;
                                 Choice = false;
                                 interactionToDo = null;
                             }
-                            if(typeChoice=="trapdoor")
+                            if(typeChoice== "window")
                             {
-                                LeaveTrapdoor = true;
+                                LeaveWindow = true;
                                 Choice = false;
                                 interactionToDo = null;
                             }

@@ -1,19 +1,20 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using MonoGame.Randomchaos.Services.Coroutine.Models;
+using MonoGame.Randomchaos.Services.Coroutine;
+using MonoGame.Randomchaos.Services.Interfaces.Enums;
 using MonoGame.Randomchaos.Services.Interfaces;
 using MonoGame.Randomchaos.Services.Scene.Models;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MonoGame.Randomchaos.Services.Coroutine.Models;
-using MonoGame.Randomchaos.Services.Interfaces.Enums;
-using System.Collections;
 
-namespace HTGTTA.Scenes
+namespace HTGTTA.Scenes.StartingScreens
 {
-    public class Ending : SceneFadeBase
+    public class Intro1 : SceneFadeBase
     {
 
         Texture2D _bgTexture;
@@ -24,12 +25,12 @@ namespace HTGTTA.Scenes
         private IAudioService _audio { get { return Game.Services.GetService<IAudioService>(); } }
 
 
-        public Ending(Game game, string name, string nextScene) : base(game, name) { NextScene = nextScene; }
+        public Intro1(Game game, string name, string nextScene) : base(game, name) { NextScene = nextScene; }
         public override void Update(GameTime gameTime)
         {
             if (State == SceneStateEnum.Loaded && !waiting)
             {
-                coroutineService.StartCoroutine(WaitSecondsAndExit(10));
+                coroutineService.StartCoroutine(WaitSecondsAndExit(5));
             }
 
             if (State == SceneStateEnum.Loaded && (kbManager.KeysPressed().Length > 0 || msManager.LeftButtonDown || msManager.RightButtonDown))
@@ -45,13 +46,7 @@ namespace HTGTTA.Scenes
         }
         protected override void LoadContent()
         {
-            // = new SpriteBatch(GraphicsDevice); // for screen switching
-            _audio.PlaySong("Audio/Music/Mysterious-Puzzle_Looping", .005f);
-
-
-            _bgTexture = Game.Content.Load<Texture2D>("Textures/backgrounds/Ending1");
-
-
+            _bgTexture = Game.Content.Load<Texture2D>("Textures/backgrounds/Intro/startscreen1");
 
 
             base.LoadContent();
@@ -80,7 +75,7 @@ namespace HTGTTA.Scenes
 
             if (State == SceneStateEnum.Loaded)
                 sceneManager.LoadScene(NextScene);
-
         }
     }
 }
+
