@@ -13,7 +13,7 @@ namespace HTGTTA.Sprites
 {
     public class Object : DrawableGameComponent
     {
-        public static bool BondsOn = true;
+        public static bool BondsOn = true; //collision/interaction/coords on
 
         #region Fields
 
@@ -41,7 +41,7 @@ namespace HTGTTA.Sprites
             TextureAsset = Convert.ToString(textureAsset);
         }
 
-        public virtual Rectangle Bounds //for collision and bounds
+        public virtual Rectangle Bounds //drawing (these objects don't have collisions
         {
             get { return new Rectangle((int)Position.X, (int)Position.Y, Width, Height); }
         }

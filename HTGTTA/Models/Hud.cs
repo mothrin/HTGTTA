@@ -15,19 +15,20 @@ namespace HTGTTA.Models
     {
         SpriteBatch _spritebatch;
         SpriteFont _font;
-        Texture2D _bgTexture;
 
-        Texture2D _boxBG;
-        Texture2D _drawerBG;
+        Texture2D _bgTexture;
         Texture2D _titleBar;
 
+        //chnaginG UIs
+        Texture2D _boxBG;
+        Texture2D _drawerBG;
 
-        Color EnterPin;
 
         ObjectInterations interactionToDo = null;
-        int maxPinLength = 4;
+        public Dictionary<string, ObjectInterations> CurrentInteractions = null;
 
-        #region packages
+        //packages
+        #region packages 
         private ISceneService sceneService { get { return Game.Services.GetService<ISceneService>(); } }
         private IKeyboardStateManager _kbState { get { return Game.Services.GetService<IInputStateService>().KeyboardManager; } }
         private IMouseStateManager _msState { get { return Game.Services.GetService<IInputStateService>().MouseManager; } }
@@ -38,46 +39,48 @@ namespace HTGTTA.Models
         protected string currentPinValue = string.Empty;
         protected string DoorCodeInput = string.Empty;
 
-        Dictionary<string, Rectangle> keysBounds = new Dictionary<string, Rectangle>();
-        Dictionary<string, Rectangle> BoxitemBounds = new Dictionary<string, Rectangle>();
-        Dictionary<string, Rectangle> DraweritemBounds = new Dictionary<string, Rectangle>();
-        Dictionary<string, Rectangle> Options = new Dictionary<string, Rectangle>();
-        Dictionary<string, Rectangle> DoorKey = new Dictionary<string, Rectangle>();
+        //buttons that player can press
+        Dictionary<string, Rectangle> Options = new Dictionary<string, Rectangle>(); //yes and no buttons
+        Dictionary<string, Rectangle> keysBounds = new Dictionary<string, Rectangle>(); //laptop keys
+        Dictionary<string, Rectangle> BoxitemBounds = new Dictionary<string, Rectangle>(); //box items
+        Dictionary<string, Rectangle> DraweritemBounds = new Dictionary<string, Rectangle>(); //drawer items
+        Dictionary<string, Rectangle> DoorKey = new Dictionary<string, Rectangle>(); //door keys
 
-        public Dictionary<string, ObjectInterations> CurrentInteractions = null;
 
+        Color EnterPin; //changes colour of laptop pin input depending if wrong input or not
+        int maxPinLength = 4; //pinlength for laptopcode
+
+        //boolean for puzzles
         protected int puzzleNum= 2; //hints
         protected bool keyPress;
-
+        //laptop
         protected bool OpenLaptop; //Brings up laptop UI if true
         protected bool LaptopLocked = true; //Shows locked laptop screen if true
         protected bool laptopOpened ; //shows unlocked laptop screen is true
-
+        //diary
         protected bool ReadDiary; // allows player to progress to next puzzle
         protected bool DiaryOpen; // if true, diary ui pops up
-
+        //desk
         public bool chairGot; //if true player can place infront of wardrobe
         protected bool PlacedChair; //if true player can continuously look in box without yes or no option 
         protected bool chairTook; // if player has taken chair, they can't continuously take it after
-
+        //box and drawer items
         protected bool itemDescBox; //if true description for item is shown
         protected string itemDescription; //decription for item
         public string itemText = ""; //Name of item
-
+        //box
         protected bool BoxGot; //if true player can
         protected string BoxType; //determines if player can taken key or not so correct UI can be shown
         protected bool KeyClicked; //if true the boxtype changes to the one without a key
-
         protected bool boxLooked; //if true the player can continue to next puzzle
-        protected bool KeyTaken; //if true the player can open the drawer with yes or no buttons
-
+        protected bool KeyTaken =true; //if true the player can open the drawer with yes or no buttons
+        //drawer
         protected bool DrawerOpened; //if true drawer UI pops up
         protected string DrawerType; //determines which UI is to be shown
         protected bool PaperClicked; //if clicked UI changes 
-
         protected bool drawerLooked; //if true player can progress to next puzzle
         protected bool PaperRead; //when true the player can put in the code to the door
-
+        //door
         protected bool DoorCode; //when true door UI pops up
         public bool DoorOpened; //when true game ends 
         protected int codeCount = 0; //keeps track of code length
@@ -85,22 +88,21 @@ namespace HTGTTA.Models
         protected string icon2; //door code
         protected string icon3; //door code
         protected string icon4; //door code
-
+        //wardrobe
         protected bool moveClothes;
         public bool LeaveTrapdoor;
-
+        //window
         protected bool windowkey;
         public bool LeaveWindow;
-
+        //bed
         public bool SleepYes; // when true game ends
-
+        //yes or no buttons
         public bool Choice; //for yes and no buttons
         protected string typeChoice; //to dictate what happens when yes is pressed depending on puzzle type
-
-
-
+        //changes key player is told to use in top left corner
         public bool UIup; //changes interaction key
 
+        //door code button symbols
         private List<string> doorKeyTextures = new List<string>()
         {
             "book", "circle",
@@ -109,7 +111,7 @@ namespace HTGTTA.Models
             "heart", "rabbit",
             "flag", "star"
         };
-
+        //hidable sprites that are moved
         public List<Object> HidableSprites = new List<Object>();
 
         public Hud(Game game) : base(game)
@@ -148,7 +150,7 @@ namespace HTGTTA.Models
                     interactionToDo = CurrentInteractions[key];
                 }
 
-                if (interactionToDo != null && interactionToDo.InteractionType == InteractionTypeEnum.Nothing)
+                if (interactionToDo != null && interactionToDo.InteractionType == InteractionTypeEnum.Nothing) //for uninteractable objects that require collison
                 {
                     interactionToDo = null;
                     
@@ -158,14 +160,14 @@ namespace HTGTTA.Models
                 {
                     if (_msState.PositionRect.Intersects(BoxitemBounds[item]) && _msState.LeftClicked && !KeyClicked)
                     {
-                        if (item == "Key")
+                        if (item == "Key")//item that player needs to click
                         {
                             _boxBG = Game.Content.Load<Texture2D>("Textures/Puzzle UI/BoxNoKey");
-                            KeyTaken = true;
-                            PlacedChair = true;
-                            KeyClicked = true;
+                            KeyTaken = true; //So player can progress to next puzzle
+                            PlacedChair = true; //recalls procedure that draws UI
+                            KeyClicked = true; //so ui changes
                             BoxType = "Key";
-
+                            _audio.PlaySFX("Audio/SFX/keys_05");
                         }
                     }
                 }
@@ -174,14 +176,14 @@ namespace HTGTTA.Models
                 {
                     if (_msState.PositionRect.Intersects(DraweritemBounds[item]) && _msState.LeftClicked && !PaperClicked)
                     {
-                        if (item == "Paper")
+                        if (item == "Paper")//item that player needs to click
                         {
                             _boxBG = Game.Content.Load<Texture2D>("Textures/Puzzle UI/DrawerWithNote");
-                            PaperRead = true;
-                            DrawerOpened = true;
-                            PaperClicked = true;
+                            PaperRead = true; //So player can progress to next puzzle
+                            DrawerOpened = true; //recalls procedure that draws UI
+                            PaperClicked = true; //so ui changes
                             DrawerType = "Paper";
-                            _audio.PlaySFX("Audio/SFX/book_flip.2");
+                            _audio.PlaySFX("Audio/SFX/book_flip.2"); 
                         }
                     }
                 }
@@ -197,9 +199,9 @@ namespace HTGTTA.Models
                             if (currentPinValue.Length < maxPinLength) // limits player input to max of 4 numbers
                             {
                                 _audio.PlaySFX("Audio/SFX/menu_select");
-                                currentPinValue += lapTopKey;
+                                currentPinValue += lapTopKey; //adds to pin
                             }
-                            else
+                            else //player can't type any more numbers
                             {
                                 _audio.PlaySFX("Audio/SFX/menu_cancel"); 
                             }
@@ -222,13 +224,13 @@ namespace HTGTTA.Models
                                     LaptopLocked = false;
 
                                 }
-                                else
+                                else //incorrect code
                                 {
                                     EnterPin = Color.DarkRed;
                                     _audio.PlaySFX("Audio/SFX/menu_cancel");
                                 }
                             }
-                            else
+                            else 
                             {
                                 _audio.PlaySFX("Audio/SFX/menu_cancel");
                             }
@@ -263,13 +265,13 @@ namespace HTGTTA.Models
                             if (DoorCodeInput == "Textures/Puzzle UI/DoorIcons/triangleTextures/Puzzle UI/DoorIcons/circleTextures/Puzzle UI/DoorIcons/heartTextures/Puzzle UI/DoorIcons/star")
                             {
                                 _audio.PlaySFX("Audio/SFX/menu_change");
-                                DoorOpened = true;
-                                DoorCode = false;
-                                PaperRead = false;
+                                DoorOpened = true; //ends game
+                                DoorCode = false; //closes door UI
+                                PaperRead = false; 
                             }
-                            if (codeCount > 4)
+                            if (codeCount > 4) //resets code
                             {
-                                codeCount = 0;
+                                codeCount = 0; 
                                 DoorCodeInput = "";
                             }
                         }
@@ -291,14 +293,14 @@ namespace HTGTTA.Models
             {
                 _spritebatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap);
 
-                //option window
+                //defines options window
                 Point winSize = new Point(500, 45 + CurrentInteractions.Count * _font.LineSpacing);
                 Point winPos = new Point(8, 8 + 110);
 
+                //draws option window
                 DrawWindowBase(winSize,winPos,new Color(.5f, .5f, .5f, .5f),Color.Black, 2,"What do you want to do?",new Color(1f, 1f, 1.25f, 1f)); //draws box for options
 
-
-                Vector2 txtPos = (winPos.ToVector2() + new Vector2(winSize.X / 2, 0)) - (new Vector2(0, _titleBar.Height / 4) * .5f); //where box is to be drawn
+                Vector2 txtPos = winPos.ToVector2() - (new Vector2(0, _titleBar.Height / 4) * .5f); //where box is to be drawn
                 txtPos.X = 16;
 
                 int idx = 1;
@@ -348,7 +350,7 @@ namespace HTGTTA.Models
                 {
                     Drawer();
                 }
-                if (DoorCode) 
+                if (DoorCode) //if true door UI opens
                 {
                     DoorLock();
                 }
@@ -367,7 +369,7 @@ namespace HTGTTA.Models
             //it can either trigger interaction, ui to pop up or for yes or no buttons to pop up
             string textToPrint = string.Empty;
 
-
+            //switch case determines what interaction, easy to add to
             switch (interaction.InteractionType)
             {
                 //desk
@@ -378,7 +380,7 @@ namespace HTGTTA.Models
                 case InteractionTypeEnum.LaptopCodeEnter:
                     textToPrint = interaction.Description;
                     interaction.InteractionType = InteractionTypeEnum.LaptopCodeEnter;
-                    if (!OpenLaptop)
+                    if (!OpenLaptop) 
                     {
                         currentPinValue = string.Empty; // resets the pin value.
                     }
@@ -386,12 +388,12 @@ namespace HTGTTA.Models
                     break;
                 case InteractionTypeEnum.Chair:
                     textToPrint = interaction.Description;
-                    if (chairTook)
+                    if (chairTook) //if player tried to interact with chair after it's taken
                     {
                         textToPrint = "I have the chair on me.";
                         break;
                     }
-                    if (ReadDiary && !UIup)
+                    if (ReadDiary && !UIup) //opens yes or no buttons
                     {
                         textToPrint = "Maybe i could use this for something after all. Do i take it?";
                         typeChoice = "Chair";
@@ -408,11 +410,11 @@ namespace HTGTTA.Models
                 case InteractionTypeEnum.DoorCode:
                     textToPrint = interaction.Description;
                     interaction.InteractionType = InteractionTypeEnum.DoorCode;
-                    if (PaperRead)
+                    if (PaperRead) //opens door UI
                     {
                         DoorCode = true;
                     }
-                    if (DoorOpened)
+                    if (DoorOpened) //Displays this before ending game
                     {
                         textToPrint = "I unlocked it!";
                     }
@@ -426,13 +428,13 @@ namespace HTGTTA.Models
                 case InteractionTypeEnum.WindowOpen:
                     textToPrint = interaction.Description;
                     interaction.InteractionType = InteractionTypeEnum.WindowOpen;
-                    if(windowkey)
+                    if(windowkey) //checks if player has required key
                     {
                         textToPrint = "I have a key. Do I try using it?";
                         typeChoice = "window";
                         Choice= true;
                     }
-                    else if(KeyTaken)
+                    else if(KeyTaken) //if player has the wrong key
                     {
                         textToPrint = "Hmm, this key isn't for this.";
                     }
@@ -446,7 +448,7 @@ namespace HTGTTA.Models
                 case InteractionTypeEnum.Diary:
                     textToPrint = interaction.Description;
                     interaction.InteractionType = InteractionTypeEnum.Diary;
-                    if (laptopOpened)
+                    if (laptopOpened) //checks if player can read diary yet
                     {
                         DiaryOpen = true;
                     }
@@ -454,7 +456,7 @@ namespace HTGTTA.Models
                 case InteractionTypeEnum.Sleep:
                     textToPrint = interaction.Description;
                     interaction.InteractionType = InteractionTypeEnum.Sleep;
-                    if(!UIup)
+                    if(!UIup) //opens yes or no buttons
                     {
                         typeChoice = "Sleep";
                         Choice = true;
@@ -469,13 +471,13 @@ namespace HTGTTA.Models
                 case InteractionTypeEnum.Box:
                     textToPrint = interaction.Description;
                     interaction.InteractionType = InteractionTypeEnum.Box;
-                    if (chairGot && !UIup)
+                    if (chairGot && !UIup) //opens yes or no buttons
                     {
                         textToPrint = "I might be able to reach that box now. Do I place the chair?";
                         typeChoice = "PlaceChair";
                         Choice = true;
                     }
-                    if (boxLooked)
+                    if (boxLooked) //so yes or no buttons don't continue to pop up after inital answer
                     {
                         PlacedChair = true;
                     }
@@ -483,7 +485,7 @@ namespace HTGTTA.Models
                 case InteractionTypeEnum.ClothesMoved:
                     textToPrint = interaction.Description;
                     interaction.InteractionType = InteractionTypeEnum.ClothesMoved;
-                    if (PaperRead && !UIup)
+                    if (PaperRead && !UIup) //opens yes or no buttons
                     {
                         textToPrint = "Do I move the clothes?";
                         typeChoice = "clothes";
@@ -499,18 +501,18 @@ namespace HTGTTA.Models
                 case InteractionTypeEnum.Table:
                     textToPrint = interaction.Description;
                     interaction.InteractionType = InteractionTypeEnum.Table;
-                    if (KeyTaken && !UIup)
+                    if (KeyTaken && !UIup) //opens yes or no buttons
                     {
                         textToPrint = "Pretty sure I got a key for this. Do I use it?";
                         typeChoice = "UseKey";
                         Choice = true;
                     }
-                    if (drawerLooked)
+                    if (drawerLooked) //so yes or no buttons don't continue to pop up after inital answer
                     {
                         DrawerOpened = true;
                     }
                     break;
-                case InteractionTypeEnum.Bear:
+                case InteractionTypeEnum.Bear: //hints
                     switch (puzzleNum)
                     {
                         case 0:
@@ -536,7 +538,7 @@ namespace HTGTTA.Models
                 case InteractionTypeEnum.Drawers:
                     textToPrint = interaction.Description;
                     interaction.InteractionType = InteractionTypeEnum.Drawers;
-                    if(ReadDiary)
+                    if(ReadDiary) //gives player window key for alt ending
                     {
                         textToPrint = "Oh cool, guess there was something in here! I found a key!";
                         windowkey = true;
@@ -553,25 +555,24 @@ namespace HTGTTA.Models
 
             }
 
-            //Description box title and 
+            //defines description box
             Point winSize = new Point(1500, 150);
             Point winPos = new Point(210, 600 + startYPos);
 
             DrawWindowBase(winSize,winPos,new Color(.5f, .5f, .5f, .5f),Color.Black, 2, string.IsNullOrEmpty(interaction.Name) ? "FIX THIS" : interaction.Name, new Color(1f, 1f, 1.25f, .5f));
-
             Vector2 textSize = _font.MeasureString(textToPrint);
 
-            //Description box
+            //draws description box
             Vector2 txtPos = (winPos.ToVector2() + new Vector2(winSize.X / 2, 0)) - (new Vector2(0, _titleBar.Height / 4) * .5f);
             txtPos = new Vector2(215, txtPos.Y + _font.LineSpacing);
             DrawString(textToPrint, txtPos, Color.Navy);
         }
 
-        //Screens
+        //UIs
         protected void DrawLaptopKeyPad()
         {
 
-            // Draw laptop locked image
+            // Draws laptop locked image
             Rectangle laptopRec = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
             _spritebatch.Draw(Game.Content.Load<Texture2D>("Textures/Puzzle UI/LaptopLocked"), laptopRec, Color.White);
 
@@ -597,6 +598,7 @@ namespace HTGTTA.Models
             Point keySize = new Point(112, 40);
             Point keyStartPos = textBoxPos + new Point(0, 25);
 
+            //draws pin buttons
             for (int i = 0; i < 12; i++)
             {
                 Point keyPos = keyStartPos;
@@ -629,8 +631,7 @@ namespace HTGTTA.Models
                 {
                     keysBounds.Add(keyText, new Rectangle(keyPos.X, keyPos.Y + 50, 112, 40));
                 }
-
-
+                //changes button colour when player hovers over with mouse
                 if (_msState.PositionRect.Intersects(keysBounds[keyText])) // Check mouse over and if it is button click event.
                 {
                     keyColor = Color.DarkGray;
@@ -639,10 +640,11 @@ namespace HTGTTA.Models
 
                 strSize = _font.MeasureString(keyText) / 2;
 
+                //draws pin key buttons
                 DrawBox(keySize, keyPos + new Point(0, 50), keyColor, keyBorder, 1);
                 DrawString(keyText, (keyPos + new Point(56, 64)).ToVector2() - strSize, Color.Gray);
             }
-            if (inputService.KeyboardManager.KeyPress(Keys.Q)) //close laptop
+            if (inputService.KeyboardManager.KeyPress(Keys.Q)) //closes laptop
             {
                 OpenLaptop = false;
                 interactionToDo = null;
@@ -652,11 +654,12 @@ namespace HTGTTA.Models
         }
         protected void DrawLaptop()
         {
+            //draws unlocked laptop
             Rectangle laptopRec = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
             _spritebatch.Draw(Game.Content.Load<Texture2D>("Textures/Puzzle UI/laptop"), laptopRec, Color.White);
 
             laptopOpened = true;
-            puzzleNum = 1;
+            puzzleNum = 1; //increases puzzle number for hint system
 
             UIup = true;
 
@@ -670,14 +673,15 @@ namespace HTGTTA.Models
         }
         protected void DiaryRead()
         {
+            //draws diary
             Rectangle diaryRec = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
             _spritebatch.Draw(Game.Content.Load<Texture2D>("Textures/Puzzle UI/Diary"), diaryRec, Color.White);
 
-            puzzleNum = 2;
-            ReadDiary = true;
+            puzzleNum = 2;  //increases puzzle number for hint system
+            ReadDiary = true; 
             UIup = true;
 
-            if (inputService.KeyboardManager.KeyPress(Keys.Q)) //close diary
+            if (inputService.KeyboardManager.KeyPress(Keys.Q)) //closes diary
             {
                 DiaryOpen = false;
                 UIup = false;
@@ -688,8 +692,10 @@ namespace HTGTTA.Models
         }
         protected void LookInBox()
         {
+            //draws box UI
             Rectangle boxRec = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
 
+            //defines what UI background is displayed
             if (BoxType == "Key")
             {
                 _boxBG = Game.Content.Load<Texture2D>("Textures/Puzzle UI/BoxNoKey");
@@ -704,6 +710,7 @@ namespace HTGTTA.Models
                 Point size = new Point(112, 40);
                 Point keyPos = new Point(112, 40);
 
+                //buttons used to dicatate what item desciption to display
                 for (int i = 0; i < 8; i++)
                 {
                     if (i == 0)
@@ -776,6 +783,7 @@ namespace HTGTTA.Models
                         Point winPos = new Point(210, 200);
                         if (_msState.PositionRect.Intersects(BoxitemBounds[itemText]))
                         {
+                            //draws description box
                             DrawWindowBase(winSize,
                             winPos,
                             new Color(.5f, .5f, .5f, .5f),
@@ -783,16 +791,14 @@ namespace HTGTTA.Models
                             itemText,
                             new Color(1f, 1f, 1.25f, 1f));
 
-                            //Description box
                             Vector2 txtPos = (winPos.ToVector2() + new Vector2(winSize.X / 2, 0)) - (new Vector2(0, _titleBar.Height / 4) * .5f);
                             txtPos = new Vector2(215, txtPos.Y + _font.LineSpacing);
-                            DrawString(itemDescription, txtPos, Color.Navy); //shadow colour
-
+                            DrawString(itemDescription, txtPos, Color.Navy); 
                         }
                     }
                 }
             }
-            puzzleNum = 3;
+            puzzleNum = 3;  //increases puzzle number for hint system
 
             UIup = true;
             if (inputService.KeyboardManager.KeyPress(Keys.Q)) //close UI
@@ -805,7 +811,9 @@ namespace HTGTTA.Models
         }
         protected void Drawer()
         {
+            //draws drawer UI
             Rectangle DrawerRec = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+            //dictates which UI to display
             if (DrawerType == "Paper")
             {
                 _drawerBG = Game.Content.Load<Texture2D>("Textures/Puzzle UI/DrawerWithNote");
@@ -864,8 +872,6 @@ namespace HTGTTA.Models
                     {
                         itemText = "Stationary";
                         itemDescription = "Ooo drawing utensils.";
-                        //typeChoice = "Key";
-                        //Choice = true;
                         keyPos = new Point(635, 20);
                         size = new Point(570, 245);
                     }
@@ -887,6 +893,7 @@ namespace HTGTTA.Models
                         Point winPos = new Point(210, 200);
                         if (_msState.PositionRect.Intersects(DraweritemBounds[itemText]))
                         {
+                            //Draws description box
                             DrawWindowBase(winSize,
                             winPos,
                             new Color(.5f, .5f, .5f, .5f),
@@ -894,16 +901,15 @@ namespace HTGTTA.Models
                             itemText,
                             new Color(1f, 1f, 1.25f, 1f));
 
-                            //Description box
                             Vector2 txtPos = (winPos.ToVector2() + new Vector2(winSize.X / 2, 0)) - (new Vector2(0, _titleBar.Height / 4) * .5f);
                             txtPos = new Vector2(215, txtPos.Y + _font.LineSpacing);
-                            DrawString(itemDescription, txtPos, Color.Navy); //shadow colour
+                            DrawString(itemDescription, txtPos, Color.Navy);
 
                         }
                     }
                 }
             }
-            puzzleNum = 4;
+            puzzleNum = 4;  //increases puzzle number for hint system
             UIup = true;
 
 
@@ -920,12 +926,13 @@ namespace HTGTTA.Models
             Rectangle laptopRec = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
             _spritebatch.Draw(Game.Content.Load<Texture2D>("Textures/Puzzle UI/PadLock"), laptopRec, Color.White);
 
-            puzzleNum = 5;
+            puzzleNum = 5;  //increases puzzle number for hint system
             UIup = true;
 
             Point keyPos = new Point(160, 120);
             Point keySize = new Point(150, 150);
 
+            //draws buttons for player input to be displayed
             #region code input
             Point Size1 = new Point(170, 155);
             Point textBoxPos1 = new Point(585, 705);
@@ -943,6 +950,7 @@ namespace HTGTTA.Models
             Point textBoxPos4 = new Point(1220, 705);
             DrawBox(new Point(Size4.X, Size4.Y), textBoxPos4, Color.DimGray, Color.DimGray, 1);
 
+            //draws symbols in boxes as player inputs symbols
             if (codeCount == 1)
             {
                 _spritebatch.Draw(Game.Content.Load<Texture2D>(icon1), new Rectangle(textBoxPos1.X, textBoxPos1.Y, 150, 145), Color.White);
@@ -967,6 +975,7 @@ namespace HTGTTA.Models
             }
             #endregion
 
+            //draws buttons for player to press
             for (int i = 0; i < 10; i++)
             {
                 Color keyColor = Color.DimGray;
@@ -982,9 +991,7 @@ namespace HTGTTA.Models
                 {
                     DoorKey.Add(keyText, new Rectangle(keyPos.X, keyPos.Y, 150, 150));
                 }
-
-
-                if (_msState.PositionRect.Intersects(DoorKey[keyText])) // Check mouse over and if it is button click event.
+                if (_msState.PositionRect.Intersects(DoorKey[keyText])) // Check mouse over and changes button colour
                 {
                     keyColor = Color.DarkGray;
                     keyBorder = Color.Black;
@@ -998,17 +1005,13 @@ namespace HTGTTA.Models
 
         protected void YesOrNo()
         {
-
+            // displays yes and no buttons
             Point keySize = new Point(400, 100);
             Point keyStartPos = new Point((GraphicsDevice.Viewport.Width / 2) - 425, 500);
             string keyText = "";
 
-
-
-            //DrawBox(keySize, keyPos + new Point(440,0), keyColor, keyBorder, 1);
-            //DrawString("No", (keyPos + new Point(638,0)).ToVector2(), Color.Navy);
-
             Vector2 strSize = _font.MeasureString(keyText);
+            //defines buttons
             for (int i = 0; i < 2; i++)
             {
                 Point keyPos = keyStartPos;
@@ -1024,12 +1027,11 @@ namespace HTGTTA.Models
                     keyText = "No";
                     keyPos.X += (keySize.X + 50);
                 }
-
                 if (!Options.ContainsKey(keyText))
                 {
                     Options.Add(keyText, new Rectangle(keyPos.X, keyPos.Y, 400, 100));
                 }
-                if (_msState.PositionRect.Intersects(Options[keyText])) // Check mouse over and if it is button click event.
+                if (_msState.PositionRect.Intersects(Options[keyText])) // Check mouse over and chaneges the colour of them
                 {
                     keyColor = Color.LavenderBlush;
                     keyBorder = Color.Navy;
@@ -1037,20 +1039,22 @@ namespace HTGTTA.Models
 
                 strSize = _font.MeasureString(keyText) / 2;
 
+                //draws buttons
                 DrawBox(keySize, keyPos, keyColor, keyBorder, 1);
                 DrawString(keyText, (keyPos + new Point(200,50)).ToVector2() - strSize, Color.Navy);
 
+                //checks player button press and repsonds accordingly
                 foreach (var button in Options.Keys)
                 {
                     if (_msState.PositionRect.Intersects(Options[button]) && _msState.LeftClicked)
                     {
                         if (button == "Yes")
                         { 
-                            if(typeChoice=="Sleep")
+                            if(typeChoice=="Sleep") //ending triggered
                             {
                                 SleepYes = true;
                             }
-                            if(typeChoice=="Chair")
+                            if(typeChoice=="Chair") //player takes chair and it is removed 
                             {
                                 chairGot = true;
                                 var chair = HidableSprites.FirstOrDefault(f => f.Name == typeChoice);
@@ -1059,25 +1063,11 @@ namespace HTGTTA.Models
                                 {
                                     chair.Visible = false;
                                 }
-
                                 Choice = false;
                                 interactionToDo = null;
                                 chairTook = true;
                             }
-                            if (typeChoice== "PlaceChair")
-                            {
-                                chairGot = false;
-                                var chair2 = HidableSprites.FirstOrDefault(f => f.Name == typeChoice);
-                                if (chair2 == null)
-                                {
-                                    chair2.Visible = true;
-                                }
-                                PlacedChair = true;
-                                Choice = false;
-                                interactionToDo = null;
-                                boxLooked = true;
-                            }
-                            if(typeChoice== "UseKey")
+                            if(typeChoice== "UseKey") //opens drawer for user
                             {
                                 KeyTaken = false;
                                 DrawerOpened = true;
@@ -1085,21 +1075,20 @@ namespace HTGTTA.Models
                                 interactionToDo = null;
                                 drawerLooked = true;
                             }
-                            if(typeChoice=="clothes")
+                            if(typeChoice=="clothes") //ending triggered
                             {
                                 LeaveTrapdoor = true;
                                 Choice = false;
                                 interactionToDo = null;
                             }
-                            if(typeChoice== "window")
+                            if(typeChoice== "window") //ending triggered
                             {
                                 LeaveWindow = true;
                                 Choice = false;
                                 interactionToDo = null;
                             }
-
                         }
-                        if (button == "No")
+                        if (button == "No") //for all presses of no, button UI closes
                         {
                             Choice = false;
                             interactionToDo = null;
@@ -1115,14 +1104,13 @@ namespace HTGTTA.Models
 
             _spritebatch.Begin();
 
-            //interact box (E)
+            //interact box (E) (changes to Q when UI open
             DrawWindowBase(winSize,
                   winPos,
                    new Color(.5f, .5f, .5f, .5f),
                    Color.Black, 2,
                    "Interactions",
                    new Color(1f, 1f, 1.25f, 1f));
-            //size, position, base window, border, border thickness, Title, header colour
 
             Vector2 center = new Vector2(winPos.X / 2, winPos.Y);
 
@@ -1131,6 +1119,7 @@ namespace HTGTTA.Models
             int idx = 1;
             p = new Vector2(22, p.Y + 40);
             string text;
+            //changes interaction box depending if UI is open or not
             foreach (Sprite interationObject in interactions.Keys)
             {
                 if (UIup)
@@ -1160,6 +1149,7 @@ namespace HTGTTA.Models
         //UI
         protected void DrawBox(Point size, Point pos, Color bgColor, Color borderCour, int borderThickness)
         {
+            //draws box (for buttons)
             _bgTexture = new Texture2D(GraphicsDevice, size.X, size.Y);
             _bgTexture.FillWithBorder(bgColor, borderCour, new Rectangle(borderThickness, borderThickness, borderThickness, borderThickness));
 
@@ -1167,6 +1157,7 @@ namespace HTGTTA.Models
         }
         protected void DrawWindowBase(Point size, Point pos, Color bgColor, Color borderCour, int borderThickness, string title, Color titleBgColor, Color? titleTextColor = null)
         {
+            //draws box for windows (interaction key prompt, options window, desciprion box)
             if (titleTextColor == null)
             {
                 titleTextColor = Color.Navy;
@@ -1189,6 +1180,7 @@ namespace HTGTTA.Models
         }
         protected void DrawString(string text, Vector2 pos, Color color, SpriteFont font = null)
         {
+            //draws string
             if (font == null)
             {
                 font = _font;

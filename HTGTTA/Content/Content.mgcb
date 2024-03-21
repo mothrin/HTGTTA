@@ -37,6 +37,12 @@
 /processorParam:Quality=Best
 /build:Audio/SFX/Chest-Drawer_Open.mp3
 
+#begin Audio/SFX/keys_05.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/SFX/keys_05.wav
+
 #begin Audio/SFX/menu_cancel.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor

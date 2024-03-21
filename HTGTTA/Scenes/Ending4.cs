@@ -29,7 +29,7 @@ namespace HTGTTA.Scenes
         {
             if (State == SceneStateEnum.Loaded && !waiting)
             {
-                coroutineService.StartCoroutine(WaitSecondsAndExit(10));
+                coroutineService.StartCoroutine(WaitSecondsAndExit(10)); //this number can be changed to change how long screen stays up before fading
             }
 
             if (State == SceneStateEnum.Loaded && (kbManager.KeysPressed().Length > 0 || msManager.LeftButtonDown || msManager.RightButtonDown))

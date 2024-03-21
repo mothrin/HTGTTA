@@ -42,7 +42,7 @@ namespace HTGTTA.Scenes
         protected override void LoadContent()
         {
             // = new SpriteBatch(GraphicsDevice); // for screen switching
-            _audio.PlaySong("Audio/Music/Mysterious-Puzzle_Looping", .005f); 
+            _audio.PlaySong("Audio/Music/Mysterious-Puzzle_Looping", .005f);  //menu music
             _font = Game.Content.LoadLocalized<SpriteFont>("Fonts/UIFont");
             
 

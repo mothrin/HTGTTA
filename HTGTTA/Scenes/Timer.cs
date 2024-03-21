@@ -50,14 +50,6 @@ namespace HTGTTA.Scenes
 
         public override void Update(GameTime gameTime)
         {
-
-            if (State == SceneStateEnum.Loaded)
-            {
-                if (kbManager.KeyPress(Microsoft.Xna.Framework.Input.Keys.F1))
-                {
-                    sceneManager.LoadScene("Options");
-                }
-            }
             base.Update(gameTime);
         }
         public override void Draw(GameTime gameTime)
@@ -69,7 +61,6 @@ namespace HTGTTA.Scenes
 
             _spriteBatch.Draw(Game.Content.Load<Texture2D>("Screens/TimerMenu"), new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White);
 
-            DrawString("Press F1 to go back.", new Point(10, 10).ToVector2(), Color.Gray);
 
             MenuButtons();
 
@@ -90,13 +81,13 @@ namespace HTGTTA.Scenes
 
 
             Vector2 strSize = _font.MeasureString(keyText);
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 4; i++)
             {
                 Point keyPos = keyStartPos;
 
                 Color keyColor = Color.Gray;
-                Color selectedColor = Color.Gold;
-                Color selectedHoverColor = Color.Orange;
+                Color selectedColor = Color.Lavender;
+                Color selectedHoverColor = Color.PowderBlue;
                 Color keyBorder = Color.DimGray;
                 Color hoverColor = Color.LavenderBlush;
                 Color hoverBorderColor = Color.Gray;
@@ -133,6 +124,12 @@ namespace HTGTTA.Scenes
                         hoverColor = selectedHoverColor;
                     }
                 }
+                if (i == 3)
+                {
+                    keyText = "Back";
+                    keyPos.Y += (keySize.Y + 275);
+
+                }
 
                 if (!ButtonBounds.ContainsKey(keyText))
                 {
@@ -157,7 +154,7 @@ namespace HTGTTA.Scenes
                         if (button == "Normal")
                         {
                             TimerType =  TimerTypeEnum.Normal;
-                            MaxTime = new TimeSpan(0, 15, 0);
+                            MaxTime = new TimeSpan(0, 10, 0);
                         }
                         if (button == "Tense")
                         {
@@ -167,7 +164,11 @@ namespace HTGTTA.Scenes
                         if (button == "Relaxed")
                         {
                             TimerType = TimerTypeEnum.Relaxed;
-                            MaxTime = new TimeSpan(0, 15, 0);
+                            MaxTime = new TimeSpan(0, 60, 0);
+                        }
+                        if(button =="Back")
+                        {
+                            sceneManager.LoadScene("Options");
                         }
                     }
                 }

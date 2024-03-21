@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace HTGTTA.Models
 {
-    public class ObjectInterations
+    public class ObjectInterations //this is for objects that are interactable
     {
-        public string Name { get; set; }
+        public string Name { get; set; }  
         public string Description { get; set; }
         public bool Active{get; set; }
 

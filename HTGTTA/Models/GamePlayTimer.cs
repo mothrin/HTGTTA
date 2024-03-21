@@ -21,15 +21,15 @@ namespace HTGTTA.Models
 
         protected HTGTTAService _HTGTTAService { get { return Game.Services.GetService<HTGTTAService>(); } }
 
-        public TimeSpan MaxTime { get { return _HTGTTAService.MaxTime; } set { _HTGTTAService.MaxTime = value; } }
-        public TimeSpan CurrentTime { get; set; } = TimeSpan.Zero;
-        public TimeSpan CurrentTimeLeft { get; set; }
-        public bool IsPaused { get; set; } = false;
-        public bool IsRunning { get; protected set; } = false;
-        public bool IsOutOfTime { get; protected set; } = false;
+        public TimeSpan MaxTime { get { return _HTGTTAService.MaxTime; } set { _HTGTTAService.MaxTime = value; } } //dictates player time limit 
+        public TimeSpan CurrentTime { get; set; } = TimeSpan.Zero; //this counts up while game isn't paused
+        public TimeSpan CurrentTimeLeft { get; set; } //this counts down while game isn't paused
+        public bool IsPaused { get; set; } = false; //when this is true the time is paused
+        public bool IsRunning { get; protected set; } = false; //when true means timer is counting up or down
+        public bool IsOutOfTime { get; protected set; } = false; //this triggers the game to end
 
-        public TimerTypeEnum TimerType { get { return _HTGTTAService.TimerType; } set { _HTGTTAService.TimerType = value; } }
-        protected Texture2D PausedTexture { get; set; }
+        public TimerTypeEnum TimerType { get { return _HTGTTAService.TimerType; } set { _HTGTTAService.TimerType = value; } } //this dictates what type of timer is selected in timer menu
+        protected Texture2D PausedTexture { get; set; } //texture of pause screen
         //protected Timer Timer;
         public GamePlayTimer(Game game) : base(game) { }
 
@@ -44,7 +44,7 @@ namespace HTGTTA.Models
 
         public void StartTimer()
         {
-            CurrentTimeLeft = MaxTime;
+            CurrentTimeLeft = MaxTime; //sets times
             CurrentTime = TimeSpan.Zero;
 
             IsRunning = true;
@@ -58,7 +58,7 @@ namespace HTGTTA.Models
 
         protected IEnumerator TimeTicker()
         {
-            while (IsRunning && TimerType != TimerTypeEnum.Relaxed)
+            while (IsRunning && TimerType != TimerTypeEnum.Relaxed) 
             {
                 if (!IsPaused && !IsOutOfTime) // If it's not paused, wait for a second and move the time on.
                 {
@@ -92,26 +92,23 @@ namespace HTGTTA.Models
             timeString = $"{CurrentTime}";
             if (IsPaused)
             {
-                _spriteBatch.Draw(PausedTexture, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White);
+                _spriteBatch.Draw(PausedTexture, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White); //paused texture being drawn
             }
 
             switch (TimerType)
             {
                 case TimerTypeEnum.Normal:
-                    timeString = $"{CurrentTime}";
+                    timeString = $"{CurrentTime}"; //counting up timer
                     break;
                 case TimerTypeEnum.Tense:
-                    timeString = $"{CurrentTimeLeft}";
+                    timeString = $"{CurrentTimeLeft}"; //counting down timer
                     break;
                 case TimerTypeEnum.Relaxed:
                     timeString = "";
-                    break;
+                    break; //no timer
             }
 
-            //timeString = $"{CurrentTime} / {MaxTime} = {CurrentTimeLeft}";
-
-            //timeString = $"{CurrentTime}";
-
+            //timer being drawn (twice as to highlight it and make it more readable)
             float l = _font.MeasureString(timeString).X /2 ;
 
             _spriteBatch.DrawString(_font, timeString, new Vector2(GraphicsDevice.Viewport.Width/2 - (int)l, 8), Color.Black);

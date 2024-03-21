@@ -14,9 +14,9 @@ namespace HTGTTA.Manager
         private Animation _animation;
 
         private float _timer; // to know when to incremenet current frame based on spritespeed
-        public Vector2 Position { get; set; }
+        public Vector2 Position { get; set; } //position of player sprite
 
-        protected Texture2D _CurrentFrame;
+        protected Texture2D _CurrentFrame; //frame the cycle is on
         public int FrameWidth { get { return _animation.FrameWidth; } }
         public int FrameHeight { get { return _animation.FrameHeight; } }
 
@@ -27,13 +27,8 @@ namespace HTGTTA.Manager
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(_animation.Texture,
-                             Position,
-                             new Rectangle(_animation.CurrentFrame * _animation.FrameWidth, // as currentframe increments, the width shifts to along sprite sheet
-                                           0,
-                                           _animation.FrameWidth,
-                                           _animation.FrameHeight),
-                             Color.White);
+            spriteBatch.Draw(_animation.Texture,Position,new Rectangle(_animation.CurrentFrame * _animation.FrameWidth, // as currentframe increments, the width shifts to along sprite sheet
+                                           0, _animation.FrameWidth, _animation.FrameHeight), Color.White);
         }
 
         public void Play(Animation animation)
@@ -43,16 +38,16 @@ namespace HTGTTA.Manager
              
             _animation = animation; //else it resets it from start
 
-            _animation.CurrentFrame = 0;
+            _animation.CurrentFrame = 0; //starts at first frame
 
-            _timer = 0;
+            _timer = 0; //timer starts at 0
         }
 
         public void Stop() //stops animation
         {
-            _timer = 0f;
+            _timer = 0f; //resets to 0
 
-            _animation.CurrentFrame = 0;
+            _animation.CurrentFrame = 0; //resets to 0
         }
 
         public void Update(GameTime gameTime)

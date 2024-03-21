@@ -29,7 +29,7 @@ namespace HTGTTA.Scenes
         {
             if (State == SceneStateEnum.Loaded && !waiting)
             {
-                coroutineService.StartCoroutine(WaitSecondsAndExit(5));
+                coroutineService.StartCoroutine(WaitSecondsAndExit(5)); //this number can be changed to change how long screen stays up before fading
             }
 
             if (State == SceneStateEnum.Loaded && (kbManager.KeysPressed().Length > 0 || msManager.LeftButtonDown || msManager.RightButtonDown))
@@ -45,14 +45,8 @@ namespace HTGTTA.Scenes
         }
         protected override void LoadContent()
         {
-            // = new SpriteBatch(GraphicsDevice); // for screen switching
             _audio.PlaySong("Audio/Music/Mysterious-Puzzle_Looping", .005f);
-
-
             _bgTexture = Game.Content.Load<Texture2D>("Textures/Puzzle UI/trapdoor");
-
-
-
 
             base.LoadContent();
         }

@@ -13,8 +13,8 @@ namespace HTGTTA.Scenes
 {
     public class GameScene : SceneFadeBase
     {
-        public int w;
-        public int h;
+        public int w; //window width 
+        public int h; //window height
 
 
         protected SpriteFont _font;
@@ -34,18 +34,11 @@ namespace HTGTTA.Scenes
 
         private List<Object> _objects;
 
-        public bool choiceExit;
-
-        public bool DoorOpened;
-        public bool SleepYes;
-
+        public bool choiceExit; //exit game
 
         protected bool UIup;
 
-        protected bool Choice = false;
-        protected string typeChoice;
-
-        Vector2 lastPosition; //collision
+        Vector2 lastPosition; //collision repsonse (doesn't allow player to move further)
 
 
         #region packages
@@ -81,13 +74,12 @@ namespace HTGTTA.Scenes
                 { "WalkRight", new Animation(Game.Content.Load<Texture2D>("Textures/Sprite/right"), 3) },
             };
 
-            // TODO: Add your initialization logic here
             Dictionary<string, ObjectInterations> nothingToDo = new Dictionary<string, ObjectInterations>()
             {
                 {"Nothing to do here", new ObjectInterations(){ Active = true, Description = "Nothing to do here", Name = "Nothing to do.", InteractionType = InteractionTypeEnum.Nothing } }
             };
 
-            //objects
+            //objects on screen
             _items = new List<Sprite>()
             {
                 new Sprite(Game, "Textures/Objects/Blank")
@@ -276,17 +268,10 @@ namespace HTGTTA.Scenes
             base.UnloadScene();
         }
 
-        /// Allows the game to perform any initialization it needs to before starting to run.
-        /// This is where it can query for any required services and load any non-graphic
-        /// related content.  Calling base.Initialize will enumerate through any components
-        /// and initialize them as well.
-
         public override void Initialize()
         {
             base.Initialize();
         }
-
-        /// LoadContent will be called once per game and is the place to load all of your content.
 
         protected override void LoadContent()
         {
@@ -294,7 +279,6 @@ namespace HTGTTA.Scenes
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             _backgroundTexture = Game.Content.Load<Texture2D>("Textures/backgrounds/background2"); //background
-            //_backgroundTexture = Game.Content.Load<Texture2D>("Textures/Puzzle UI/PadLock");
 
             _audio.PlaySong("Audio/Music/Drafty-Places", .005f); //music
 
@@ -303,16 +287,10 @@ namespace HTGTTA.Scenes
             base.LoadContent();
         }
 
-
-        /// UnloadContent will be called once per game and is the place to unload game-specific content
-
         protected override void UnloadContent()
         {
             // TODO: Unload any non ContentManager content here
         }
-
-
-        /// Allows the game to run logic such as updating the world, checking for collisions, gathering input, and playing audio
 
         public override void Update(GameTime gameTime)
         {
@@ -328,6 +306,7 @@ namespace HTGTTA.Scenes
                 // Disable the player when the game is paused so they can't move about..
                 player.Enabled = !GamePlayTimer.IsPaused && !ConfirmGameExit;
 
+                //these start endings when variables are true
                 if (HUD.DoorOpened)
                 {
                     sceneManager.LoadScene("Ending");
@@ -451,7 +430,6 @@ namespace HTGTTA.Scenes
                     _spriteBatch.Draw(tmpgb, new Rectangle(0, 0, w,h), Color.White);
 
                     string exitMessage = "Are you sure you want to quit the game?";
-
  
                     float length = _uiFont.MeasureString(exitMessage).X / 2;
 

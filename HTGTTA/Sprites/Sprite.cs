@@ -16,7 +16,7 @@ namespace HTGTTA.Sprites
 
         protected SpriteBatch spriteBatch;
 
-        protected Vector2 _position;
+        protected Vector2 _position; //sprite position
 
         protected Texture2D _texture;
         protected Texture2D _boundsTexture;
@@ -27,15 +27,13 @@ namespace HTGTTA.Sprites
 
         protected Dictionary<string, Animation> _animations;
 
-        public int Width { get; set; }
-        public int Height { get; set; }
+        public int Width { get; set; } //sprite width
+        public int Height { get; set; } //sprite height
 
+        public Input Input;
         //packages
         protected IKeyboardStateManager _keyboard { get { return ((IInputStateService)Game.Services.GetService<IInputStateService>()).KeyboardManager; } }
         protected IAudioService _audio { get { return Game.Services.GetService<IAudioService>(); } }
-
-        public Input Input;
-
 
 
         #endregion
@@ -100,8 +98,6 @@ namespace HTGTTA.Sprites
             if (!string.IsNullOrEmpty(TextureAsset))
             {
                 _texture = Game.Content.Load<Texture2D>(TextureAsset);
-                //Width = _texture.Width;
-                //Height = _texture.Height;
             }
             if (_animations != null)
             {
@@ -123,9 +119,6 @@ namespace HTGTTA.Sprites
                     _animationManager.Position = _position;
             }
         }
-
-        
-
         #endregion
 
         #region Methods
@@ -160,7 +153,6 @@ namespace HTGTTA.Sprites
                     spriteBatch.DrawString(_font, textToPrint, txtPos + new Vector2(-1, -1), Color.Gold);
                 }
                 
-
                 if (_texture != null)
                 {
                     spriteBatch.Draw(_texture, Bounds, Color.White);
@@ -169,10 +161,6 @@ namespace HTGTTA.Sprites
                 {                 
                     _animationManager.Draw(spriteBatch);
                 }
-
-                
-
-
 
                 spriteBatch.End();
             }

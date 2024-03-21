@@ -79,6 +79,7 @@ namespace HTGTTA
 
         protected override void Initialize()
         {
+            //scenes
             sceneService.AddScene(new GameScene(this, "Game"));
             sceneService.AddScene(new MainMenu(this, "mainMenu"));
             sceneService.AddScene(new Options(this, "Options"));
@@ -108,7 +109,7 @@ namespace HTGTTA
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            sceneService.LoadScene("mainMenu");
+            sceneService.LoadScene("mainMenu"); //starting screen (could be changed to title or splash screen in future
 
             base.LoadContent();
         }

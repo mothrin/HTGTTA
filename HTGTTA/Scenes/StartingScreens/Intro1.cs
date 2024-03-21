@@ -30,7 +30,7 @@ namespace HTGTTA.Scenes.StartingScreens
         {
             if (State == SceneStateEnum.Loaded && !waiting)
             {
-                coroutineService.StartCoroutine(WaitSecondsAndExit(5));
+                coroutineService.StartCoroutine(WaitSecondsAndExit(5)); //this number can be changed to change how long screen stays up before fading
             }
 
             if (State == SceneStateEnum.Loaded && (kbManager.KeysPressed().Length > 0 || msManager.LeftButtonDown || msManager.RightButtonDown))
@@ -68,6 +68,7 @@ namespace HTGTTA.Scenes.StartingScreens
 
             DrawFader(gameTime);
         }
+        //means the player can either let the screen play through of skip through with mouse clicks
         protected IEnumerator WaitSecondsAndExit(float seconds)
         {
             waiting = true;

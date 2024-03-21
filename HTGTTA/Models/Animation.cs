@@ -14,8 +14,8 @@ namespace HTGTTA.Models
         public int FrameHeight {get {return Texture.Height;} } // height of texture
         public int FrameWidth { get { return Texture.Width / FrameCount; } } //weidth of texture
         public float FrameSpeed { get; set; } //speed of animation
-        public bool IsLooping { get; set; }
-        public Texture2D Texture { get; private set; } 
+        public bool IsLooping { get; set; } //is true animation loops round
+        public Texture2D Texture { get; private set; }  //sprite sheet
 
 
         public Animation (Texture2D texture, int frameCount) //contructor
